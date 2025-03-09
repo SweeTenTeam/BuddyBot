@@ -1,0 +1,7 @@
+services:
+  vectorial:
+    build: vectorialDbService
+    volumes:
+      - ./vectorialDbService:/app/
+  rabbitmq:
+    image: rabbitmq
