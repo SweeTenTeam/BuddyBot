@@ -8,24 +8,22 @@ export class JiraAPIAdapter implements JiraAPIPort {
   constructor() {
     this.jiraAPI = new JiraAPIFacade();
   }
-  fetchTicket(req: JiraCmd): Ticket[] {
-    this.jiraAPI.fetchTicket("KAN-1");
-    let tickets = Ticket[2];
-    return tickets;
-  }
-  async fetchIssues(boardId: string, lastUpdate: string): Promise<Ticket[]> {
+
+  async fetchTickets(req: JiraCmd): Promise<Ticket[]> {
     let result: Ticket[] = [];
-    const issues = await this.jiraAPI.fetchIssuesForBoard(boardId, "1");
-    //console.log(issues);
+    let boardId = req.getBoardId();
+    let lastUpdate = req.getLastUpdate();
+    const issues = await this.jiraAPI.fetchIssuesForBoard(boardId, lastUpdate)
     for (let i = 0; i < issues.length; i++) {
       let fields = issues[i].fields;
       result.push(
         new Ticket(
           fields.summary,
           fields.description,
-          fields.assignee,
+          fields.assignee ? fields.assignee.displayName : 'No assignee',
           fields.status.name,
           fields.sprint,
+          fields.epic || 'No epic',
           fields.creator.displayName,
           fields.priority.name,
           fields.duedate,
@@ -33,13 +31,18 @@ export class JiraAPIAdapter implements JiraAPIPort {
           fields.issuelinks,
         ),
       );
+      return result;
     }
-    return result;
   }
 }
 
-const adapter = new JiraAPIAdapter();
-async function tempFunction() {
-  console.log(await adapter.fetchIssues("1", "1"));
-}
-tempFunction();
+//const adapter = new JiraAPIAdapter();
+//async function tempFunction() {
+//  let param : JSON = JSON;
+//  param['origin'] = 'Jira';
+//  param['boardId'] = '1';
+//  param['lastUpdate'] = '150';
+//  console.log(param);
+//  console.log(await adapter.fetchTickets(new JiraCmd(param)));
+//}
+//tempFunction();

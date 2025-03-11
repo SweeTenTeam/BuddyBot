@@ -9,7 +9,7 @@ amqp.connect('amqp://rabbitmq', function(error0, connection) {
         if(error1){
             throw error1;
         }
-        var queue = 'hello';
+        var queue = 'information';
         var msg = 'Hello World!';
 
         channel.assertQueue(queue, {

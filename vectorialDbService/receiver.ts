@@ -9,19 +9,13 @@ amqp.connect('amqp://rabbitmq', function(error0, connection) {
         if(error1){
             throw error1;
         }
-        var queue = 'hello';
+        var queue = 'information-output';
 
-        channel.assertQueue(queue, {
-            durable: false
-        });
+        channel.assertQueue(queue);
 
         console.log(" [*] Waiting for messages in %s. To exit press CTRL+C", queue);
         channel.consume(queue, function(msg){
             console.log(" [x] Received %s", msg.content.toString());
-            var wtf = msg.content
-            console.log(wtf)
-            var j = JSON.parse(wtf.toString());
-            console.log(j['zio'])
         }, {
             noAck: true
         });

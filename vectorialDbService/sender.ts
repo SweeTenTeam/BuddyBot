@@ -9,12 +9,10 @@ amqp.connect('amqp://rabbitmq', function(error0, connection) {
         if(error1){
             throw error1;
         }
-        var queue = 'hello';
-        var msg = 'Hello World!';
+        var queue = 'information-input';
+        var msg = JSON.stringify({'origin':'Jira','boardId':'1','lastUpdate':'150'});
 
-        channel.assertQueue(queue, {
-            durable: false
-        });
+        channel.assertQueue(queue);
 
         channel.sendToQueue(queue, Buffer.from(msg));
         console.log("[+] Sent %s", msg);

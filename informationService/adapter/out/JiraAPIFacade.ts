@@ -32,6 +32,12 @@ export class JiraAPIFacade {
     return "1";
   }
 
+  async fetchStoryPoint(id: string): Promise<string> {
+    const issue = await this.jira.getIssueEstimationForBoard("10000", 1);
+    console.log(issue);
+    return "1";
+  }
+
   async fetchIssuesForBoard(
     id: string,
     lastUpdate: string,

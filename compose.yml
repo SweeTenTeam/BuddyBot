@@ -1,4 +1,8 @@
 services:
+  information:
+    build: informationService
+    volumes:
+      - ./informationService:/app/
   vectorial:
     build: vectorialDbService
     volumes:
