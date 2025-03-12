@@ -10,15 +10,21 @@ export class InformationController {
   private readonly jiraService: JiraUseCase;
   private readonly confluenceService: ConfluenceUseCase;
 
-  constructor(githubService: GithubUseCase, jiraService: JiraUseCase, confluenceService: ConfluenceUseCase) {
+  constructor(
+    githubService: GithubUseCase,
+    jiraService: JiraUseCase,
+    confluenceService: ConfluenceUseCase,
+  ) {
     this.githubService = githubService;
     this.jiraService = jiraService;
     this.confluenceService = confluenceService;
   }
 
+  @Get()
   async fetchAndStoreJiraInfo(req: JSON): Promise<boolean> {
-    const result = await this.jiraService.fetchAndStoreJiraInfo(new JiraCmd(req));
+    const result = await this.jiraService.fetchAndStoreJiraInfo(
+      new JiraCmd(req),
+    );
     return result;
   }
 }
-

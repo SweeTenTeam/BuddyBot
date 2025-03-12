@@ -8,7 +8,7 @@ export class Ticket {
   public storyPoint: string;
   public creator: string;
   public priority: string;
-  public expiryDate: Date;
+  public expiryDate: string;
   public comments: string[];
   public relatedTickets: string[];
 
@@ -22,7 +22,7 @@ export class Ticket {
     storyPoint: string,
     creator: string,
     priority: string,
-    expiryDate: Date,
+    expiryDate: string,
     comments: string[],
     relatedTickets: string[],
   ) {
@@ -40,8 +40,8 @@ export class Ticket {
     this.relatedTickets = relatedTickets;
   }
 
-  toJson(): JSON{
-    let result: JSON = JSON;
+  toJson(): JSON {
+    const result: JSON = JSON;
     result['title'] = this.title;
     result['description'] = this.description;
     result['assignee'] = this.assignee;

@@ -6,7 +6,7 @@ export class ConfluenceDocument {
     private author: string,
     private owner: string,
     private content: string,
-    private space: string
+    private space: string,
   ) {}
 
   // Getter methods
