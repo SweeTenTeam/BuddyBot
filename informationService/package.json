@@ -1,10 +1,8 @@
 {
   "devDependencies": {
     "@types/amqplib": "^0.10.7",
-    "@types/jira-client": "^7.1.9",
     "@types/node": "^22.13.10",
     "@types/request": "^2.48.12",
-    "amqplib": "^0.10.5",
-    "jira-client": "^8.2.2"
+    "amqplib": "^0.10.5"
   }
 }
