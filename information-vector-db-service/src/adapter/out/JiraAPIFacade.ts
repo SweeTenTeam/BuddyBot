@@ -1,5 +1,7 @@
+import { Injectable } from "@nestjs/common";
 import JiraApi, { JsonResponse } from "jira-client";
 
+@Injectable
 export class JiraAPIFacade {
   private jira: JiraApi;
   constructor() {
@@ -13,42 +15,5 @@ export class JiraAPIFacade {
       apiVersion: "3",
       strictSSL: true,
     });
-  }
-  async fetchTicket(id: string): Promise<string> {
-    const issue = await this.jira.findIssue(id);
-    console.log(issue);
-    return "1";
-  }
-
-  async fetchProjects(id: string): Promise<string> {
-    const issue = await this.jira.getProjectsFull("1");
-    console.log(issue);
-    return "1";
-  }
-
-  async fetchProject(id: string): Promise<string> {
-    const issue = await this.jira.getProject("KAN");
-    console.log(issue);
-    return "1";
-  }
-
-  async fetchStoryPoint(id: string): Promise<string> {
-    const issue = await this.jira.getIssueEstimationForBoard("10000", 1);
-    console.log(issue);
-    return "1";
-  }
-
-  async fetchIssuesForBoard(
-    id: string,
-    lastUpdate: string,
-  ): Promise<JsonResponse> {
-    const boardIssues = await this.jira.getIssuesForBoard(
-      id,
-      0,
-      50,
-      `updated >= "-${lastUpdate}d"`,
-    ); //importante
-    //console.log(boardIssues);
-    return boardIssues.issues;
   }
 }
