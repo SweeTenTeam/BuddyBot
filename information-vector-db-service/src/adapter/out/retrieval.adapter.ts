@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Information } from '../../domain/information';
-import { Metadata, Origin, Type } from '../../domain/metadata';
-import { RETRIEVAL_PORT, RetrievalPort } from 'src/application/port/out/retrieval-info.port';
-import { RetrieveCmd } from 'src/domain/retreive-cmd';
-import { QdrantInformationRepository } from './persistance/qdrant-information-repository';
+import { Information } from '../../domain/information.js';
+import { Metadata, Origin, Type } from '../../domain/metadata.js';
+import { RETRIEVAL_PORT, RetrievalPort } from '../../application/port/out/retrieval-info.port.js';
+import { RetrieveCmd } from '../../domain/retreive-cmd.js'
+import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 
 @Injectable()
 export class RetrieveAdapter implements RetrievalPort {

@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { InformationEntity } from "./entities/information.entity";
+import { InformationEntity } from "./entities/information.entity.js";
 
 
 @Injectable()

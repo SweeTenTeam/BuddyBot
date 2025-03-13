@@ -1,5 +1,5 @@
-import { Information } from "src/domain/information"
-import { RetrieveCmd } from "src/domain/retreive-cmd"
+import { Information } from "../../../domain/information.js"
+import { RetrieveCmd } from "../../../domain/retreive-cmd.js"
 
 export const RETRIEVAL_USE_CASE = Symbol('RETRIEVAL_USE_CASE');
 

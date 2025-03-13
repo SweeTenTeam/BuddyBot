@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { ConfluenceUseCase } from './port/in/ConfluenceUseCase';
-import { ConfluenceCmd } from 'src/domain/ConfluenceCmd';
-import { ConfluenceAPIPort } from './port/out/ConfluenceAPIPort';
+import { ConfluenceUseCase } from './port/in/ConfluenceUseCase.js';
+import { ConfluenceCmd } from '../domain/ConfluenceCmd.js';
+import { ConfluenceAPIPort } from './port/out/ConfluenceAPIPort.js';
 
 @Injectable()
 export class ConfluenceService implements ConfluenceUseCase {

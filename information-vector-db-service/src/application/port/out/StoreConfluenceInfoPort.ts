@@ -1,4 +1,5 @@
-import { ConfluenceDocument } from 'src/domain/ConfluenceDocument';
+import { ConfluenceDocument } from '../../../domain/ConfluenceDocument.js';
+
 
 export interface StoreConfluenceInfoPort {
   storeDocuments(req: ConfluenceDocument[]): boolean;

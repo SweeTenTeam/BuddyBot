@@ -1,4 +1,4 @@
-import { Metadata } from './metadata';
+import { Metadata } from './metadata.js';
 
 export class Information {
   constructor(

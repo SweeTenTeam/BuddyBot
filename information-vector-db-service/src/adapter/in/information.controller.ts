@@ -1,8 +1,8 @@
 import { Controller, Get } from '@nestjs/common';
-import { ConfluenceUseCase } from 'src/application/port/in/ConfluenceUseCase';
-import { GithubUseCase } from 'src/application/port/in/GithubUseCase';
-import { JiraUseCase } from 'src/application/port/in/JiraUseCase';
-import { JiraCmd } from 'src/domain/JiraCmd';
+import { ConfluenceUseCase } from '../../application/port/in/ConfluenceUseCase.js';
+import { GithubUseCase } from '../../application/port/in/GithubUseCase.js';
+import { JiraUseCase } from '../../application/port/in/JiraUseCase.js';
+import { JiraCmd } from '../../domain/JiraCmd.js';
 
 @Controller()
 export class InformationController {

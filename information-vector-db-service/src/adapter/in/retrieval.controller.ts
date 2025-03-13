@@ -1,6 +1,6 @@
 
 import { Controller, Get, Inject } from '@nestjs/common';
-import { RETRIEVAL_USE_CASE, RetrievalUseCase } from '../../application/port/in/retrieval-usecase.port';
+import { RETRIEVAL_USE_CASE, RetrievalUseCase } from '../../application/port/in/retrieval-usecase.port.js';
 
 
 @Controller()

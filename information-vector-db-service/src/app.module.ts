@@ -1,19 +1,20 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
-import { InformationController } from './adapter/in/information.controller';
-import { JiraService } from './application/jira.service';
-import { ConfluenceService } from './application/confluence.service';
-import { GithubService } from './application/github.service';
-import { TestController } from './adapter/in/test.controller';
-import { GITHUB_USECASE, GithubUseCase } from 'src/application/port/in/GithubUseCase';
-import { JiraAPIPort } from './application/port/out/JiraAPIPort';
-import { JiraAPIAdapter } from './adapter/out/JiraAPIAdapter';
-import { JiraAPIFacade } from './adapter/out/JiraAPIFacade';
-import { RetrievalController } from './adapter/in/retrieval.controller';
-import { RETRIEVAL_USE_CASE } from './application/port/in/retrieval-usecase.port';
-import { RetrievalService } from './application/retrieval.servie';
-import { RETRIEVAL_PORT } from './application/port/out/retrieval-info.port';
-import { RetrieveAdapter } from './adapter/out/retrieval.adapter';
-import { QdrantInformationRepository } from './adapter/out/persistance/qdrant-information-repository';
+import { InformationController } from './adapter/in/information.controller.js';
+import { JiraService } from './application/jira.service.js';
+import { ConfluenceService } from './application/confluence.service.js';
+import { GithubService } from './application/github.service.js';
+import { TestController } from './adapter/in/test.controller.js';
+import { GITHUB_USECASE, GithubUseCase } from './application/port/in/GithubUseCase.js';
+import { JiraAPIPort } from './application/port/out/JiraAPIPort.js';
+import { JiraAPIAdapter } from './adapter/out/JiraAPIAdapter.js';
+import { JiraAPIFacade } from './adapter/out/JiraAPIFacade.js';
+import { RetrievalController } from './adapter/in/retrieval.controller.js';
+import { RETRIEVAL_USE_CASE } from './application/port/in/retrieval-usecase.port.js';
+import { RetrievalService } from './application/retrieval.servie.js';
+import { RETRIEVAL_PORT } from './application/port/out/retrieval-info.port.js';
+import { RetrieveAdapter } from './adapter/out/retrieval.adapter.js';
+import { QdrantInformationRepository } from './adapter/out/persistance/qdrant-information-repository.js';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import { QdrantVectorStore } from '@langchain/qdrant';
 import { NomicEmbeddings } from '@langchain/nomic';
@@ -45,7 +46,6 @@ import { NomicEmbeddings } from '@langchain/nomic';
         return new QdrantInformationRepository(vectorStore);
       },
     },
-    QdrantInformationRepository,
     {
       provide: GITHUB_USECASE, 
       useClass: GithubService, 

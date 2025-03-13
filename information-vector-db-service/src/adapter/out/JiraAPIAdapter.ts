@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Ticket } from '../../domain/Ticket';
-import { JiraCmd } from '../../domain/JiraCmd';
-import { JiraAPIFacade } from './JiraAPIFacade';
-import { JiraAPIPort } from 'src/application/port/out/JiraAPIPort';
+import { Ticket } from '../../domain/Ticket.js';
+import { JiraCmd } from '../../domain/JiraCmd.js';
+import { JiraAPIFacade } from './JiraAPIFacade.js';
+import { JiraAPIPort } from '../../application/port/out/JiraAPIPort.js';
 
 @Injectable()
 export class JiraAPIAdapter implements JiraAPIPort {

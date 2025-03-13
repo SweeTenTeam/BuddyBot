@@ -1,7 +1,7 @@
-import { JiraCmd } from '../domain/JiraCmd';
-import { JiraUseCase } from './port/in/JiraUseCase';
+import { JiraCmd } from '../domain/JiraCmd.js';
+import { JiraUseCase } from './port/in/JiraUseCase.js';
 import { Injectable } from '@nestjs/common';
-import { JiraAPIPort } from './port/out/JiraAPIPort';
+import { JiraAPIPort } from './port/out/JiraAPIPort.js';
 
 @Injectable()
 export class JiraService implements JiraUseCase {

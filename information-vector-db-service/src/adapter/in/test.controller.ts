@@ -1,9 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { GithubService } from 'src/application/github.service';
-import { ConfluenceUseCase } from 'src/application/port/in/ConfluenceUseCase';
-import { GITHUB_USECASE, GithubUseCase } from 'src/application/port/in/GithubUseCase';
-import { JiraUseCase } from 'src/application/port/in/JiraUseCase';
-import { JiraCmd } from 'src/domain/JiraCmd';
+
+import { GITHUB_USECASE, GithubUseCase } from '../../application/port/in/GithubUseCase.js';
+
 
 @Controller()
 export class TestController {

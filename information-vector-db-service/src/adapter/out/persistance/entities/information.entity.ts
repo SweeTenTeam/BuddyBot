@@ -1,4 +1,4 @@
-import { MetadataEntity } from './metadata.entity';
+import { MetadataEntity } from './metadata.entity.js';
 
 export class InformationEntity {
   constructor(
