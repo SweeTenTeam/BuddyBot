@@ -9,7 +9,7 @@ import { QdrantInformationRepository } from './persistance/qdrant-information-re
 export class RetrieveAdapter implements RetrievalPort {
       constructor( private readonly informationRepository: QdrantInformationRepository) {}
 
-  retrieveRelevantInfo(req: RetrieveCmd): Information[] {
+  async retrieveRelevantInfo(req: RetrieveCmd): Promise<Information[]> {
     // Mock implementation returning some static Information objects
     return [
       new Information(

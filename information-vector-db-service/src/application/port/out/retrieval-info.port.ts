@@ -3,7 +3,6 @@ import { RetrieveCmd } from "../../../domain/retreive-cmd.js";
 
 export const RETRIEVAL_PORT = Symbol("RETRIVAL_PORT");
 
-
 export interface RetrievalPort {
-  retrieveRelevantInfo(req: RetrieveCmd): Information[];
+  retrieveRelevantInfo(req: RetrieveCmd): Promise<Information[]>;
 }
