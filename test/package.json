@@ -1,5 +1,5 @@
 {
-  "name": "information-vector-db-service",
+  "name": "test",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -26,8 +26,6 @@
     "@nestjs/platform-express": "^11.0.1",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.5",
-    "confluence.js": "^1.7.4",
-    "jira.js": "^4.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

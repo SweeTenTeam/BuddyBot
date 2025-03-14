@@ -8,14 +8,15 @@ import { GITHUB_USECASE, GithubUseCase } from 'src/application/port/in/GithubUse
 import { JiraAPIPort } from './application/port/out/JiraAPIPort';
 import { JiraAPIAdapter } from './adapter/out/JiraAPIAdapter';
 import { JiraAPIFacade } from './adapter/out/JiraAPIFacade';
+import { JIRA_USECASE } from './application/port/in/JiraUseCase';
 
 @Module({
   imports: [],
   controllers: [TestController],
   providers: [
     {
-      provide: GITHUB_USECASE, 
-      useClass: GithubService, 
+      provide: JIRA_USECASE, 
+      useClass: JiraService, 
     },
     {
       provide: JiraAPIPort, 

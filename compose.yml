@@ -1,11 +1,11 @@
 services:
   information:
-    build: informationService
-    volumes:
-      - ./informationService:/app/
-  vectorial:
-    build: vectorialDbService
-    volumes:
-      - ./vectorialDbService:/app/
+    build: information-vector-db-service
+    #volumes:
+    #  - ./information-vector-db-service:/app/
+  test:
+    build: test
+    ports:
+      - "3000:3000"
   rabbitmq:
     image: rabbitmq

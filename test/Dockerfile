@@ -11,4 +11,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node","adapter/in/event/MessageListener.js"]
+CMD ["npm","run","start"]
