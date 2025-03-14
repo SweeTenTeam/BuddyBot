@@ -12,7 +12,7 @@ export class TestController {
   }
 
   @MessagePattern('wtf_pattern')
-  async chill(data: Record<string, any>) {
+  async chill(data: Record<string, any>): Promise<string> {
     console.log('Received message:', data);
     // Add your message processing logic here
     return 'wtf?';

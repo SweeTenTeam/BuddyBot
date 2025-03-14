@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfluenceClient } from 'confluence.js';
+import { ConfluenceClient, Models } from 'confluence.js';
 
 //@Injectable()
 export class ConfluenceAPIFacade {
@@ -22,14 +22,18 @@ export class ConfluenceAPIFacade {
   }
 
   async fetchSpace(): Promise<void>{
-    console.log(await this.confluence.space.getSpace({spaceKey: '~712020a978bfb8df77494da2183efc1d3da02e',expand: ['homepage']}))
+    const spaceContents = await this.confluence.space.getContentForSpace({spaceKey: '~712020a978bfb8df77494da2183efc1d3da02e'});
+    console.log(spaceContents);
   }
 
-  async 
+  async fetchDocuments(): Promise<Models.ContentArray<Models.Content>>{
+    const documents = (await this.confluence.content.getContent({expand: ['space','history.ownedBy','body.storage']})); //history.ownedBy
+    return documents;
+  }
 }
 
-const confluenceAPI = new ConfluenceAPIFacade();
-async function ziomela(): Promise<void> {
- console.log(await confluenceAPI.fetchSpace());
-}
-ziomela();
+//const confluenceAPI = new ConfluenceAPIFacade();
+//async function ziomela(): Promise<void> {
+// console.log(await confluenceAPI.fetchDocuments());
+//}
+//ziomela();

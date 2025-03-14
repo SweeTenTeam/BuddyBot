@@ -13,6 +13,19 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
 
   async fetchDocuments(req: ConfluenceCmd): Promise<ConfluenceDocument[]> {
     const result: ConfluenceDocument[] = [];
+    const documents = await this.confluenceAPI.fetchDocuments();
+    for(const document of documents.results){
+      result.push(new ConfluenceDocument(
+        document.id,
+        document.title,
+        document.status,
+        document.history?.createdBy.displayName || '',
+        document.history?.createdBy.displayName || '', //to fix non existant type ownedBy
+        document.body?.storage?.value || '',
+        document.space?.key || ''
+      ));
+    }
+    console.log(result);
     return result;
   }
 }

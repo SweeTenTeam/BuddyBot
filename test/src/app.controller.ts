@@ -7,7 +7,7 @@ export class MessageController {
 
   @Get()
   async sendMessage() {
-    const wtf = await this.producerService.sendMessage('ez_pattern', 'ziomela');
+    const wtf = await this.producerService.sendMessage('fetchAndStoreConfluence', 'ziomela');
     console.log(wtf);
     return 'Message sent!';
   }

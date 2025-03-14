@@ -1,7 +1,9 @@
-import { Controller, Get } from '@nestjs/common';
-import { ConfluenceUseCase } from 'src/application/port/in/ConfluenceUseCase';
-import { GithubUseCase } from 'src/application/port/in/GithubUseCase';
-import { JiraUseCase } from 'src/application/port/in/JiraUseCase';
+import { Controller, Get, Inject } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
+import { CONFLUENCE_USECASE, ConfluenceUseCase } from 'src/application/port/in/ConfluenceUseCase';
+import { GITHUB_USECASE, GithubUseCase } from 'src/application/port/in/GithubUseCase';
+import { JIRA_USECASE, JiraUseCase } from 'src/application/port/in/JiraUseCase';
+import { ConfluenceCmd } from 'src/domain/ConfluenceCmd';
 import { JiraCmd } from 'src/domain/JiraCmd';
 
 @Controller()
@@ -11,20 +13,28 @@ export class InformationController {
   private readonly confluenceService: ConfluenceUseCase;
 
   constructor(
-    githubService: GithubUseCase,
-    jiraService: JiraUseCase,
-    confluenceService: ConfluenceUseCase,
+    @Inject(GITHUB_USECASE) githubService: GithubUseCase,
+    @Inject(JIRA_USECASE) jiraService: JiraUseCase,
+    @Inject(CONFLUENCE_USECASE) confluenceService: ConfluenceUseCase,
   ) {
     this.githubService = githubService;
     this.jiraService = jiraService;
     this.confluenceService = confluenceService;
   }
 
-  @Get()
+  @MessagePattern('fetchAndStoreJira')
   async fetchAndStoreJiraInfo(req: JSON): Promise<boolean> {
     const result = await this.jiraService.fetchAndStoreJiraInfo(
       new JiraCmd(req),
     );
-    return result;
+    return true;
+  }
+
+  @MessagePattern('fetchAndStoreConfluence')
+  async fetchAndStoreConfluenceInfo(req: JSON): Promise<boolean> {
+    const result = await this.confluenceService.fetchAndStoreConfluenceInfo(
+      new ConfluenceCmd(),
+    );
+    return true;
   }
 }
