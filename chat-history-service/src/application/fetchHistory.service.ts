@@ -14,7 +14,7 @@ export class FecthHistoryService implements FetchHistoryUseCase{
         //return this.FetchHistoryPort.fetchStoricoChat(req);
 
         return Promise.resolve([ //mocckino, testo TODO
-            new Chat("firstID", "Di che colore è l'Arancia?", "Blu", new Date())
+            new Chat("firstID", "firstQuestion?", "firstAnswer", new Date())
         ]);
     }
 }
