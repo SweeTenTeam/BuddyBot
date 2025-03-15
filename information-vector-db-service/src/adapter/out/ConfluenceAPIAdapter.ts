@@ -20,9 +20,9 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
         document.title,
         document.status,
         document.history?.createdBy.displayName || '',
-        document.history?.createdBy.displayName || '', //to fix non existant type ownedBy
-        document.body?.storage?.value || '',
-        document.space?.key || ''
+        document.history?.ownedBy.displayName || '',
+        document.space?.id || -1,
+        document.body?.storage?.value || ''
       ));
     }
     console.log(result);

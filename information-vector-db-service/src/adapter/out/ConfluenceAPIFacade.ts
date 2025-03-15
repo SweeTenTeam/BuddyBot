@@ -30,10 +30,15 @@ export class ConfluenceAPIFacade {
     const documents = (await this.confluence.content.getContent({expand: ['space','history.ownedBy','body.storage']})); //history.ownedBy
     return documents;
   }
+
+  async fetchLastUpdatedDocuments(): Promise<Models.SearchPageResponseSearchResult>{
+    const documents = await this.confluence.search.searchByCQL({cql:'lastModified >= now("-100d") or created >= now("-100d")'});
+    return documents
+  }
 }
 
 //const confluenceAPI = new ConfluenceAPIFacade();
 //async function ziomela(): Promise<void> {
-// console.log(await confluenceAPI.fetchDocuments());
+// console.log(((await confluenceAPI.fetchLastUpdatedDocuments()).results[0].content));
 //}
 //ziomela();
