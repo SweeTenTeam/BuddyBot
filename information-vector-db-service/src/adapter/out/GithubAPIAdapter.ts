@@ -17,12 +17,42 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
   constructor(githubAPI: GithubAPIFacade) {
     this.githubAPI = githubAPI;
   }
-  fetchGithubCommitsInfo(): Promise<Commit[]> {
-    return Commit[1];
+  
+  async fetchGithubCommitsInfo(): Promise<Commit[]> {
+    const commitsInfo = await this.githubAPI.fetchCommitsInfo();
+    const result: Commit[] = [];
+    for(const commit of commitsInfo.data){
+      const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(commit.sha);
+      const filenames: string[] = []; //to change/fix
+      for(const filename of commitFileInfo.data.files ?? []){
+        filenames.push(filename.filename);;
+      }
+      result.push(new Commit(
+        commit.sha,
+        commit.commit.message,
+        commit.commit.author?.date ?? '',
+        filenames,
+        commit.commit.author?.name ?? '',
+      ));
+    }
+    return result;
   }
 
-  fetchGithubFilesInfo(): Promise<File[]> {
-    return File[1];
+  async fetchGithubFilesInfo(): Promise<File[]> {
+    const files = await this.githubAPI.fetchFilesInfo('master');
+    const result: File[] = [];
+    for(const file of files.data.tree){
+      if(file.type !== 'blob') continue;
+      if(file.size! > 1000) continue;
+      const fileContents = await this.githubAPI.fetchFileInfo(file.path ?? '');
+      let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
+      result.push(new File(
+        file.path ?? '',
+        file.sha ?? '',
+        content
+      ));
+    }
+    return result;
   }
 
   async fetchGithubPullRequestsInfo(): Promise<PullRequest[]> {
@@ -37,6 +67,8 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
         for(const reviewer of pullRequest.requested_reviewers || []){
             requested_reviewers.push(reviewer.login);
         }
+        const pr_comments = await this.githubAPI.fetchPullRequestComments(pullRequest.number);
+        pr_comments.concat(await this.githubAPI.fetchPullRequestReviewComments(pullRequest.number));
         const filenames = await this.githubAPI.fetchPullRequestModifiedFiles(pullRequest.number);
         result.push(new PullRequest(
             pullRequest.id,
@@ -46,7 +78,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
             pullRequest.state,
             assignees,
             requested_reviewers,
-            [], //to fix comments
+            pr_comments, //to fix comments
             filenames,
             pullRequest.head.ref,
             pullRequest.base.ref
@@ -68,7 +100,19 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return repos;
   }
 
-  fetchGithubWorkflowInfo(): Promise<Workflow[]> {
-    return Workflow[1];
+  async fetchGithubWorkflowInfo(): Promise<Workflow[]> {
+    const workflowInfo = await this.githubAPI.fetchWorkflowsInfo();
+    const result: Workflow[] = [];
+    for(const workflow of workflowInfo.data.workflows){
+      result.push(new Workflow(
+        workflow.id,
+        workflow.name,
+        workflow.state,
+        workflow.state,
+        workflow.state,
+        workflow.state //to fix because wtf
+      ));
+    }
+    return result;
   }
 }

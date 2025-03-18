@@ -1,7 +1,7 @@
 export class File{
     constructor(
-        private id: string,
-        private owner: string,
+        private path: string,
+        private sha: string,
         private content: string
     ) {}
 }

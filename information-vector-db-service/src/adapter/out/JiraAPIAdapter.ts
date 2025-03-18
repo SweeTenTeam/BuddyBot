@@ -15,7 +15,7 @@ export class JiraAPIAdapter implements JiraAPIPort {
     const result: Ticket[] = [];
     const boardId = req.getBoardId();
     const lastUpdate = req.getLastUpdate();
-    const issues = (await this.jiraAPI.fetchIssuesForBoard(boardId)).issues;
+    const issues = (await this.jiraAPI.fetchIssuesForBoard(1)).issues;
     for (let i = 0; i < issues.length; i++) {
       const fields = issues[i].fields ?? null;
       if (fields !== null) {

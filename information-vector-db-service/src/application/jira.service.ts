@@ -12,7 +12,7 @@ export class JiraService implements JiraUseCase {
 
   async fetchAndStoreJiraInfo(req: JiraCmd): Promise<boolean> {
     const tickets = await this.jiraAPIAdapter.fetchTickets(req);
-    console.log(tickets);
+    console.log(tickets[0]);
     //store logic
     return true;
   }

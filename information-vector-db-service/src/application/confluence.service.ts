@@ -12,6 +12,7 @@ export class ConfluenceService implements ConfluenceUseCase {
 
   async fetchAndStoreConfluenceInfo(req: ConfluenceCmd): Promise<boolean> {
     const documents = await this.confluenceAPIAdapter.fetchDocuments(req);
+    console.log(documents[10]);
     //store logic
     return true;
   }

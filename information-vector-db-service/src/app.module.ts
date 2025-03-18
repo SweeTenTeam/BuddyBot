@@ -12,6 +12,8 @@ import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter';
 import { ConfluenceAPIPort } from './application/port/out/ConfluenceAPIPort';
 import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade';
 import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase';
+import { GithubAPIAdapter } from './adapter/out/GithubAPIAdapter';
+import { GithubAPIFacade } from './adapter/out/GithubAPIFacade';
 
 @Module({
   imports: [],
@@ -21,6 +23,8 @@ import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase';
       provide: GITHUB_USECASE,
       useClass: GithubService,
     },
+    GithubAPIAdapter,
+    GithubAPIFacade,
     {
       provide: JIRA_USECASE, 
       useClass: JiraService, 

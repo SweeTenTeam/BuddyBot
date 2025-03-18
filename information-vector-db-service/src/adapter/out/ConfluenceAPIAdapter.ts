@@ -25,7 +25,6 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
         document.body?.storage?.value || ''
       ));
     }
-    console.log(result);
     return result;
   }
 }

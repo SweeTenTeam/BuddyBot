@@ -1,6 +1,8 @@
 services:
   information:
     build: information-vector-db-service
+    env_file:
+      - information-vector-db-service/.env
     #volumes:
     #  - ./information-vector-db-service:/app/
   test:
