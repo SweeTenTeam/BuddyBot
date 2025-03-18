@@ -3,16 +3,16 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { QdrantVectorStore } from '@langchain/qdrant';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-import { RetrievalController } from '../src/adapter/in/retrieval.controller.js';
-import { RetrievalService } from '../src/application/retrieval.service.js';
-import { QdrantInformationRepository } from '../src/adapter/out/persistance/qdrant-information-repository.js';
-import { RetrieveAdapter } from '../src/adapter/out/retrieval.adapter.js';
-import { RETRIEVAL_PORT } from '../src/application/port/out/retrieval-info.port.js';
-import { RETRIEVAL_USE_CASE } from '../src/application/port/in/retrieval-usecase.port.js';
-import { Information } from '../src/domain/information.js';
-import { Metadata, Origin, Type } from '../src/domain/metadata.js';
-import { InformationEntity } from '../src/adapter/out/persistance/entities/information.entity.js';
-import { OriginEntity, TypeEntity } from '../src/adapter/out/persistance/entities/metadata.entity.js';
+import { RetrievalController } from '../../src/adapter/in/retrieval.controller.js';
+import { RetrievalService } from '../../src/application/retrieval.service.js';
+import { QdrantInformationRepository } from '../../src/adapter/out/persistance/qdrant-information-repository.js';
+import { RetrieveAdapter } from '../../src/adapter/out/retrieval.adapter.js';
+import { RETRIEVAL_PORT } from '../../src/application/port/out/retrieval-info.port.js';
+import { RETRIEVAL_USE_CASE } from '../../src/application/port/in/retrieval-usecase.port.js';
+import { Information } from '../../src/domain/information.js';
+import { Metadata, Origin, Type } from '../../src/domain/metadata.js';
+import { InformationEntity } from '../../src/adapter/out/persistance/entities/information.entity.js';
+import { OriginEntity, TypeEntity } from '../../src/adapter/out/persistance/entities/metadata.entity.js';
 import { QdrantClient } from '@qdrant/js-client-rest';
 import { NomicEmbeddings } from '@langchain/nomic';
 import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
@@ -237,4 +237,67 @@ describe('Retrieval Integration', () => {
   const nodeDocument = nodeResponse.find(doc => doc.metadata.originID === 'nodejs-doc');
   expect(nodeDocument).toBeDefined();
 });
+
+  it('should delete existing documents when storing with the same metadata', async () => {
+    // Create initial document
+    const originalDoc = new InformationEntity(
+      'This is the original content that should be replaced',
+      {
+        origin: OriginEntity.GITHUB,
+        type: TypeEntity.COMMMIT,
+        originID: 'duplicate-test-id',
+      }
+    );
+
+    // Store the original document
+    await repository.storeInformation(originalDoc);
+    
+    // Give some time for indexing
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Make a query that should find the original document
+    const originalResults = await repository.retrieveRelevantInfo('original content replaced');
+    
+    // Verify the original document exists
+    expect(originalResults.length).toBeGreaterThan(0);
+    expect(originalResults.some(doc => 
+      doc.metadata.originID === 'duplicate-test-id' && 
+      doc.content.includes('original content')
+    )).toBe(true);
+    
+    // Create updated document with the same metadata but different content
+    const updatedDoc = new InformationEntity(
+      'This is the updated content that should replace the original',
+      {
+        origin: OriginEntity.GITHUB,
+        type: TypeEntity.COMMMIT,
+        originID: 'duplicate-test-id',
+      }
+    );
+    
+    // Store the updated document (should delete the original first)
+    await repository.storeInformation(updatedDoc);
+    
+    // Give some time for indexing
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Query for both original and updated content
+    const updatedResults = await repository.retrieveRelevantInfo('original updated content');
+    
+    // Verify only the updated document exists
+    expect(updatedResults.some(doc => 
+      doc.metadata.originID === 'duplicate-test-id' && 
+      doc.content.includes('updated content')
+    )).toBe(true);
+    
+    // Ensure the original content is no longer retrievable
+    const originalContentQuery = await repository.retrieveRelevantInfo('original content that should be replaced');
+    const hasOriginalContent = originalContentQuery.some(doc => 
+      doc.metadata.originID === 'duplicate-test-id' && 
+      doc.content.includes('original content') &&
+      !doc.content.includes('updated content')
+    );
+    
+    expect(hasOriginalContent).toBe(false);
+  });
 });

@@ -3,6 +3,7 @@ import { QdrantVectorStore } from "@langchain/qdrant";
 import { InformationEntity } from "./entities/information.entity.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
+import { MetadataEntity } from "./entities/metadata.entity.js";
 
 @Injectable()
 export class QdrantInformationRepository {
@@ -12,6 +13,13 @@ export class QdrantInformationRepository {
 
   async storeInformation(infoToStore: InformationEntity): Promise<boolean> {
     try {
+      // First, delete any existing documents with the same metadata combination
+      await this.deleteByMetadata({
+        origin: infoToStore.metadata.origin,
+        type: infoToStore.metadata.type,
+        originID: infoToStore.metadata.originID
+      });
+      
       let documents: Document[] = [];
       
       if (infoToStore.content.length > 1000) {
@@ -83,6 +91,39 @@ export class QdrantInformationRepository {
     } catch (error) {
       console.error(`Error performing similarity search: ${error}`);
       throw error;
+    }
+  }
+
+
+  async deleteByMetadata(metadata: MetadataEntity): Promise<boolean> {
+    try {
+      const client = this.vectorStore.client;
+      const collectionName = this.vectorStore.collectionName;
+      
+      const filter = {
+        must: [
+          {
+            key: 'metadata.origin',
+            match: { value: metadata.origin },
+          },
+          {
+            key: 'metadata.type',
+            match: { value: metadata.type },
+          },
+          {
+            key: 'metadata.originID',
+            match: { value: metadata.originID },
+          },
+        ],
+      };
+      
+      await client.delete(collectionName, { filter });
+      
+      console.log(`Successfully deleted documents with metadata combination: ${JSON.stringify(metadata)}`);
+      return true;
+    } catch (error) {
+      console.error(`Error deleting documents by metadata: ${error}`);
+      return false;
     }
   }
 
