@@ -14,17 +14,9 @@ export class RetrievalService implements RetrievalUseCase {
 
 
   async retrieveRelevantInfo(req: RetrieveCmd): Promise<Information[]> {
-    // Mock return with some fake Information objects
-    return Promise.resolve([
-      new Information(
-        'Mock content 1',
-        new Metadata(Origin.CONFLUENCE, Type.COMMMIT, 'Mock attribute 1'),
-      ),
-      new Information(
-        'Mock content 2',
-        new Metadata(Origin.CONFLUENCE, Type.COMMMIT, 'Mock attribute 2'),
-      ),
-    ]);
+    return await this.retrievalAdapter.retrieveRelevantInfo(req);
+    
+  
   }
 
 }

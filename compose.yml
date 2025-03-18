@@ -11,25 +11,25 @@ services:
 
   information-vector-db-service:
     build: information-vector-db-service
-    ports:
-      - "3000:3000"
     volumes:
       - ./information-vector-db-service:/app/
-    environment:
-      - QDRANT_URL=http://qdrant:6333
-      - NOMIC_API_KEY=${NOMIC_API_KEY}
-    depends_on:
-      - qdrant
     networks:
       - app-network
 
-  information:
-    build: informationService
-    volumes:
-      - ./informationService:/app/
-  vectorial:
-    build: vectorialDbService
-    volumes:
-      - ./vectorialDbService:/app/
   rabbitmq:
     image: rabbitmq
+    ports:
+    - "5672:5672"
+    - "15672:15672" 
+    networks:
+    - app-network
+
+
+
+networks:
+  app-network:
+    driver: bridge
+
+
+volumes:
+  postgres_data:

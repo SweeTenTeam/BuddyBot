@@ -26,10 +26,13 @@
     "@langchain/qdrant": "^0.1.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.0.11",
     "@nestjs/platform-express": "^11.0.1",
     "@nomic-ai/atlas": "^0.12.0",
     "@octokit/rest": "^21.1.1",
     "@qdrant/js-client-rest": "^1.13.0",
+    "amqp-connection-manager": "^4.1.14",
+    "amqplib": "^0.10.5",
     "dotenv": "^16.4.7",
     "jira.js": "^4.1.0",
     "langchain": "^0.3.6",
@@ -45,6 +48,7 @@
     "@nestjs/testing": "^11.0.1",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
+    "@types/amqplib": "^0.10.7",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
@@ -81,7 +85,9 @@
         }
       ]
     },
-    "extensionsToTreatAsEsm": [".ts"],
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "moduleNameMapper": {
       "^(\\.{1,2}/.*)\\.js$": "$1"
     },

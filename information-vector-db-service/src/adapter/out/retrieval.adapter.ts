@@ -10,12 +10,15 @@ export class RetrieveAdapter implements RetrievalPort {
       constructor( private readonly informationRepository: QdrantInformationRepository) {}
 
   async retrieveRelevantInfo(req: RetrieveCmd): Promise<Information[]> {
-    // Mock implementation returning some static Information objects
-    return [
-      new Information(
-        "dsfa",
-        new Metadata(Origin.GITHUB, Type.COMMMIT, "d")
+    const entities = await this.informationRepository.retrieveRelevantInfo(req.query);
+    
+    return entities.map(entity => new Information(
+      entity.content,
+      new Metadata(
+        entity.metadata.origin as unknown as Origin,
+        entity.metadata.type as unknown as Type,
+        entity.metadata.originID
       )
-    ];
+    ));
   }
 }
