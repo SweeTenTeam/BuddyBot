@@ -5,8 +5,8 @@ export class ConfluenceDocument {
     private status: string,
     private author: string,
     private owner: string,
+    private space: number,
     private content: string,
-    private space: string,
   ) {}
 
   // Getter methods
@@ -34,7 +34,7 @@ export class ConfluenceDocument {
     return this.content;
   }
 
-  getSpace(): string {
+  getSpace(): number {
     return this.space;
   }
 }

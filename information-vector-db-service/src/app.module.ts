@@ -19,6 +19,13 @@ import { QdrantClient } from '@qdrant/js-client-rest';
 import { QdrantVectorStore } from '@langchain/qdrant';
 import { NomicEmbeddings } from '@langchain/nomic';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { GithubAPIAdapter } from './adapter/out/GithubAPIAdapter.js';
+import { GithubAPIFacade } from './adapter/out/GithubAPIFacade.js';
+import { JIRA_USECASE } from './application/port/in/JiraUseCase.js';
+import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase.js';
+import { ConfluenceAPIPort } from './application/port/out/ConfluenceAPIPort.js';
+import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter.js';
+import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
 
 @Module({
   imports: [],
@@ -62,11 +69,26 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
       provide: GITHUB_USECASE, 
       useClass: GithubService, 
     },
+    GithubAPIAdapter,
+    GithubAPIFacade,
+    {
+      provide: JIRA_USECASE, 
+      useClass: JiraService, 
+    },
     {
       provide: JiraAPIPort, 
       useClass: JiraAPIAdapter, 
     },
     JiraAPIFacade,
+    {
+      provide: CONFLUENCE_USECASE,
+      useClass: ConfluenceService
+    },
+    {
+      provide: ConfluenceAPIPort,
+      useClass: ConfluenceAPIAdapter,
+    },
+    ConfluenceAPIFacade
   ],
 })
 export class AppModule {}

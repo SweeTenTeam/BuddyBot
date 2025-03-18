@@ -1,16 +1,21 @@
-import { Controller, Get, Inject } from '@nestjs/common';
-
-import { GITHUB_USECASE, GithubUseCase } from '../../application/port/in/GithubUseCase.js';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 
 
 @Controller()
 export class TestController {
-  
-  constructor(@Inject(GITHUB_USECASE) private readonly appService: GithubUseCase) {}
 
-  @Get()
-  getHello(): string {
-    console.log("[+] GET hihiha")
-    return this.appService.getHello();
+  @MessagePattern('ez_pattern')
+  async handleMessage(data: Record<string, any>) {
+    console.log('Received message:', data);
+    // Add your message processing logic here
+    return 'hello?';
+  }
+
+  @MessagePattern('wtf_pattern')
+  async chill(data: Record<string, any>): Promise<string> {
+    console.log('Received message:', data);
+    // Add your message processing logic here
+    return 'wtf?';
   }
 }

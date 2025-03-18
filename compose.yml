@@ -16,6 +16,16 @@ services:
     networks:
       - app-network
 
+  information:
+    build: information-vector-db-service
+    env_file:
+      - information-vector-db-service/.env
+    #volumes:
+    #  - ./information-vector-db-service:/app/
+  test:
+    build: test
+    ports:
+      - "3000:3000"
   rabbitmq:
     image: rabbitmq
     ports:
@@ -24,12 +34,9 @@ services:
     networks:
     - app-network
 
-
-
 networks:
   app-network:
     driver: bridge
-
 
 volumes:
   postgres_data:

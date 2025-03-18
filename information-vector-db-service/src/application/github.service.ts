@@ -1,14 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { GithubUseCase } from './port/in/GithubUseCase.js';
-import { JiraAPIPort } from './port/out/JiraAPIPort.js';
+import { GithubAPIAdapter } from 'src/adapter/out/GithubAPIAdapter.js';
+import { GithubCmd } from 'src/domain/GithubCmd.js';
 
 @Injectable()
 export class GithubService implements GithubUseCase {
-
-
-  constructor(private readonly jiraAdapter: JiraAPIPort) {}
+  constructor(private readonly githubApi: GithubAPIAdapter) {}
   
-  getHello(): string {
-    return 'Hello World!';
+  async fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean> {
+    const commits = await this.githubApi.fetchGithubCommitsInfo();
+    const files = await this.githubApi.fetchGithubFilesInfo();
+    const pullRequests = await this.githubApi.fetchGithubPullRequestsInfo();
+    const repository = await this.githubApi.fetchGithubRepositoryInfo();
+    const workflows = await this.githubApi.fetchGithubWorkflowInfo();
+
+    //DEBUG
+    console.log(commits);
+    console.log(files);
+    console.log(pullRequests[0]);
+    console.log(repository);
+    console.log(workflows);
+
+    //store logic
+    return true;
   }
 }
