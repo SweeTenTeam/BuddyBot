@@ -11,10 +11,11 @@ export class FecthHistoryService implements FetchHistoryUseCase{
     constructor(@Inject(FH_PORT_OUT) private readonly FetchHistoryAdapter: FetchHistoryPort) {}
 
     async fetchStoricoChat(req: FetchHistoryCmd): Promise<Chat[]> {
-        //return this.FetchHistoryPort.fetchStoricoChat(req);
+        return this.FetchHistoryAdapter.fetchStoricoChat(req);
 
+        /*
         return Promise.resolve([ //mocckino, testo TODO
             new Chat("firstID", "firstQuestion?", "firstAnswer", new Date())
-        ]);
+        ]);*/
     }
 }
