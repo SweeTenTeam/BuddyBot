@@ -6,15 +6,11 @@ services:
       - "6334:6334"
     volumes:
       - ./qdrant-storage/:/qdrant/storage:z
-    networks:
-      - app-network
 
   information-vector-db-service:
     build: information-vector-db-service
     volumes:
       - ./information-vector-db-service:/app/
-    networks:
-      - app-network
 
   information:
     build: information-vector-db-service
@@ -31,12 +27,7 @@ services:
     ports:
     - "5672:5672"
     - "15672:15672" 
-    networks:
-    - app-network
 
-networks:
-  app-network:
-    driver: bridge
 
 volumes:
   postgres_data:

@@ -9,8 +9,8 @@ import { QdrantInformationRepository } from '../../src/adapter/out/persistance/q
 import { RetrieveAdapter } from '../../src/adapter/out/retrieval.adapter.js';
 import { RETRIEVAL_PORT } from '../../src/application/port/out/retrieval-info.port.js';
 import { RETRIEVAL_USE_CASE } from '../../src/application/port/in/retrieval-usecase.port.js';
-import { Information } from '../../src/domain/information.js';
-import { Metadata, Origin, Type } from '../../src/domain/metadata.js';
+import { Information } from '../../src/domain/business/information.js';
+import { Metadata, Origin, Type } from '../../src/domain/business/metadata.js';
 import { InformationEntity } from '../../src/adapter/out/persistance/entities/information.entity.js';
 import { OriginEntity, TypeEntity } from '../../src/adapter/out/persistance/entities/metadata.entity.js';
 import { QdrantClient } from '@qdrant/js-client-rest';
@@ -32,7 +32,7 @@ describe('Retrieval Integration', () => {
 
   beforeAll(async () => {
     // Get Qdrant URL from environment variables
-    const qdrantUrl = process.env.QDRANT_URL || 'http://localhost:6333';
+    const qdrantUrl = process.env.QDRANT_URL || 'http://qdrant:6333';
     console.log(`Connecting to Qdrant at: ${qdrantUrl}`);
     
     // Create a real Qdrant client
@@ -62,7 +62,7 @@ describe('Retrieval Integration', () => {
             transport: Transport.RMQ,
             options: {
               urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq'],
-              queue: 'information_queue',
+              queue: 'information-queue',
               queueOptions: {
                 durable: true,
               },
@@ -111,8 +111,8 @@ describe('Retrieval Integration', () => {
     app.connectMicroservice({
       transport: Transport.RMQ,
       options: {
-        urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
-        queue: 'information_service_queue',
+        urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq:5672'],
+        queue: 'information-queue',
         queueOptions: {
           durable: true,
         },

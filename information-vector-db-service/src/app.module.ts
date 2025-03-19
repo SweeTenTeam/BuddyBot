@@ -42,7 +42,7 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
     {
       provide: QdrantInformationRepository,
       useFactory: () => {
-        const qdrantUrl = process.env.QDRANT_URL || "http://localhost:6333";
+        const qdrantUrl = process.env.QDRANT_URL || "http://qdrant:6333";
         console.log(`Connecting to Qdrant at: ${qdrantUrl}`);
                 const qdrantClient = new QdrantClient({ 
           url: qdrantUrl
