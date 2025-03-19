@@ -5,11 +5,11 @@ import { GithubRepositoryAPIPort } from "../../application/port/out/GithubReposi
 import { GithubWorkflowsAPIPort } from "../../application/port/out/GithubWorkflowsAPIPort.js";
 import { GithubAPIFacade } from "./GithubAPIFacade.js";
 import { Injectable } from '@nestjs/common';
-import { Commit } from "../../domain/Commit.js";
-import { File } from "../../domain/File.js";
-import { PullRequest } from "../../domain/PullRequest.js";
-import { Repository } from "../../domain/Repository.js";
-import { Workflow } from "../../domain/Workflow.js";
+import { Commit } from "../../domain/business/Commit.js";
+import { File } from "../../domain/business/File.js";
+import { PullRequest } from "../../domain/business/PullRequest.js";
+import { Repository } from "../../domain/business/Repository.js";
+import { Workflow } from "../../domain/business/Workflow.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{

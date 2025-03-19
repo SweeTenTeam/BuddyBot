@@ -1,7 +1,7 @@
 import { Controller, Get, Inject } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { RETRIEVAL_USE_CASE, RetrievalUseCase } from '../../application/port/in/retrieval-usecase.port.js';
-import { RetrieveCmd } from '../../domain/retreive-cmd.js';
+import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
 import { RetrievalQueryDTO } from './dto/retrival-query.dto.js';
 
 @Controller()

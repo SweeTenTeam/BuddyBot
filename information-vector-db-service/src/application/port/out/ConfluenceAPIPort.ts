@@ -1,5 +1,5 @@
-import { ConfluenceCmd } from '../../../domain/ConfluenceCmd.js';
-import { ConfluenceDocument } from '../../../domain/ConfluenceDocument.js';
+import { ConfluenceCmd } from '../../../domain/command/ConfluenceCmd.js';
+import { ConfluenceDocument } from '../../../domain/business/ConfluenceDocument.js';
 
 export abstract class ConfluenceAPIPort {
   fetchDocuments(req: ConfluenceCmd): Promise<ConfluenceDocument[]> {

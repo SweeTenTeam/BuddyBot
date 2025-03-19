@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JiraAPIPort } from './port/out/JiraAPIPort.js';
 import { RetrievalUseCase } from './port/in/retrieval-usecase.port.js';
-import { RetrieveCmd } from '../domain/retreive-cmd.js';
-import { Information } from '../domain/information.js';
-import { Metadata, Origin, Type } from '../domain/metadata.js';
+import { RetrieveCmd } from '../domain/command/retreive-cmd.js';
+import { Information } from '../domain/business/information.js';
 import { RETRIEVAL_PORT, RetrievalPort } from './port/out/retrieval-info.port.js';
 
 @Injectable()

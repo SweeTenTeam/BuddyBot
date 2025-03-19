@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Information } from '../../domain/information.js';
-import { Metadata, Origin, Type } from '../../domain/metadata.js';
-import { RETRIEVAL_PORT, RetrievalPort } from '../../application/port/out/retrieval-info.port.js';
-import { RetrieveCmd } from '../../domain/retreive-cmd.js'
+import { Information } from '../../domain/business/information.js';
+import { Metadata, Origin, Type } from '../../domain/business/metadata.js';
+import { RetrievalPort } from '../../application/port/out/retrieval-info.port.js';
+import { RetrieveCmd } from '../../domain/command/retreive-cmd.js'
 import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 
 @Injectable()

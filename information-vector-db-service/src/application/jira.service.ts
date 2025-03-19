@@ -1,4 +1,4 @@
-import { JiraCmd } from '../domain/JiraCmd.js';
+import { JiraCmd } from '../domain/command/JiraCmd.js';
 import { JiraUseCase } from './port/in/JiraUseCase.js';
 import { Injectable } from '@nestjs/common';
 import { JiraAPIPort } from './port/out/JiraAPIPort.js';

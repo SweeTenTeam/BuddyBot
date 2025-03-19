@@ -2,10 +2,10 @@ import { Controller, Inject } from '@nestjs/common';
 import { CONFLUENCE_USECASE, ConfluenceUseCase } from '../../application/port/in/ConfluenceUseCase.js';
 import { GITHUB_USECASE, GithubUseCase } from '../../application/port/in/GithubUseCase.js';
 import { JIRA_USECASE, JiraUseCase } from '../../application/port/in/JiraUseCase.js';
-import { JiraCmd } from '../../domain/JiraCmd.js';
+import { JiraCmd } from '../../domain/command/JiraCmd.js';
 import { MessagePattern } from '@nestjs/microservices';
-import { GithubCmd } from '../../domain/GithubCmd.js';
-import { ConfluenceCmd } from '../../domain/ConfluenceCmd.js';
+import { GithubCmd } from '../../domain/command/GithubCmd.js';
+import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
 
 @Controller()
 export class InformationController {

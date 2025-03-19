@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfluenceUseCase } from './port/in/ConfluenceUseCase.js';
-import { ConfluenceCmd } from '../domain/ConfluenceCmd.js';
+import { ConfluenceCmd } from '../domain/command/ConfluenceCmd.js';
 import { ConfluenceAPIPort } from './port/out/ConfluenceAPIPort.js';
 
 @Injectable()

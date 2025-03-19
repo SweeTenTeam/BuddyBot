@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Ticket } from '../../domain/Ticket.js';
-import { JiraCmd } from '../../domain/JiraCmd.js';
+import { Ticket } from '../../domain/business/Ticket.js';
+import { JiraCmd } from '../../domain/command/JiraCmd.js';
 import { JiraAPIFacade } from './JiraAPIFacade.js';
 import { JiraAPIPort } from '../../application/port/out/JiraAPIPort.js';
 

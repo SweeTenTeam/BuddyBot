@@ -61,8 +61,8 @@ describe('Retrieval Integration', () => {
             name: 'RABBIT_SERVICE',
             transport: Transport.RMQ,
             options: {
-              urls: [process.env.RABBITMQ_URL || 'amqp://localhost:5672'],
-              queue: 'information_service_queue',
+              urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq'],
+              queue: 'information_queue',
               queueOptions: {
                 durable: true,
               },

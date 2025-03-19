@@ -1,4 +1,4 @@
-import { JiraCmd } from '../../../domain/JiraCmd.js';
+import { JiraCmd } from '../../../domain/command/JiraCmd.js';
 
 export interface JiraUseCase {
   fetchAndStoreJiraInfo(req: JiraCmd): Promise<boolean>;

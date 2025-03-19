@@ -1,4 +1,4 @@
-import { ConfluenceDocument } from '../../../domain/ConfluenceDocument.js';
+import { ConfluenceDocument } from '../../../domain/business/ConfluenceDocument.js';
 
 
 export interface StoreConfluenceInfoPort {

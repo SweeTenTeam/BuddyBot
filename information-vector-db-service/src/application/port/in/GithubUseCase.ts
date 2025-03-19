@@ -1,4 +1,4 @@
-import { GithubCmd } from "src/domain/GithubCmd.js";
+import { GithubCmd } from "src/domain/command/GithubCmd.js";
 
 export interface GithubUseCase {
     fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean>;

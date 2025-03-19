@@ -1,4 +1,4 @@
-import { File } from "src/domain/File.js"
+import { File } from "src/domain/business/File.js"
 
 export interface GithubFilesAPIPort{
     fetchGithubFilesInfo(): Promise<File[]>

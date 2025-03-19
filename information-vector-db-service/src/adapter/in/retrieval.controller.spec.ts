@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { RetrievalController } from './retrieval.controller.js';
 import { RETRIEVAL_USE_CASE, RetrievalUseCase } from '../../application/port/in/retrieval-usecase.port.js';
-import { RetrieveCmd } from '../../domain/retreive-cmd.js';
-import { Information } from '../../domain/information.js';
-import { Metadata, Origin, Type } from '../../domain/metadata.js';
+import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
+import { Information } from '../../domain/business/information.js';
+import { Metadata, Origin, Type } from '../../domain/business/metadata.js';
 import { RetrievalQueryDTO } from './dto/retrival-query.dto.js';
 
 describe('RetrievalController', () => {
