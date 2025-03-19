@@ -11,6 +11,8 @@ services:
     build: information-vector-db-service
     volumes:
       - ./information-vector-db-service:/app/
+    env_file:
+      - information-vector-db-service/.env
 
   information:
     build: information-vector-db-service

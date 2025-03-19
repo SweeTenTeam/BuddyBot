@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { InformationController } from './adapter/in/information.controller.js';
 import { JiraService } from './application/jira.service.js';
