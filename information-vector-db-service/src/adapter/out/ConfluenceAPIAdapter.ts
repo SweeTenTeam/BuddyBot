@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ConfluenceAPIPort } from 'src/application/port/out/ConfluenceAPIPort';
-import { ConfluenceCmd } from 'src/domain/ConfluenceCmd';
-import { ConfluenceAPIFacade } from './ConfluenceAPIFacade';
-import { ConfluenceDocument } from 'src/domain/ConfluenceDocument';
+import { ConfluenceAPIPort } from '../../application/port/out/ConfluenceAPIPort.js';
+import { ConfluenceCmd } from '../../domain/ConfluenceCmd.js';
+import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
+import { ConfluenceDocument } from '../../domain/ConfluenceDocument.js';
 
 @Injectable()
 export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
@@ -20,7 +20,7 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
         document.title,
         document.status,
         document.history?.createdBy.displayName || '',
-        document.history?.ownedBy.displayName || '',
+        '',//document.history?.ownedBy.displayName || '', //fix AGAIN
         document.space?.id || -1,
         document.body?.storage?.value || ''
       ));

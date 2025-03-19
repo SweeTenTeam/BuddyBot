@@ -29,7 +29,7 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
 
 @Module({
   imports: [],
-  controllers: [TestController, RetrievalController],
+  controllers: [TestController, RetrievalController, InformationController],
   providers: [
     {
       provide: RETRIEVAL_USE_CASE, 

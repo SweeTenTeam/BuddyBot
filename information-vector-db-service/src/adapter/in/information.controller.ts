@@ -4,8 +4,8 @@ import { GITHUB_USECASE, GithubUseCase } from '../../application/port/in/GithubU
 import { JIRA_USECASE, JiraUseCase } from '../../application/port/in/JiraUseCase.js';
 import { JiraCmd } from '../../domain/JiraCmd.js';
 import { MessagePattern } from '@nestjs/microservices';
-import { GithubCmd } from 'src/domain/GithubCmd.js';
-import { ConfluenceCmd } from 'src/domain/ConfluenceCmd.js';
+import { GithubCmd } from '../../domain/GithubCmd.js';
+import { ConfluenceCmd } from '../../domain/ConfluenceCmd.js';
 
 @Controller()
 export class InformationController {
