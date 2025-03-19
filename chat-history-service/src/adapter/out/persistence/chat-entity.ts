@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeor
 
 
 @Entity()
-export class ChatEntity{
+export class ChatEntity {
     @PrimaryGeneratedColumn('uuid') //primaryKey
     id: string;
 
@@ -12,6 +12,6 @@ export class ChatEntity{
     @Column()
     answer: string;
 
-    @CreateDateColumn({ type: 'timestamptz' }) //timestamptz perche fa anche le conversione in caso di fuso orario
+    @CreateDateColumn({ type: 'timestamptz' })
     date: Date = new Date();
 }

@@ -21,7 +21,7 @@ import { ChatModule } from './adapter/out/persistence/chat.module';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
       entities: [ChatEntity],
-      synchronize: true, 
+      synchronize: true,
     }),
     ChatModule,
   ],
@@ -38,4 +38,4 @@ import { ChatModule } from './adapter/out/persistence/chat.module';
     ChatRepository
   ],
 })
-export class AppModule {}
+export class AppModule { }
