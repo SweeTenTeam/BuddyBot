@@ -46,6 +46,10 @@ describe('QdrantInformationRepository', () => {
     textSplitter = module.get(RecursiveCharacterTextSplitter);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(repository).toBeDefined();
   });

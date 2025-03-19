@@ -6,7 +6,7 @@ export const rabbitMQConfig = (): RmqOptions => ({
     urls: ['amqp://rabbitmq'], // Replace with your RabbitMQ server URL
     queue: 'information-queue', // Define the queue name
     queueOptions: {
-      durable: false,
+      durable: true,
     },
   },
 });

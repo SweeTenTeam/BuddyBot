@@ -30,6 +30,10 @@ describe('RetrievalController', () => {
     retrievalService = module.get(RETRIEVAL_USE_CASE);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });

@@ -3,6 +3,9 @@ import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module.js';
 
 async function bootstrap() {
+  console.log('Starting information-vector-db-service...');
+  console.log('RabbitMQ URL:', process.env.RABBITMQ_URL || 'amqp://rabbitmq');
+  
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
@@ -11,15 +14,21 @@ async function bootstrap() {
         urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq'],
         queue: 'information-queue',
         queueOptions: {
-          durable: false,
+          durable: true,
         },
       },
     },
   );
+  
+  console.log('Microservice created, starting to listen...');
   await app.listen();
+  console.log('Microservice is now listening for messages');
 }
 
-bootstrap();
+bootstrap().catch(error => {
+  console.error('Failed to start microservice:', error);
+  process.exit(1);
+});
 
 
 // import { NestFactory } from '@nestjs/core';

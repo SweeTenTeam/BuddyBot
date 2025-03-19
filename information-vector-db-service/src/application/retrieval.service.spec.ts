@@ -29,6 +29,10 @@ describe('RetrievalService', () => {
     retrievalAdapter = module.get(RETRIEVAL_PORT);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should be defined', () => {
     expect(service).toBeDefined();
   });

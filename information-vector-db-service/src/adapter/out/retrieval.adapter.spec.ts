@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { RetrieveAdapter } from './retrieval.adapter.js';
 import { RETRIEVAL_PORT } from '../../application/port/out/retrieval-info.port.js';
-import { RetrieveCmd } from '../../domain/retreive-cmd.js';
+import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
 import { InformationEntity } from './persistance/entities/information.entity.js';
 import { OriginEntity, TypeEntity } from './persistance/entities/metadata.entity.js';
 import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
@@ -28,6 +28,10 @@ describe('RetrieveAdapter', () => {
 
     adapter = module.get<RetrieveAdapter>(RetrieveAdapter);
     informationRepository = module.get(QdrantInformationRepository);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
