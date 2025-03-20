@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { RabbitMQService } from "./rabbitmq.service";
 
-@Controller('chat')
+@Controller('api/chat')
 export class ChatController {
     constructor(private readonly rabbitMqService: RabbitMQService) { }
 

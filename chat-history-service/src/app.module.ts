@@ -9,6 +9,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatEntity } from './adapter/out/persistence/chat-entity';
 import { ChatRepository } from './adapter/out/persistence/chat.repository';
 import { ChatModule } from './adapter/out/persistence/chat.module';
+import { IC_USE_CASE } from './application/port/in/insertChat-usecase.port'
+import { InsertChatService } from './application/insertChat.service';
+import { InsertChatController } from './adapter/in/insertChat.controller';
+import { IC_PORT_OUT } from './application/port/out/insertChat.port';
+import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
 
 @Module({
   imports: [
@@ -25,7 +30,7 @@ import { ChatModule } from './adapter/out/persistence/chat.module';
     }),
     ChatModule,
   ],
-  controllers: [FetchHistoryController],
+  controllers: [FetchHistoryController, InsertChatController],
   providers: [
     {
       provide: FH_USE_CASE,
@@ -34,6 +39,14 @@ import { ChatModule } from './adapter/out/persistence/chat.module';
     {
       provide: FH_PORT_OUT,
       useClass: FetchHistoryAdapter,
+    },
+    {
+      provide: IC_USE_CASE,
+      useClass: InsertChatService
+    },
+    {
+      provide: IC_PORT_OUT,
+      useClass: InsertChatAdapter
     },
     ChatRepository
   ],
