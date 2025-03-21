@@ -1,3 +1,5 @@
+import { Metadata, Origin, Type } from "./metadata.js";
+
 export class PullRequest{
     constructor(
         private id: number,
@@ -12,4 +14,12 @@ export class PullRequest{
         private fromBranch: string,
         private toBranch: string
     ) {}
+
+    toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+    
+    getMetadata(): Metadata {
+        return new Metadata(Origin.GITHUB, Type.PULLREQUEST, this.id.toString());
+    }
 }

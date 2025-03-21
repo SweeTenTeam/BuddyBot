@@ -1,3 +1,5 @@
+import { Metadata, Origin, Type } from "./metadata.js";
+
 export class Commit{
     constructor(
         private hash: string,
@@ -6,4 +8,12 @@ export class Commit{
         private modifiedFiles: string[],
         private author: string,
     ) {}
+
+    toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+    
+    getMetadata(): Metadata {
+        return new Metadata(Origin.JIRA, Type.COMMIT, this.hash);
+    }
 }

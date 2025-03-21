@@ -1,9 +1,10 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import { InformationEntity } from "./entities/information.entity.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
-import { MetadataEntity } from "./entities/metadata.entity.js";
+import { Information } from "src/domain/business/information.js";
+import { Metadata } from "src/domain/business/metadata.js";
+import { InformationEntity } from "./entities/information.entity.js";
 
 @Injectable()
 export class QdrantInformationRepository {
@@ -11,7 +12,7 @@ export class QdrantInformationRepository {
   constructor(private readonly vectorStore: QdrantVectorStore, private readonly textSplitter: RecursiveCharacterTextSplitter ) {}
 
 
-  async storeInformation(infoToStore: InformationEntity): Promise<boolean> {
+  async storeInformation(infoToStore: Information): Promise<boolean> {
     try {
       // First, delete any existing documents with the same metadata combination
       await this.deleteByMetadata({
@@ -95,7 +96,7 @@ export class QdrantInformationRepository {
   }
 
 
-  async deleteByMetadata(metadata: MetadataEntity): Promise<boolean> {
+  async deleteByMetadata(metadata: Metadata): Promise<boolean> {
     try {
       const client = this.vectorStore.client;
       const collectionName = this.vectorStore.collectionName;

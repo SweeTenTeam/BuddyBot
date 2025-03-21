@@ -24,8 +24,8 @@ export class JiraAPIFacade {
   }
 }
 
-// const githubAPI = new JiraAPIFacade();
-// async function ziomela(): Promise<void> {
-//  console.log(await githubAPI.fetchIssuesForBoard(1));
-// }
-// ziomela();
+//const githubAPI = new JiraAPIFacade();
+//async function ziomela(): Promise<void> {
+// console.log(await githubAPI.fetchIssuesForBoard(1));
+//}
+//ziomela();
