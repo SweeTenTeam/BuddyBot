@@ -14,6 +14,6 @@ export class Repository {
   }
   
   getMetadata(): Metadata {
-    return new Metadata(Origin.JIRA, Type.TICKET, this.id.toString());
+    return new Metadata(Origin.GITHUB, Type.REPOSITORY, this.id.toString());
   }
 }
