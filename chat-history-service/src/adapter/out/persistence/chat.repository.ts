@@ -10,7 +10,6 @@ export class ChatRepository {
     private readonly chatRepo: Repository<ChatEntity>,
   ) { }
 
-  //inserimento di nuove conversazioni all'interno del db
   async insertChat(question: string, answer: string, date: Date): Promise<boolean> {
     try {
       const newChat = this.chatRepo.create({ question, questionDate: date, answer });
@@ -23,13 +22,12 @@ export class ChatRepository {
     }
   }
 
-  //recupero di conversazioni passate già inserite e presenti nel db
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
     const take = numChat ? numChat : 5;
     return await this.chatRepo.find({
       where: { id: lastChatId },
       take,
-      order: { questionDate: 'DESC' },
+      order: { answerDate: 'DESC' },
     });
   }
 

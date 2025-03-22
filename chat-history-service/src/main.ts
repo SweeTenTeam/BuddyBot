@@ -10,6 +10,8 @@ async function bootstrap() {
     options: {
       urls: ['amqp://guest:guest@localhost:5672'],
       queue: 'chat_queue',
+      exchange: 'amq.topic', // o custom exchange
+      routingKey: 'fetch_queue',
       queueOptions: {
         durable: false,
       }
