@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { ClientProxy, ClientProxyFactory, Transport } from "@nestjs/microservices";
+import { CreateChatDTO } from "../dto/CreateChatDTO";
 
 @Injectable()
 export class RabbitMQService {
@@ -18,7 +19,7 @@ export class RabbitMQService {
         })
     }
 
-    sendMessage(data: { message: string }) {
+    sendMessage(data: CreateChatDTO) {
         return this.client.send('chat_message', data).toPromise()
     }
 }

@@ -9,9 +9,12 @@ export class ChatEntity {
     @Column()
     question: string;
 
+    @CreateDateColumn({ type: 'timestamptz' })
+    questionDate: Date;
+
     @Column()
     answer: string;
 
-    @CreateDateColumn({ type: 'timestamptz' })
-    date: Date = new Date();
+    @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
+    answerDate: Date = new Date();
 }

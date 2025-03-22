@@ -13,7 +13,7 @@ export class ChatRepository {
   //inserimento di nuove conversazioni all'interno del db
   async insertChat(question: string, answer: string, date: Date): Promise<boolean> {
     try {
-      const newChat = this.chatRepo.create({ question, answer, date });
+      const newChat = this.chatRepo.create({ question, questionDate: date, answer });
       await this.chatRepo.save(newChat);
       console.log("Vamos")
       return true;
@@ -29,7 +29,7 @@ export class ChatRepository {
     return await this.chatRepo.find({
       where: { id: lastChatId },
       take,
-      order: { date: 'DESC' },
+      order: { questionDate: 'DESC' },
     });
   }
 

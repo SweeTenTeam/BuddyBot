@@ -11,9 +11,9 @@ import { ChatRepository } from './adapter/out/persistence/chat.repository';
 import { ChatModule } from './adapter/out/persistence/chat.module';
 import { IC_USE_CASE } from './application/port/in/insertChat-usecase.port'
 import { InsertChatService } from './application/insertChat.service';
-import { InsertChatController } from './adapter/in/insertChat.controller';
 import { IC_PORT_OUT } from './application/port/out/insertChat.port';
 import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
+import { insertChatController } from './adapter/in/event/insertChat.controller';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
     }),
     ChatModule,
   ],
-  controllers: [FetchHistoryController, InsertChatController],
+  controllers: [FetchHistoryController, insertChatController],
   providers: [
     {
       provide: FH_USE_CASE,

@@ -9,10 +9,5 @@ export class InsertChatService implements InsertChatUseCase {
 
     async insertChat(req: InsertChatCmd): Promise<boolean> {
         return this.InsertChatAdapter.insertChat(req);
-
-        /*
-        return Promise.resolve([ //mocckino, testo TODO
-            new Chat("firstID", "firstQuestion?", "firstAnswer", new Date())
-        ]);*/
     }
 }
