@@ -23,12 +23,16 @@ export class ChatRepository {
   }
 
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
-    const take = numChat ? numChat : 5;
-    return await this.chatRepo.find({
-      where: { id: lastChatId },
-      take,
-      order: { answerDate: 'DESC' },
-    });
+    try {
+      const take = numChat ? numChat : 5;
+      return await this.chatRepo.find({
+        where: { id: lastChatId },
+        take,
+        order: { answerDate: 'DESC' },
+      });
+    } catch(error) {
+      throw new Error('Error during History-fetch')
+    }
   }
 
 }

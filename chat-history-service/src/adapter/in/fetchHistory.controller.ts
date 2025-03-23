@@ -4,6 +4,8 @@ import { FecthHistoryService } from "src/application/fetchHistory.service"
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { Chat } from "src/domain/chat";
 import { FetchRequestDTO } from "./dto/FetchRequestDTO";
+import { ChatDTO } from "./dto/ChatDTO";
+import { FetchHistoryCmd } from "src/domain/fetchHistoryCmd";
 
 @Controller('api/chat')
 export class FetchHistoryController {
@@ -17,17 +19,21 @@ export class FetchHistoryController {
   }*/
   
   @MessagePattern('fetch_queue')
-  async fetchChatHistory(@Payload() data: FetchRequestDTO): Promise<Chat[]> {
+  async fetchChatHistory(@Payload() data: FetchRequestDTO): Promise<ChatDTO[]> {
     console.log('Richiesta fetch chat ricevuta:', data);
 
-    const chatHistory = await this.FetchHistoryService.fetchStoricoChat(data);
+    const fetchHistoryCmd: FetchHistoryCmd = {
+      id: data.id,
+      numChat: data.numChat
+    }
+    const chatHistory = await this.FetchHistoryService.fetchStoricoChat(fetchHistoryCmd);
 
     console.log(chatHistory); //da rimuovere questa riga quando microserv è pronto
     return chatHistory;
   }
 }
 
-/* richiesta fetch simulata
+/* richiesta fetch simulata rmq
 {
   "pattern": "fetch_queue",
   "data": {

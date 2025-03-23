@@ -4,5 +4,6 @@ export class Chat{
         public readonly question: string,
         public readonly questionDate: Date,
         public readonly answer: string,
+        public readonly answerDate: Date,
     ) {}
 }
