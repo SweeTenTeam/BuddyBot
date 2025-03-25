@@ -2,8 +2,8 @@ export class ConfluenceDocument {
   constructor(
     private id: string,
     private title: string,
-    private status: string,
-    private author: string,
+    private status: string,//name
+    private author: string,//name
     private owner: string,
     private space: number,
     private content: string,

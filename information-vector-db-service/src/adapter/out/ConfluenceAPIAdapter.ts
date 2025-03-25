@@ -13,21 +13,23 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
   }
 
   async fetchDocuments(req: ConfluenceCmd): Promise<ConfluenceDocument[]> {
-    const result: ConfluenceDocument[] = [];
-    const documents = await this.confluenceAPI.fetchDocuments();
-    for(const document of documents.results){
-      result.push(new ConfluenceDocument(
-        document.id,
-        document.title,
-        document.status,
-        document.history?.createdBy.displayName || '',
-        '',//document.history?.ownedBy.displayName || '', //fix AGAIN
-        document.space?.id || -1,
-        document.body?.storage?.value || ''
-      ));
-    }
-    return result;
+    const days = req.lastUpdate ? 
+      Math.ceil((new Date().getTime() - req.lastUpdate.getTime()) / (1000 * 60 * 60 * 24)) : 
+      undefined;
+    
+    const rawData = await this.confluenceAPI.fetchConfluencePages(days);
+    console.log(rawData)
+    const documents = rawData.results;
+    
+    return documents.map(document => new ConfluenceDocument(
+      document.id,
+      document.title,
+      document.status,
+      document.history?.createdBy?.displayName,
+      document.history?.ownedBy?.displayName,
+      document.space?.id,
+      document.body?.storage?.value
+    ));
   }
-
 
 }
