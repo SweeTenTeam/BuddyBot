@@ -1,3 +1,5 @@
 export class GithubCmd {
-  lastUpdate: Date;
+  constructor(
+    public readonly lastUpdate: string
+  ){}
 }
