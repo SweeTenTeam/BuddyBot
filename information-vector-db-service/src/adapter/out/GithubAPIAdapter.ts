@@ -10,6 +10,7 @@ import { File } from "../../domain/business/File.js";
 import { PullRequest } from "../../domain/business/PullRequest.js";
 import { Repository } from "../../domain/business/Repository.js";
 import { Workflow } from "../../domain/business/Workflow.js";
+import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{
@@ -103,16 +104,24 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
   async fetchGithubWorkflowInfo(): Promise<Workflow[]> {
     const workflowInfo = await this.githubAPI.fetchWorkflowsInfo();
     const result: Workflow[] = [];
-    for(const workflow of workflowInfo.data.workflows){
+    
+    for (const workflow of workflowInfo) {
+      const workflowRuns = workflow.runs.map(run => new WorkflowRun(
+        run.id,
+        run.status,
+        run.duration,
+        run.log,
+        run.trigger
+      ));
+      
       result.push(new Workflow(
         workflow.id,
         workflow.name,
         workflow.state,
-        workflow.state,
-        workflow.state,
-        workflow.state //to fix because wtf
+        workflowRuns
       ));
     }
+    
     return result;
   }
 }

@@ -1,5 +1,7 @@
 import { Octokit } from '@octokit/rest'
 import type * as OctokitTypes from "@octokit/types";
+import { Workflow } from '../../domain/business/Workflow.js';
+import { WorkflowRun } from '../../domain/business/WorkflowRun.js';
 
 export class GithubAPIFacade{
   private readonly octokit: Octokit;
@@ -119,26 +121,96 @@ export class GithubAPIFacade{
     return data;
   }
 
-  async fetchWorkflowsInfo(): Promise<OctokitTypes.OctokitResponse<{workflows : {id: number, name: string, state: string}[]}, 200>> {
+  async fetchWorkflowsInfo(): Promise<{
+    id: number,
+    name: string,
+    state: string,
+    runs: {
+      id: number,
+      status: string,
+      duration: number,
+      log: string,
+      trigger: string
+    }[]
+  }[]> {
     const data = await this.octokit.rest.actions.listRepoWorkflows({
       owner: this.owner,
       repo: this.repo
     });
-    return data;
+
+    // Create an array of promises for parallel execution
+    const workflowPromises = data.data.workflows.map(async (workflow) => {
+      let runs: {
+        id: number,
+        status: string,
+        duration: number,
+        log: string,
+        trigger: string
+      }[] = [];
+      
+      try {
+        runs = await this.fetchWorkflowRuns(workflow.id);
+      } catch (error) {
+        console.warn(`No runs found for workflow ${workflow.id}: ${error.message}`);
+      }
+
+      return {
+        id: workflow.id,
+        name: workflow.name,
+        state: workflow.state,
+        runs
+      };
+    });
+
+    return Promise.all(workflowPromises);
   }
 
-  async fetchLastWorkflowRunInfo(workflow_id: number): Promise<void> {
-    const data = await this.octokit.rest.actions.listWorkflowRuns({
-      owner: this.owner,
-      repo: this.repo,
-      workflow_id: workflow_id,
-      per_page: 1
-    })
+  async fetchWorkflowRuns(workflow_id: number): Promise<{
+    id: number;
+    status: string;
+    duration: number;
+    log: string;
+    trigger: string;
+  }[]> {
+    let allRuns: any[] = [];
+    let page = 1;
+
+    while (true) {
+      const { data } = await this.octokit.rest.actions.listWorkflowRuns({
+        owner: this.owner,
+        repo: this.repo,
+        workflow_id,
+        per_page: 100,
+        page
+      });
+
+      if (!data.workflow_runs.length) break;
+
+      allRuns.push(...data.workflow_runs);
+      page++;
+
+      if (data.workflow_runs.length < 100) break;
+    }
+
+    if (!allRuns.length) throw new Error('No workflow runs found');
+
+    return allRuns.map((run) => {
+      const startTime = new Date(run.run_started_at || run.created_at);
+      const endTime = run.updated_at ? new Date(run.updated_at) : new Date();
+      return {
+        id: run.id,
+        status: run.status || 'unknown',
+        duration: Math.round((endTime.getTime() - startTime.getTime()) / 1000),
+        log: run.html_url || '',
+        trigger: run.event || 'unknown'
+      };
+    });
   }
-}
 
 //const githubAPI = new GithubAPIFacade();
 //async function ziomela(): Promise<void> {
 //  console.log(await githubAPI.fetchPullRequestsInfo()); //127703483 //124129218
 //}
 //ziomela();
+
+}

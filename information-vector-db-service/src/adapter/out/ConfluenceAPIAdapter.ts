@@ -3,6 +3,7 @@ import { ConfluenceAPIPort } from '../../application/port/out/ConfluenceAPIPort.
 import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
 import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
 import { ConfluenceDocument } from '../../domain/business/ConfluenceDocument.js';
+import fetch from 'node-fetch';
 
 @Injectable()
 export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
@@ -27,4 +28,6 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
     }
     return result;
   }
+
+
 }
