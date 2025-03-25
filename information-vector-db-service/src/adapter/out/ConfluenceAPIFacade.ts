@@ -85,7 +85,8 @@ export class ConfluenceAPIFacade {
 
 
 async fetchConfluencePages(daysBack?: number): Promise<{ results: any[] }> {
-  const baseUrl = 'https://sweetenteam.atlassian.net/wiki/rest/api/content/search';
+  const baseUrl = 'https://sweetenteam.atlassian.net/wiki';
+  const searchEndpoint = '/rest/api/content/search';
   const username = 'sweetenteam@gmail.com';
   const auth = 'Basic ' + btoa(`${username}:${process.env.ATLASSIAN_API_KEY}`);
 
@@ -94,23 +95,40 @@ async fetchConfluencePages(daysBack?: number): Promise<{ results: any[] }> {
     cqlQuery = `lastModified >= now("-${daysBack}d") or created >= now("-${daysBack}d")`;
   }
   const expandParams = '&expand=space,createdBy,history.ownedBy,body.storage';
+  const limit = 25;
 
   cqlQuery += ' type=page';
   
-  const response = await fetch(`${baseUrl}?cql=${cqlQuery}&${expandParams}`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': auth,
-    },
-  });
+  let allResults: any[] = [];
+  let nextUrl = `${baseUrl}${searchEndpoint}?cql=${cqlQuery}&${expandParams}&limit=${limit}`;
 
-  if (!response.ok) {
-    console.error('Failed to fetch pages:', response.statusText);
-    throw new Error(`Failed to fetch pages: ${response.statusText}`);
+  while (nextUrl) {
+    const response = await fetch(nextUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': auth,
+      },
+    });
+
+    if (!response.ok) {
+      console.error('Failed to fetch pages:', response.statusText);
+      throw new Error(`Failed to fetch pages: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    allResults = allResults.concat(data.results);
+
+    // Check if there are more results
+    if (data._links?.next) {
+      // Combine the base URL with the next URL from the response
+      nextUrl = `${baseUrl}${data._links.next}`;
+    } else {
+      nextUrl = '';
+    }
   }
 
-  return await response.json();
+  return { results: allResults };
 }
 
 

@@ -14,10 +14,10 @@ services:
       - information-vector-db-service/.env
     #volumes:
     #  - ./information-vector-db-service:/app/
-  # test:
-  #   build: test
-  #   ports:
-  #     - "3000:3000"
+  test:
+    build: test
+    ports:
+      - "3000:3000"
   rabbitmq:
     image: rabbitmq
     ports:
