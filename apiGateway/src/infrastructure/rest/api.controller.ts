@@ -1,10 +1,9 @@
-//CONTROLLER
-
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { GetStoricoUseCase } from '../../core/use-cases/get-storico.use-case';
-import { GetRispostaUseCase } from '../../core/use-cases/get-risposta.use-case';
-import { RequestChatCMD } from '../../core/domain/request-chat-cmd';
-import { ReqAnswerCmd } from '../../core/domain/req-answer-cmd';
+//API CONTROLLER
+import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
+import { GetStoricoUseCase } from '../../core/services/get-storico.use-case';
+import { GetRispostaUseCase } from '../../core/services/get-risposta.use-case';
+import { RequestChatDTO } from '../../core/domain/request-chat.dto';
+import { ReqAnswerDTO } from '../../core/domain/req-answer.dto';
 import { ChatDTO } from '../../core/domain/chat.dto';
 
 @Controller('api')
@@ -18,18 +17,30 @@ export class ApiController {
    * Endpoint per recuperare la cronologia delle conversazioni.
    */
   @Get('get-storico/:id')
-  async getStorico(@Param('id') id: string): Promise<any> {
-    const req: RequestChatCMD = { id, numChat: 10 }; // !!! NUMCHAT DA CAMBIARE CON VARIABILE CHE ARRIVA DAL FRONTEND !!!
+  async getStorico(
+    @Param('id') id: string,
+    @Query('num') numChat?: number // Riceve il parametro opzionale 'num' dalla query string
+  ): Promise<ChatDTO[]> {
+    const req: RequestChatDTO = { id, numChat: numChat ?? 1 }; // valore 1 di default
     const storico = await this.getStoricoUseCase.execute(req);
-
-    console.log('STORICO DEBUG:', storico); //DEBUG !!!
-
-    // Trasformazione dei dati per il frontend
-    return storico.map((chat: ChatDTO) => ({
+  
+    console.log('STORICO DEBUG:', storico); // Debug
+  
+    if (!Array.isArray(storico)) {
+      throw new Error("La risposta del microservizio storico non è un array.");
+    }
+  
+    // Trasformazione per il frontend seguendo `ChatDTO`
+    return storico.map((chat) => ({
       id: chat.id,
-      question: chat.question,
-      answer: chat.answer,
-      timestamp: chat.date ? new Date(chat.date).toISOString() : null, // DATE TYPE PROBLEM !!!
+      question: {
+        content: chat.question.content,
+        timestamp: chat.question.timestamp,
+      },
+      answer: {
+        content: chat.answer.content,
+        timestamp: chat.answer.timestamp,
+      },
     }));
   }
 
@@ -37,16 +48,26 @@ export class ApiController {
    * Endpoint per ottenere una risposta dal chatbot.
    */
   @Post('get-risposta')
-  async getRisposta(@Body() req: ReqAnswerCmd): Promise<any> {
-    const risposta = await this.getRispostaUseCase.execute(req);
-
-    console.log('RISPOSTA DEBUG:', risposta); // Log per verificare cosa arriva
-
-    // Trasformazione dei dati per il frontend
+  async getRisposta(@Body() req: ReqAnswerDTO): Promise<ChatDTO> {
+    const requestWithDate: ReqAnswerDTO = {
+      text: req.text,
+      date: req.date || new Date().toISOString(),
+    };
+    
+    const chatSalvata = await this.getRispostaUseCase.execute(requestWithDate);
+  
+    console.log('✅ Risposta finale per il frontend:', chatSalvata);
+  
     return {
-      question: risposta.question,
-      answer: risposta.answer,
-      timestamp: risposta.date ? new Date(risposta.date).toISOString() : new Date().toISOString(), // Se non arriva una data, metti quella attuale
+      id: chatSalvata.id,
+      question: {
+        content: chatSalvata.question.content,
+        timestamp: chatSalvata.question.timestamp,
+      },
+      answer: {
+        content: chatSalvata.answer.content,
+        timestamp: chatSalvata.answer.timestamp,
+      },
     };
   }
 }

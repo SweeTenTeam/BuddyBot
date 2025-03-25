@@ -1,5 +1,5 @@
 export class ProvChat {
-  question: string;
-  answer: string;
-  date: Date;
+  question: string;  // Domanda dell'utente
+  answer: string;    // Risposta generata dal chatbot
+  timestamp: string; // Timestamp della domanda
 }

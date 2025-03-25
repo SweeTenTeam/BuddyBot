@@ -1,4 +1,5 @@
 export class ReqAnswerDTO {
-  text: string;
-  date: Date;
+    text: string;  // La domanda dell'utente
+    date: string;  // Timestamp della domanda
 }
+  

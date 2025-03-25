@@ -1,8 +1,7 @@
-import { RequestChatDTO} from '../domain/request-chat.dto';
-import { ProvChat } from '../domain/prov-chat';
-import { ChatDTO } from '../domain/chat.dto';
+import { RequestChatCMD} from '../domain/request-chat-cmd';
+import { Chat } from '../domain/chat';
 
 export interface StoricoPort {
-  getStorico(req: RequestChatDTO): Promise<ChatDTO[]>;
-  postStorico(chat: ProvChat): Promise<void>;
+  getStorico(req: RequestChatCMD): Promise<Chat[]>;
+  postStorico(chat: Chat): Promise<Chat>; 
 }

@@ -1,56 +1,96 @@
-import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
 @Injectable()
-export class RabbitMQService implements OnModuleInit {
+export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private channel: amqp.Channel;
 
-  constructor(
-    @Inject('RABBITMQ_CLIENT') private readonly client: amqp.Connection
-  ) {}
+  constructor(@Inject('RABBITMQ_CLIENT') private readonly client: amqp.Connection) {}
 
-  // Metodo automatico all'avvio del modulo
   async onModuleInit() {
     await this.initialize();
   }
 
-  // Inizializzazione del canale e delle code
-  private async initialize() {
+  async initialize() { // !!!
     this.channel = await this.client.createChannel();
 
-    // Dichiarazione delle code
     await this.channel.assertQueue('chatbot_queue');
     await this.channel.assertQueue('storico_queue');
     await this.channel.assertQueue('storico_save_queue');
 
     console.log('✅ RabbitMQService initialized and queues declared.');
   }
-
-  // Metodo per inviare dati a una coda e ricevere una risposta
-  async sendToQueue<T>(queue: string, data: T): Promise<T> {
-    return new Promise((resolve, reject) => {
+  // !!! 
+  async sendToQueue<T>(queue: string, data: T, timeoutMs = 5000): Promise<T> {
+    console.log(`📨 Inviando messaggio a ${queue}:`, data);
+  
+    return new Promise<T>(async (resolve, reject) => {
       try {
-        // Invia il messaggio
-        this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)));
+        // 🔥 Creiamo una coda di risposta esclusiva per il test
+        const replyQueue = await this.channel.assertQueue('', { exclusive: true });
+  
+        const correlationId = Math.random().toString();
+        this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(data)), {
+          correlationId,
+          replyTo: replyQueue.queue, // ✅ Aspettiamo la risposta su questa coda
+        });
+  
         console.log(`📨 Messaggio inviato alla coda: ${queue}`);
-
-        // Ricezione della risposta (da migliorare lato consumer reale)
+  // !!!
         this.channel.consume(
           queue,
           (message) => {
-            if (message) {
-              const content = JSON.parse(message.content.toString());
-              this.channel.ack(message); // Conferma ricezione
-              console.log(`✅ Risposta ricevuta dalla coda: ${queue}`);
+            console.log(`📥 REAL: Ricevuto messaggio su ${queue}:`, message?.content?.toString());
+            if (!message) {
+              reject(new Error(`Messaggio vuoto ricevuto da ${queue}`));
+              return;
+            }
+        
+            const rawContent = message.content.toString();
+            console.log(`📥 REAL: Contenuto ricevuto:`, rawContent);
+        
+            try {
+              const content = JSON.parse(rawContent);
+              this.channel.ack(message);
               resolve(content);
+            } catch (err) {
+              console.error(`❌ Errore parsing JSON`);
+              reject(new Error(`Errore parsing JSON`));
             }
           },
-          { noAck: false } // ACK manuale
+          { noAck: false }
         );
+        console.log(`✅ Channel.consume è stato registrato per ${queue}`);
+      
+  
+        setTimeout(() => reject(new Error(`⏳ Timeout su coda: ${queue}`)), timeoutMs);
       } catch (err) {
-        console.error('❌ Errore durante l\'invio alla coda:', err);
         reject(err);
       }
     });
+  }
+  // !!!
+  async consumeQueue(queue: string, callback: (msg: any) => void) {
+    await this.channel.consume(queue, (message) => {
+      if (message) {
+        const content = JSON.parse(message.content.toString());
+        this.channel.ack(message);
+        callback(content);
+      }
+    });
+  }
+
+  async closeConnection() { // !!!
+    if (this.channel) {
+      await this.channel.close();
+    }
+    if (this.client) {
+      await this.client.close();
+    }
+    console.log('🚪 RabbitMQ connection closed.');
+  }
+
+  onModuleDestroy() {
+    this.closeConnection();
   }
 }

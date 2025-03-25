@@ -1,11 +1,12 @@
-/*
+
 import { Injectable, Inject } from '@nestjs/common';
 import { StoricoPort } from '../ports/storico.port';
 import { RequestChatCMD } from '../domain/request-chat-cmd';
 import { Chat } from '../domain/chat';
+import { GetStoricoInterface } from '../interfaces/get-storico';
 
 @Injectable()
-export class GetStoricoUseCase {
+export class GetStoricoUseCase implements GetStoricoInterface {
   constructor(
     @Inject('StoricoPort') private readonly storicoPort: StoricoPort
   ) {
@@ -16,7 +17,10 @@ export class GetStoricoUseCase {
     return this.storicoPort.getStorico(req);
   }
 }
-*/
+
+
+
+/*
 // MOCK PER TEST SENZA FRONTEND
 
 import { Injectable } from '@nestjs/common';
@@ -45,3 +49,4 @@ export class GetStoricoUseCase {
     ];
   }
 }
+*/

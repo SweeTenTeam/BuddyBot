@@ -10,10 +10,11 @@ export class MessageAdapter implements ChatBotPort {
   
   async getRisposta(req: ReqAnswerCmd): Promise<ProvChat> {
     const provChat: ProvChat = {
-      question: req.text, // Mappatura corretta dei campi
-      answer: '', // Inizialmente vuoto, verrà popolato dal chatbot
-      date: req.date,
+      question: req.text,
+      answer: '', 
+      timestamp: req.date || new Date().toISOString(), 
     };
+    
     return this.rabbitMQService.sendToQueue<ProvChat>('chatbot_queue', provChat);
   }
 }
