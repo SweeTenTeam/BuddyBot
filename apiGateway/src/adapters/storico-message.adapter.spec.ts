@@ -1,45 +1,52 @@
+import { Test, TestingModule } from '@nestjs/testing';
 import { StoricoMessageAdapter } from './storico-message.adapter';
 import { RabbitMQService } from '../infrastructure/rabbitmq/rabbitmq.service';
+import { RequestChatCMD } from '../core/domain/request-chat-cmd';
+import { Chat } from '../core/domain/chat';
 
 describe('StoricoMessageAdapter', () => {
-  let storicoAdapter: StoricoMessageAdapter;
+  let adapter: StoricoMessageAdapter;
   let rabbitMQService: RabbitMQService;
 
-  beforeEach(() => {
-    rabbitMQService = {
-      sendToQueue: jest.fn().mockResolvedValue([
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        StoricoMessageAdapter,
         {
-          id: 'mock-id',
-          question: { content: 'Ciao', timestamp: new Date().toISOString() },
-          answer: { content: 'Risposta', timestamp: new Date().toISOString() },
+          provide: RabbitMQService,
+          useValue: {
+            sendToQueue: jest.fn(),
+          },
         },
-      ]),
-    } as any;
+      ],
+    }).compile();
 
-    storicoAdapter = new StoricoMessageAdapter(rabbitMQService);
+    adapter = module.get<StoricoMessageAdapter>(StoricoMessageAdapter);
+    rabbitMQService = module.get<RabbitMQService>(RabbitMQService);
   });
 
-  it('should send a message to storico_queue and return chat history', async () => {
-    const result = await storicoAdapter.getStorico({ id: 'user123', numChat: 1 });
+  it('should be defined', () => {
+    expect(adapter).toBeDefined();
+  });
 
-    expect(rabbitMQService.sendToQueue).toHaveBeenCalledWith(
-        'storico_queue',
-        expect.arrayContaining([
-          expect.objectContaining({
-            id: 'user123',
-            question: expect.any(Object),
-            answer: expect.any(Object),
-          }),
-        ])
-      );
-      
+  it('should retrieve chat history', async () => {
+    const req: RequestChatCMD = { id: '123', numChat: 5 };
+    const chatHistory: Chat[] = [{ id: '123', question: { content: 'Hello?', timestamp: '2024-01-01T12:00:00Z' }, answer: { content: 'Hi!', timestamp: '2024-01-01T12:01:00Z' } }];
+    jest.spyOn(rabbitMQService, 'sendToQueue').mockResolvedValue(chatHistory);
 
-    expect(result).toEqual([
-      {
-        id: 'mock-id',
-        question: { content: 'Ciao', timestamp: expect.any(String) },
-        answer: { content: 'Risposta', timestamp: expect.any(String) },
-      },
-    ]);
+    const result = await adapter.getStorico(req);
+
+    expect(rabbitMQService.sendToQueue).toHaveBeenCalledWith('storico_queue', req);
+    expect(result).toEqual(chatHistory);
+  });
+
+  it('should save chat history', async () => {
+    const chat: Chat = { id: '123', question: { content: 'Hello?', timestamp: '2024-01-01T12:00:00Z' }, answer: { content: 'Hi!', timestamp: '2024-01-01T12:01:00Z' } };
+    jest.spyOn(rabbitMQService, 'sendToQueue').mockResolvedValue(chat);
+
+    const result = await adapter.postStorico(chat);
+
+    expect(rabbitMQService.sendToQueue).toHaveBeenCalledWith('storico_save_queue', expect.any(Object));
+    expect(result).toEqual(chat);
   });
 });
