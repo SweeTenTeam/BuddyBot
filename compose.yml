@@ -1,12 +1,23 @@
 services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant-storage/:/qdrant/storage:z
+
+
   information:
-    build: informationService
-    volumes:
-      - ./informationService:/app/
-  vectorial:
-    build: vectorialDbService
-    volumes:
-      - ./vectorialDbService:/app/
+    build: information-vector-db-service
+    env_file:
+      - information-vector-db-service/.env
+    #volumes:
+    #  - ./information-vector-db-service:/app/
+  test:
+    build: test
+    ports:
+      - "3000:3000"
   rabbitmq:
     image: rabbitmq:management 
     container_name: rabbitmq
