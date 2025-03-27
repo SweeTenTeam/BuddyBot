@@ -22,7 +22,6 @@ describe('StoricoMessageAdapter', () => {
   it('should send a message to storico_queue and return chat history', async () => {
     const result = await storicoAdapter.getStorico({ id: 'user123', numChat: 1 });
 
-    //expect(rabbitMQService.sendToQueue).toHaveBeenCalledWith('storico_queue', { id: 'user123', numChat: 1 });
     expect(rabbitMQService.sendToQueue).toHaveBeenCalledWith(
         'storico_queue',
         expect.arrayContaining([

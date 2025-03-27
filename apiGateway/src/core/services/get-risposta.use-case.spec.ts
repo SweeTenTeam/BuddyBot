@@ -37,11 +37,11 @@ describe('GetRispostaUseCase', () => {
       id: '',
       question: {
         content: 'Ciao',
-        timestamp: '2024-03-23T12:00:00Z', // ✅ Ora corrisponde esattamente a ciò che restituisce il codice
+        timestamp: '2024-03-23T12:00:00Z', 
       },
       answer: {
         content: 'Ciao, come posso aiutarti?',
-        timestamp: '', // ✅ Lo storico genererà il timestamp della risposta
+        timestamp: '', 
       },
     };
   
@@ -52,6 +52,5 @@ describe('GetRispostaUseCase', () => {
   
     expect(result).toEqual(mockChat);
   });
-  
   
 });

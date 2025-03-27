@@ -1,4 +1,4 @@
-//API CONTROLLER
+//CONTROLLER
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
 import { GetStoricoUseCase } from '../../core/services/get-storico.use-case';
 import { GetRispostaUseCase } from '../../core/services/get-risposta.use-case';
@@ -19,18 +19,22 @@ export class ApiController {
   @Get('get-storico/:id')
   async getStorico(
     @Param('id') id: string,
-    @Query('num') numChat?: number // Riceve il parametro opzionale 'num' dalla query string
+    @Query('num') numChat?: number 
   ): Promise<ChatDTO[]> {
-    const req: RequestChatDTO = { id, numChat: numChat ?? 1 }; // valore 1 di default
+    const req: RequestChatDTO = { id, numChat: numChat ?? 1 }; // valore 1 di default, almeno una chat 
     const storico = await this.getStoricoUseCase.execute(req);
   
-    console.log('STORICO DEBUG:', storico); // Debug
+    console.log('STORICO DEBUG:', storico); // Debug !!!
   
-    if (!Array.isArray(storico)) {
-      throw new Error("La risposta del microservizio storico non è un array.");
+    //if (!Array.isArray(storico)) {
+      //throw new Error("La risposta del microservizio storico non è un array.");
+    //}
+
+    if (!Array.isArray(storico) || storico.some(chat => !chat.question || !chat.answer)) {
+      throw new Error("La risposta del microservizio storico non è valida.");
     }
-  
-    // Trasformazione per il frontend seguendo `ChatDTO`
+    
+    // Trasformazione per il frontend seguendo oggetto ChatDTO
     return storico.map((chat) => ({
       id: chat.id,
       question: {
@@ -55,8 +59,12 @@ export class ApiController {
     };
     
     const chatSalvata = await this.getRispostaUseCase.execute(requestWithDate);
-  
-    console.log('✅ Risposta finale per il frontend:', chatSalvata);
+    //!!!
+    if (!chatSalvata || !chatSalvata.question || !chatSalvata.answer) {
+      throw new Error("Risposta non valida dal microservizio.");
+    }
+    
+    console.log('Risposta finale per il frontend:', chatSalvata);
   
     return {
       id: chatSalvata.id,

@@ -21,7 +21,7 @@ describe('API End-to-End Tests (Mock RabbitMQ)', () => {
   });
 
   afterAll(async () => {
-    // ✅ Puliamo il mock per evitare processi aperti
+    
     jest.clearAllMocks();
     jest.resetAllMocks();
     

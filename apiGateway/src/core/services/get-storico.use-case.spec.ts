@@ -14,7 +14,7 @@ describe('GetStoricoUseCase', () => {
         GetStoricoUseCase,
         {
           provide: 'StoricoPort',
-          useValue: { getStorico: jest.fn() }, // ✅ Mock della funzione
+          useValue: { getStorico: jest.fn() }, 
         },
       ],
     }).compile();
@@ -39,7 +39,7 @@ describe('GetStoricoUseCase', () => {
       },
     ];
 
-    storicoPort.getStorico = jest.fn().mockResolvedValue(mockChatHistory); // ✅ Simuliamo la risposta
+    storicoPort.getStorico = jest.fn().mockResolvedValue(mockChatHistory); 
 
     const result = await getStoricoUseCase.execute(request);
 

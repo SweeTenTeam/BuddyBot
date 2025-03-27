@@ -8,36 +8,34 @@ import { RabbitMQService } from '../infrastructure/rabbitmq/rabbitmq.service';
 export class StoricoMessageAdapter implements StoricoPort {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
+  /* */
   async getStorico(req: RequestChatCMD): Promise<Chat[]> {
+    console.log(`Richiesta storico: ID=${req.id}, num=${req.numChat}`);
+
     
-    const chat: Chat = {
-      id: req.id, 
-      question: {
-        content: 'Domanda di esempio',
-        timestamp: new Date().toISOString(),
-      }, 
-      answer: {
-        content: 'Risposta di esempio',
-        timestamp: new Date().toISOString(),
-      },
-    };
+    const storico = await this.rabbitMQService.sendToQueue<RequestChatCMD, Chat[]>('storico_queue', req);
     
-    return this.rabbitMQService.sendToQueue<Chat[]>('storico_queue', [chat]);
+    console.log(` Storico ricevuto:`, storico);
+    return storico;
   }
 
-
+  /*  */
   async postStorico(chat: Chat): Promise<Chat> {
-    return this.rabbitMQService.sendToQueue<Chat>('storico_save_queue', {
-      id: ' ',//'generated-id-' + new Date().getTime(), // X TESTS
+    console.log(`Salvataggio chat nello storico:`, chat);
+
+    const chatSalvata = await this.rabbitMQService.sendToQueue<Chat, Chat>('storico_save_queue', {
+      id: chat.id, // storico assegna l'ID nuovo, ora vuoto
       question: {
         content: chat.question.content,
         timestamp: chat.question.timestamp,
       },
       answer: {
         content: chat.answer.content,
-        timestamp: new Date().toISOString(), // Il microservizio storico genera la data della risposta
+        timestamp:'',// new Date().toISOString(), 
       },
     });
+
+    console.log(` Chat salvata nello storico:`, chatSalvata);
+    return chatSalvata;
   }
- 
 }

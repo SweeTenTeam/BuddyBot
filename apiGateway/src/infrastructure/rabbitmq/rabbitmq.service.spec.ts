@@ -1,105 +1,122 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RabbitMQService } from './rabbitmq.service';
 import * as amqp from 'amqplib';
+import { RabbitMQService } from './rabbitmq.service';
 
-jest.mock('amqplib'); // Mock amqplib !!!
+jest.mock('amqplib'); // Mock amqplib
 
 describe('RabbitMQService', () => {
-  let rabbitMQService: RabbitMQService;
-  let channelMock: any;
-  let connectionMock: any;
+  let service: RabbitMQService;
+  let mockChannel: any;
+  let mockConnection: any;
 
   beforeEach(async () => {
-    jest.useFakeTimers(); // !!!
-  
-    channelMock = {
-        assertQueue: jest.fn().mockResolvedValue({}),
-        sendToQueue: jest.fn(),
-        close: jest.fn(),
-        consume: jest.fn().mockImplementation((queue, callback) => {
-            setTimeout(() => {
-              const message = {
-                content: Buffer.from(JSON.stringify({ success: true })), 
-              };
-              console.log(`📥 Mock: ricevuto messaggio su ${queue}:`, message); // 🔍 Debug
-              callback(message); 
-              channelMock.ack?.(message); 
-            }, 100);
-          }),          
-        ack: jest.fn(), //  Mock ack !!!
-      };
-      
-      
-  
-    connectionMock = {
-      createChannel: jest.fn().mockResolvedValue(channelMock),
+    mockChannel = {
+      assertQueue: jest.fn().mockImplementation((queueName) => {
+        if (['chatbot_queue', 'storico_queue', 'storico_save_queue'].includes(queueName)) {
+          return Promise.resolve();
+        }
+        if (queueName === '') {
+          return Promise.resolve({ queue: 'temp_reply_queue' });
+        }
+        return Promise.reject(new Error('Queue not mocked'));
+      }),
+      sendToQueue: jest.fn(),
+      consume: jest.fn(),
+      ack: jest.fn(),
+      close: jest.fn(),
+      cancel: jest.fn(), // 
+    };
+
+    mockConnection = {
+      createChannel: jest.fn().mockResolvedValue(mockChannel),
       close: jest.fn(),
     };
-  
-    (amqp.connect as jest.Mock).mockResolvedValue(connectionMock);
-  
+
+    (amqp.connect as jest.Mock).mockResolvedValue(mockConnection);
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RabbitMQService,
-        { provide: 'RABBITMQ_CLIENT', useValue: connectionMock },
+        {
+          provide: 'RABBITMQ_CLIENT',
+          useValue: mockConnection,
+        },
       ],
     }).compile();
-  
-    rabbitMQService = module.get<RabbitMQService>(RabbitMQService);
-    await rabbitMQService.initialize();
+
+    service = module.get<RabbitMQService>(RabbitMQService);
+    await service.onModuleInit(); // init sim
   });
-  
-  
+
   afterEach(async () => {
-    jest.clearAllMocks();
-    await rabbitMQService.closeConnection(); // close connessione mockata
+    await service.closeConnection();
   });
 
-  it('should connect to RabbitMQ', async () => {
-    expect(connectionMock.createChannel).toHaveBeenCalled();
-    expect(channelMock.assertQueue).toHaveBeenCalledWith('chatbot_queue');
-    expect(channelMock.assertQueue).toHaveBeenCalledWith('storico_queue');
-    expect(channelMock.assertQueue).toHaveBeenCalledWith('storico_save_queue');
+  
+  it('dovrebbe inizializzare il servizio e creare le code', async () => {
+    expect(mockChannel.assertQueue).toHaveBeenCalledWith('chatbot_queue');
+    expect(mockChannel.assertQueue).toHaveBeenCalledWith('storico_queue');
+    expect(mockChannel.assertQueue).toHaveBeenCalledWith('storico_save_queue');
   });
-  // !!!
-  /*
-  it('should send a message to a queue', async () => {
-    //jest.setTimeout(20000); //  timeout a 20 secondi
-  
-    await rabbitMQService.sendToQueue('chatbot_queue', { message: 'Ciao' });
-  
-    expect(channelMock.sendToQueue).toHaveBeenCalledWith(
-      'chatbot_queue',
-      expect.any(Buffer),
-      expect.any(Object),
-    );
-  });*/
-  
-  it('should consume a message from a queue', async () => {
-    const callback = jest.fn();
-    await rabbitMQService.consumeQueue('chatbot_queue', callback);
-  
-    expect(channelMock.consume).toHaveBeenCalledWith(
-      'chatbot_queue',
-      expect.any(Function),
-    );
-  });
-  
 
-  it('should handle errors when sending a message', async () => {
-    channelMock.sendToQueue.mockImplementation(() => {
-      throw new Error('Send error');
+  
+  it('dovrebbe inviare un messaggio alla coda e ricevere una risposta', async () => {
+    const queue = 'test_queue';
+    const data = { text: 'Hello' };
+
+    // Mock risposta temporanea
+    mockChannel.consume.mockImplementation((q, cb) => {
+      if (q === 'temp_reply_queue') {
+        setTimeout(() => {
+          cb({
+            content: Buffer.from(JSON.stringify({ response: 'OK' })),
+            properties: { correlationId: '123' },
+          });
+        }, 100);
+      }
     });
 
-    await expect(rabbitMQService.sendToQueue('chatbot_queue', { message: 'Errore' }))
-      .rejects
-      .toThrow('Send error');
+    const response = await service.sendToQueue<typeof data, { response: string }>(queue, data);
+    expect(mockChannel.sendToQueue).toHaveBeenCalledWith(
+      queue,
+      Buffer.from(JSON.stringify(data)),
+      expect.objectContaining({
+        replyTo: 'temp_reply_queue',
+        correlationId: expect.any(String),
+      })
+    );
+    expect(response).toEqual({ response: 'OK' });
   });
 
-  it('should close RabbitMQ connection', async () => {
-    await rabbitMQService.closeConnection();
+  
+  it('dovrebbe consumare un messaggio dalla coda', async () => {
+    const queue = 'test_queue';
+    const callback = jest.fn();
 
-    expect(channelMock.close).toHaveBeenCalled();
-    expect(connectionMock.close).toHaveBeenCalled();
+    mockChannel.consume.mockImplementation((q, cb) => {
+      setTimeout(() => {
+        cb({ content: Buffer.from(JSON.stringify({ msg: 'Hello' })) });
+      }, 50);
+    });
+
+    await service.consumeQueue(queue, callback);
+    expect(mockChannel.consume).toHaveBeenCalledWith(queue, expect.any(Function));
+    expect(callback).toHaveBeenCalledWith({ msg: 'Hello' });
+  });
+
+  
+  it('dovrebbe chiudere la connessione correttamente', async () => {
+    await service.closeConnection();
+    expect(mockChannel.close).toHaveBeenCalled();
+    expect(mockConnection.close).toHaveBeenCalled();
+  });
+
+  
+  it('dovrebbe gestire il timeout quando la coda non risponde', async () => {
+    const queue = 'timeout_queue';
+    const data = { text: 'Prova' };
+
+    await expect(service.sendToQueue(queue, data, 100)).rejects.toThrow('Timeout su coda: timeout_queue');
+    expect(mockChannel.cancel).toHaveBeenCalled(); 
   });
 });
