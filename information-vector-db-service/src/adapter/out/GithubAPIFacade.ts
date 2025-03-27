@@ -16,14 +16,21 @@ export class GithubAPIFacade{
     this.repo = process.env.GITHUB_REPO || 'Docs';
   }
 
-  async fetchCommitsInfo(): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
-    const data = await this.octokit.rest.repos.listCommits({
-      owner: this.owner,
-      repo: this.repo,
-      since: '2025-03-01T00:00:00Z'
-    });
+async fetchCommitsInfo(owner: string, repoName: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
+  try {
+    const params = lastUpdate 
+      ? { owner, repo: repoName, since: lastUpdate.toISOString() }
+      : { owner, repo: repoName };
+
+    const data = await this.octokit.rest.repos.listCommits(params);
+    
     return data;
+  } catch (error) {
+    // Proper error handling
+    console.error('Failed to fetch commits:', error);
+    throw error;
   }
+}
 
   async fetchCommitModifiedFilesInfo(ref: string): Promise<OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>> {
     const data = await this.octokit.rest.repos.getCommit({
@@ -31,24 +38,26 @@ export class GithubAPIFacade{
       repo: this.repo,
       ref: ref
     })
+    console.log("222222222222")
+    console.log(data);
     return data;
   }
 
-  async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
+  async fetchFilesInfo(branch_name?: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
     const data = await this.octokit.rest.git.getTree({
       owner: this.owner,
       repo: this.repo,
-      tree_sha: branch_name, //can also be the branch's name
+      tree_sha: branch_name||"", //can also be the branch's name
       recursive: 'true',
     });
 
     return data;
   }
 
-  async fetchFileInfo(path: string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
+  async fetchFileInfo(path: string, owner: string, repo: string, branch?:string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
     const data = await this.octokit.rest.repos.getContent({
-      owner: this.owner,
-      repo: this.repo,
+      owner: owner,
+      repo: repo,
       path: path
     });
 

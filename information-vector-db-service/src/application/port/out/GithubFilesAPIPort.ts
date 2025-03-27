@@ -1,6 +1,6 @@
 import { File } from "src/domain/business/File.js"
-import { GithubCmd } from "src/domain/command/GithubCmd.js"
+import { FileCmd } from "src/domain/command/FileCmd.js"
 
 export interface GithubFilesAPIPort{
-    fetchGithubFilesInfo(req: GithubCmd): Promise<File[]>
+    fetchGithubFilesInfo(req: FileCmd[]): Promise<File[]>
 }

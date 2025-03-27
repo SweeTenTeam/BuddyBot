@@ -12,6 +12,7 @@ import { Repository } from "../../domain/business/Repository.js";
 import { Workflow } from "../../domain/business/Workflow.js";
 import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
 import { GithubCmd } from "src/domain/command/GithubCmd.js";
+import { FileCmd } from "src/domain/command/FileCmd.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{
@@ -21,39 +22,48 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
   }
   
   async fetchGithubCommitsInfo(req: GithubCmd): Promise<Commit[]> {
-    const commitsInfo = await this.githubAPI.fetchCommitsInfo();
     const result: Commit[] = [];
-    for(const commit of commitsInfo.data){
-      const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(commit.sha);
-      const filenames: string[] = []; //to change/fix
-      for(const filename of commitFileInfo.data.files ?? []){
-        filenames.push(filename.filename);;
+    
+    for (const repoCmd of req.repoCmdList) {
+      const commitsInfo = await this.githubAPI.fetchCommitsInfo(repoCmd.owner, repoCmd.repoName, req.lastUpdate);
+      
+      for(const commit of commitsInfo.data){
+        const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(commit.sha);
+        const filenames: string[] = []; //to change/fix
+        for(const filename of commitFileInfo.data.files ?? []){
+          filenames.push(filename.filename);
+        }
+        result.push(new Commit(
+          repoCmd.repoName,
+          repoCmd.branch_name,
+          commit.sha,
+          commit.commit.message,
+          commit.commit.author?.date ?? '',
+          filenames,
+          commit.commit.author?.name ?? '',
+        ));
       }
-      result.push(new Commit(
-        commit.sha,
-        commit.commit.message,
-        commit.commit.author?.date ?? '',
-        filenames,
-        commit.commit.author?.name ?? '',
-      ));
     }
     return result;
   }
 
-  async fetchGithubFilesInfo(req: GithubCmd): Promise<File[]> {
-    const files = await this.githubAPI.fetchFilesInfo('master');
+  async fetchGithubFilesInfo(req: FileCmd[]): Promise<File[]> {
+    // const files = await this.githubAPI.fetchFilesInfo(req[0].branch);
     const result: File[] = [];
-    for(const file of files.data.tree){
-      if(file.type !== 'blob') continue;
-      if(file.size! > 1000) continue;
-      const fileContents = await this.githubAPI.fetchFileInfo(file.path ?? '');
-      let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
-      result.push(new File(
-        file.path ?? '',
-        file.sha ?? '',
-        content
-      ));
-    }
+    // for(const file of req){
+    //   // if(file.type !== 'blob') continue;
+    //   // if(file.size! > 1000) continue;
+    //   const fileContents = await this.githubAPI.fetchFileInfo(file.path);
+    //   console.log("FILEEEEEEEEEEEe")
+    //   console.log(fileContents);
+    //   let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
+
+      // result.push(new File(
+      //   file.path ?? '',
+      //   fileContents.data ?? '',
+      //   content
+      // ));
+    // }
     return result;
   }
 

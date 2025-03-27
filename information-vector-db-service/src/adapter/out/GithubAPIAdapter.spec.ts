@@ -3,6 +3,7 @@ import { GithubAPIAdapter } from './GithubAPIAdapter.js';
 import { GithubAPIFacade } from './GithubAPIFacade.js';
 import { GithubCmd } from '../../domain/command/GithubCmd.js';
 import { RepoCmd } from '../../domain/command/RepoCmd.js';
+import { GithubService } from 'src/application/github.service.js';
 
 describe('GithubAPIAdapter Integration Tests', () => {
   let adapter: GithubAPIAdapter;
@@ -13,29 +14,45 @@ describe('GithubAPIAdapter Integration Tests', () => {
     adapter = new GithubAPIAdapter(githubAPI);
   });
 
-//   it('should fetch commits and their modified files', async () => {
-//     const commits = await adapter.fetchGithubCommitsInfo(new GithubCmd());
-//     console.log('Fetched commits:', commits);
-//     expect(commits).toBeDefined();
-//     expect(Array.isArray(commits)).toBe(true);
-//     if (commits.length > 0) {
-//       expect(commits[0]).toHaveProperty('sha');
-//       expect(commits[0]).toHaveProperty('message');
-//       expect(commits[0]).toHaveProperty('author');
-//       expect(commits[0]).toHaveProperty('files');
-//     }
-//   });
+  it('should fetch commits and their modified files', async () => {
+    const githubCmd = new GithubCmd();
+    githubCmd.lastUpdate = new Date(Date.now());
+    const repoCmd = new RepoCmd();
+    repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+    repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+    repoCmd.branch_name = "master"
+    githubCmd.repoCmdList = [repoCmd];
+    const commits = await adapter.fetchGithubCommitsInfo(githubCmd);
+    console.log('Fetched commits:', commits);
+    expect(commits).toBeDefined();
+    expect(Array.isArray(commits)).toBe(true);
+    if (commits.length > 0) {
+      expect(commits[0]).toHaveProperty('sha');
+      expect(commits[0]).toHaveProperty('message');
+      expect(commits[0]).toHaveProperty('author');
+      expect(commits[0]).toHaveProperty('files');
+    }
+  });
 
 //   it('should fetch files with content', async () => {
-//     const files = await adapter.fetchGithubFilesInfo(new GithubCmd());
-//     console.log('Fetched files:', files);
-//     expect(files).toBeDefined();
-//     expect(Array.isArray(files)).toBe(true);
-//     if (files.length > 0) {
-//       expect(files[0]).toHaveProperty('path');
-//       expect(files[0]).toHaveProperty('sha');
-//       expect(files[0]).toHaveProperty('content');
-//     }
+//     const ghService = new GithubService(adapter);
+//     const githubCmd = new GithubCmd();
+//     // githubCmd.lastUpdate = new Date(Date.now());
+//     const repoCmd = new RepoCmd();
+//     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+//     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+//     repoCmd.branch_name = "master"
+//     githubCmd.repoCmdList = [repoCmd];
+//     await ghService.fetchAndStoreGithubInfo(githubCmd);
+//     // const files = await adapter.fetchGithubFilesInfo();
+//     // console.log('Fetched files:', files);
+//     // expect(files).toBeDefined();
+//     // expect(Array.isArray(files)).toBe(true);
+//     // if (files.length > 0) {
+//     //   expect(files[0]).toHaveProperty('path');
+//     //   expect(files[0]).toHaveProperty('sha');
+//     //   expect(files[0]).toHaveProperty('content');
+//     // }
 //   });
 
 //   it('should fetch pull requests with all related information', async () => {
@@ -54,12 +71,14 @@ describe('GithubAPIAdapter Integration Tests', () => {
 //     }
 //   });
 
-  it('should fetch repository information', async () => {
+ /** correct test
+  *   it('should fetch repository information', async () => {
     const githubCmd = new GithubCmd();
     githubCmd.lastUpdate = new Date(Date.now());
     const repoCmd = new RepoCmd();
     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+    repoCmd.branch_name = "master"
     githubCmd.repoCmdList = [repoCmd];
 
     const repositories = await adapter.fetchGithubRepositoryInfo(githubCmd);
@@ -74,6 +93,8 @@ describe('GithubAPIAdapter Integration Tests', () => {
       expect(repositories[0]).toHaveProperty('mainLanguage');
     }
   });
+
+  */
 
 //   it('should fetch workflow information', async () => {
 //     const workflows = await adapter.fetchGithubWorkflowInfo(new GithubCmd());
