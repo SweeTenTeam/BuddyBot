@@ -25,16 +25,17 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     const result: Commit[] = [];
     
     for (const repoCmd of req.repoCmdList) {
-      const commitsInfo = await this.githubAPI.fetchCommitsInfo(repoCmd.owner, repoCmd.repoName, req.lastUpdate);
+      const commitsInfo = await this.githubAPI.fetchCommitsInfo(repoCmd.owner, repoCmd.repoName, repoCmd.branch_name, req.lastUpdate);
       
       for(const commit of commitsInfo.data){
-        const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(commit.sha);
+        const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(repoCmd.owner, repoCmd.repoName, commit.sha);
         const filenames: string[] = []; //to change/fix
         for(const filename of commitFileInfo.data.files ?? []){
           filenames.push(filename.filename);
         }
         result.push(new Commit(
           repoCmd.repoName,
+          repoCmd.owner,
           repoCmd.branch_name,
           commit.sha,
           commit.commit.message,
@@ -47,23 +48,59 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return result;
   }
 
-  async fetchGithubFilesInfo(req: FileCmd[]): Promise<File[]> {
-    // const files = await this.githubAPI.fetchFilesInfo(req[0].branch);
-    const result: File[] = [];
-    // for(const file of req){
-    //   // if(file.type !== 'blob') continue;
-    //   // if(file.size! > 1000) continue;
-    //   const fileContents = await this.githubAPI.fetchFileInfo(file.path);
-    //   console.log("FILEEEEEEEEEEEe")
-    //   console.log(fileContents);
-    //   let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
+  private isTextFile(filename: string): boolean {
+    const binaryExtensions = [
+      // Images
+      '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.svg', '.ico',
+      // PDFs
+      '.pdf',
+      // Videos
+      '.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv',
+      // Compiled artifacts
+      '.exe', '.dll', '.so', '.dylib', '.class', '.jar', '.war',
+      '.o', '.obj', '.out', '.bin', '.dat', '.db', '.sqlite',
+      // Archives
+      '.zip', '.rar', '.7z', '.tar', '.gz',
+      // Fonts
+      '.ttf', '.otf', '.woff', '.woff2', '.eot',
+      // Other binary files
+      '.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx',
+      //other format not wanted
+      '.env'
+    ];
+    
+    return !binaryExtensions.some(ext => filename.toLowerCase().endsWith(ext));
+  }
 
-      // result.push(new File(
-      //   file.path ?? '',
-      //   fileContents.data ?? '',
-      //   content
-      // ));
-    // }
+  
+//if a file is not found the method continue as commits can delete files or move it in new location
+  async fetchGithubFilesInfo(req: FileCmd[]): Promise<File[]> {
+    const result: File[] = [];
+    
+    for (const fileCmd of req) {
+      if (!this.isTextFile(fileCmd.path)) continue;
+      
+      try {
+        const fileContents = await this.githubAPI.fetchFileInfo(fileCmd.path, fileCmd.owner, fileCmd.repository, fileCmd.branch);
+        let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
+        
+        result.push(new File(
+          fileContents.data.path,
+          fileContents.data.sha,
+          fileCmd.repository,
+          fileCmd.branch,
+          content
+        ));
+      } catch (error: any) {
+        if (error.status === 404) {
+          console.log(`File not found (404): ${fileCmd.path}`);
+          continue;
+        }
+        console.error(`Error accessing ${fileCmd.path}: ${error.message}`);
+        throw error;
+      }
+    }
+    
     return result;
   }
 

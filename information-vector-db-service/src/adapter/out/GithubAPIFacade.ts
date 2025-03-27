@@ -16,11 +16,11 @@ export class GithubAPIFacade{
     this.repo = process.env.GITHUB_REPO || 'Docs';
   }
 
-async fetchCommitsInfo(owner: string, repoName: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
+async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
   try {
     const params = lastUpdate 
-      ? { owner, repo: repoName, since: lastUpdate.toISOString() }
-      : { owner, repo: repoName };
+      ? { owner, repo: repoName,sha:branch, since: lastUpdate.toISOString() }
+      : { owner, repo: repoName, sha:branch };
 
     const data = await this.octokit.rest.repos.listCommits(params);
     
@@ -32,32 +32,32 @@ async fetchCommitsInfo(owner: string, repoName: string, lastUpdate?: Date): Prom
   }
 }
 
-  async fetchCommitModifiedFilesInfo(ref: string): Promise<OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>> {
+  async fetchCommitModifiedFilesInfo(owner: string, repoName: string, commitSha: string): Promise<OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>> {
     const data = await this.octokit.rest.repos.getCommit({
-      owner: this.owner,
-      repo: this.repo,
-      ref: ref
+      owner: owner,
+      repo: repoName,
+      ref: commitSha
     })
-    console.log("222222222222")
-    console.log(data);
+
     return data;
   }
 
-  async fetchFilesInfo(branch_name?: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
+  async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
     const data = await this.octokit.rest.git.getTree({
       owner: this.owner,
       repo: this.repo,
-      tree_sha: branch_name||"", //can also be the branch's name
+      tree_sha: branch_name, //can also be the branch's name
       recursive: 'true',
     });
 
     return data;
   }
 
-  async fetchFileInfo(path: string, owner: string, repo: string, branch?:string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
+  async fetchFileInfo(path: string, owner: string, repo: string, branch:string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
     const data = await this.octokit.rest.repos.getContent({
       owner: owner,
       repo: repo,
+      ref:branch,
       path: path
     });
 

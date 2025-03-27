@@ -1,6 +1,7 @@
 export class Commit{
     constructor(
         private repoName: string,
+        private ownerRepository: string,
         private branch: string,
         private hash: string,
         private message: string,
@@ -15,5 +16,12 @@ export class Commit{
 
     getBranch():string{
         return this.branch;
+    }
+
+    getRepoName(): string{
+        return this.repoName;
+    }
+    getRepoOwner(): string{
+        return this.ownerRepository;
     }
 }

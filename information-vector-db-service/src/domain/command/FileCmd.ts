@@ -1,4 +1,6 @@
 export class FileCmd{
     path: string;
-    branch?: string;
+    owner: string;
+    repository: string;
+    branch: string;
 }
