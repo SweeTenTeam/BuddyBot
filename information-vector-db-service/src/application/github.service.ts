@@ -8,11 +8,11 @@ export class GithubService implements GithubUseCase {
   constructor(private readonly githubApi: GithubAPIAdapter) {}
   
   async fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean> {
-    const commits = await this.githubApi.fetchGithubCommitsInfo();
-    const files = await this.githubApi.fetchGithubFilesInfo();
-    const pullRequests = await this.githubApi.fetchGithubPullRequestsInfo();
-    const repository = await this.githubApi.fetchGithubRepositoryInfo();
-    const workflows = await this.githubApi.fetchGithubWorkflowInfo();
+    const commits = await this.githubApi.fetchGithubCommitsInfo(req);
+    const files = await this.githubApi.fetchGithubFilesInfo(req);
+    const pullRequests = await this.githubApi.fetchGithubPullRequestsInfo(req);
+    const repository = await this.githubApi.fetchGithubRepositoryInfo(req);
+    const workflows = await this.githubApi.fetchGithubWorkflowInfo(req);
 
     //DEBUG
     console.log(commits);

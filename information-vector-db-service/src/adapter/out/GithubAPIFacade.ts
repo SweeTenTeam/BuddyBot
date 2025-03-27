@@ -2,6 +2,7 @@ import { Octokit } from '@octokit/rest'
 import type * as OctokitTypes from "@octokit/types";
 import { Workflow } from '../../domain/business/Workflow.js';
 import { WorkflowRun } from '../../domain/business/WorkflowRun.js';
+import { RepoCmd } from 'src/domain/command/RepoCmd.js';
 
 export class GithubAPIFacade{
   private readonly octokit: Octokit;
@@ -113,10 +114,10 @@ export class GithubAPIFacade{
     return comments;
   }
   
-  async fetchRepositoryInfo(): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf
+  async fetchRepositoryInfo(req:RepoCmd): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf
     const data = await this.octokit.rest.repos.get({
-        owner: this.owner,
-        repo: this.repo,
+        owner: req.owner,
+        repo: req.repoName,
     });
     return data;
   }

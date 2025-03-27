@@ -11,6 +11,7 @@ import { PullRequest } from "../../domain/business/PullRequest.js";
 import { Repository } from "../../domain/business/Repository.js";
 import { Workflow } from "../../domain/business/Workflow.js";
 import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
+import { GithubCmd } from "src/domain/command/GithubCmd.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{
@@ -19,7 +20,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     this.githubAPI = githubAPI;
   }
   
-  async fetchGithubCommitsInfo(): Promise<Commit[]> {
+  async fetchGithubCommitsInfo(req: GithubCmd): Promise<Commit[]> {
     const commitsInfo = await this.githubAPI.fetchCommitsInfo();
     const result: Commit[] = [];
     for(const commit of commitsInfo.data){
@@ -39,7 +40,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return result;
   }
 
-  async fetchGithubFilesInfo(): Promise<File[]> {
+  async fetchGithubFilesInfo(req: GithubCmd): Promise<File[]> {
     const files = await this.githubAPI.fetchFilesInfo('master');
     const result: File[] = [];
     for(const file of files.data.tree){
@@ -56,7 +57,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return result;
   }
 
-  async fetchGithubPullRequestsInfo(): Promise<PullRequest[]> {
+  async fetchGithubPullRequestsInfo(req: GithubCmd): Promise<PullRequest[]> {
     const pullRequestsInfo = await this.githubAPI.fetchPullRequestsInfo();
     const result: PullRequest[] = [];
     for(const pullRequest of pullRequestsInfo.data){
@@ -88,20 +89,45 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return result;
   }
 
-  async fetchGithubRepositoryInfo(): Promise<Repository[]> {
-    const repoInfo = await this.githubAPI.fetchRepositoryInfo();
+
+// No way of getting only the repositories that were updated in the last "now - last_update" days,
+// we dowload all the repos info but we return only the ones that were created or updated in the last "now - last_update" days
+  async fetchGithubRepositoryInfo(req: GithubCmd): Promise<Repository[]> {
     const repos: Repository[] = [];
-    repos.push(new Repository(
-        repoInfo.data.id,
-        repoInfo.data.name,
-        repoInfo.data.created_at,
-        repoInfo.data.updated_at,
-        repoInfo.data.language || ''
-    ));
+    const lastUpdate = req.lastUpdate;
+    
+    for (const repoCmd of req.repoCmdList) {
+      const repoInfo = await this.githubAPI.fetchRepositoryInfo(repoCmd);
+      
+      if (lastUpdate) {
+        const lastUpdateDate = new Date(lastUpdate);
+        const createdDate = new Date(repoInfo.data.created_at);
+        const updatedDate = new Date(repoInfo.data.updated_at);
+        
+        if (createdDate >= lastUpdateDate || updatedDate >= lastUpdateDate) {
+          repos.push(new Repository(
+            repoInfo.data.id,
+            repoInfo.data.name,
+            repoInfo.data.created_at,
+            repoInfo.data.updated_at,
+            repoInfo.data.language || ''
+          ));
+        }
+      } else {
+        repos.push(new Repository(
+          repoInfo.data.id,
+          repoInfo.data.name,
+          repoInfo.data.created_at,
+          repoInfo.data.updated_at,
+          repoInfo.data.language || ''
+        ));
+      }
+    }
+    
     return repos;
   }
 
-  async fetchGithubWorkflowInfo(): Promise<Workflow[]> {
+  async fetchGithubWorkflowInfo(req: GithubCmd): Promise<Workflow[]> {
     const workflowInfo = await this.githubAPI.fetchWorkflowsInfo();
     const result: Workflow[] = [];
     
