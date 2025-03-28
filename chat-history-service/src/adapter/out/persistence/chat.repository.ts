@@ -22,6 +22,7 @@ export class ChatRepository {
     }
   }
 
+  /*
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
     try {
       const take = numChat ? numChat : 5;
@@ -34,5 +35,40 @@ export class ChatRepository {
       throw new Error('Error during History-fetch')
     }
   }
+  */
+
+  async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
+    try {
+      const take = numChat ? numChat : 5;
+      // Trova la chat corrente (quella dell'ID)
+    const lastChat = await this.chatRepo.findOne({
+      where: { id: lastChatId },
+    });
+
+    if (!lastChat) {
+      throw new Error('Last chat ID not found');
+    }
+
+    // Recupera le (numChat - 1) chat precedenti
+    const previousChats = await this.chatRepo.find({
+      where: {
+        answerDate: LessThan(lastChat.answerDate),
+      },
+      order: { answerDate: 'DESC' },
+      take: take - 1,
+    });
+
+    // Combina: [lastChat, ...previousChats] mantenendo l’ordine corretto
+    const combined = [lastChat, ...previousChats];
+
+    // Se vuoi mostrarli dal più vecchio al più recente
+    return combined.sort((a, b) => a.answerDate.getTime() - b.answerDate.getTime());
+
+    } catch(error) {
+      throw new Error('Error during History-fetch')
+    }
+  }
+
+
 
 }
