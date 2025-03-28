@@ -1,4 +1,4 @@
 export interface Message {
     content: string;
-    timestamp: number;
+    timestamp: string;
 }

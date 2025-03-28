@@ -34,7 +34,7 @@ export default function Bubble({ message, user, error, loading }: { message: Mes
                         <p className="w-full h-full">{message.content}</p>
                     )}
 
-                    <p className="text-sm opacity-80 text-right">{formatDate(message.timestamp)}</p>
+                    <p className="text-sm opacity-80 text-right">{formatDate(Date.parse(message.timestamp))}</p>
                 </div>
             )}
         </>
