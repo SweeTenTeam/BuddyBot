@@ -5,19 +5,18 @@ import historyData1 from "@/json/history1.json";
 export class AdapterFacade {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         //if (id === "") return historyData1;
         //else if (id == "240") return historyData;
         //return [];
 
         try {
-            const response = await fetch(`https://api-gateway/api/get-storico/1`, {
+            const response = await fetch(`http://api-gateway/api/get-storico/${id}?num=${offset}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     // Eventuali header necessari
                 },
-                //body: JSON.stringify({ id, offset }),
                 signal: controller.signal,
             });
             clearTimeout(timeoutId);
@@ -30,7 +29,7 @@ export class AdapterFacade {
 
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         //return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
 
         try {
