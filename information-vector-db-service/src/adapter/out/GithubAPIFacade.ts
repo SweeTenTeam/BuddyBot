@@ -64,29 +64,30 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     return data;
   }
 
-  async fetchPullRequestsInfo(): Promise<OctokitTypes.OctokitResponse<{id: number, number: number, title: string, body: string | null, state: string, assignees?: {login: string}[] | undefined | null, requested_reviewers?: {login: string}[] | null, head: {ref: string}, base: {ref: string}}[], 200>> {
+  async fetchPullRequestsInfo(owner: string, repoName:string, baseBranchName: string): Promise<OctokitTypes.OctokitResponse<{id: number, number: number, title: string, body: string | null, state: string, assignees?: {login: string}[] | undefined | null, requested_reviewers?: {login: string}[] | null, head: {ref: string}, base: {ref: string}}[], 200>> {
     const data = await this.octokit.rest.pulls.list({
-        owner: this.owner,
-        repo: this.repo,
-        state: 'all'
+        owner: owner,
+        repo: repoName,
+        state: 'all',
+        base: baseBranchName
     });
     return data;
   }
 
-  async fetchPullRequestInfo(): Promise<OctokitTypes.OctokitResponse<{}, 200>> {
+  async fetchPullRequestInfo(owner: string, repoName:string): Promise<OctokitTypes.OctokitResponse<{}, 200>> {
     const data = await this.octokit.rest.pulls.get({
-        owner: this.owner,
-        repo: this.repo,
+        owner: owner,
+        repo: repoName,
         pull_number: 1 
         
     });
     return data;
   }
 
-  async fetchPullRequestModifiedFiles(pull_number: number): Promise<string[]> {
+  async fetchPullRequestModifiedFiles(owner: string, repoName:string, pull_number: number): Promise<string[]> {
     const data = await this.octokit.rest.pulls.listFiles({
-        owner: this.owner,
-        repo: this.repo,
+        owner: owner,
+        repo: repoName,
         pull_number: pull_number
     });
 
@@ -97,30 +98,13 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     return filenames;
   }
 
-  async fetchPullRequestComments(pull_number: number): Promise<string[]> {
-    const data = await this.octokit.issues.listComments({
-        owner: this.owner,
-        repo: this.repo,
-        issue_number: pull_number,
-    });
-    const comments: string[] = [];
-    for(const comment of data.data){
-      comments.push(comment.body ?? '');
-    }
-    return comments;
-  }
-
-  async fetchPullRequestReviewComments(pull_number: number): Promise<string[]> {
+  async fetchPullRequestReviewComments(owner: string, repoName:string, pull_number: number) {
     const data = await this.octokit.pulls.listReviewComments({
-        owner: this.owner,
-        repo: this.repo,
+        owner: owner,
+        repo: repoName,
         pull_number: pull_number,
     });
-    const comments: string[] = [];
-    for(const comment of data.data){
-      comments.push(comment.body ?? '');
-    }
-    return comments;
+    return data;
   }
   
   async fetchRepositoryInfo(req:RepoCmd): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf

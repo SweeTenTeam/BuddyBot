@@ -4,6 +4,7 @@ import { GithubAPIFacade } from './GithubAPIFacade.js';
 import { GithubCmd } from '../../domain/command/GithubCmd.js';
 import { RepoCmd } from '../../domain/command/RepoCmd.js';
 import { GithubService } from '../../application/github.service.js';
+import { timeout } from 'rxjs';
 
 describe('GithubAPIAdapter Integration Tests', () => {
   let adapter: GithubAPIAdapter;
@@ -36,42 +37,53 @@ describe('GithubAPIAdapter Integration Tests', () => {
 //     }
 //   });
 
-  it('should fetch files with content', async () => {
+//   it('should fetch files with content', async () => {
     
-    const githubCmd = new GithubCmd();
+//     const githubCmd = new GithubCmd();
+//     // githubCmd.lastUpdate = new Date(Date.now());
+//     const repoCmd = new RepoCmd();
+//     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+//     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+//     repoCmd.branch_name = "develop"
+//     githubCmd.repoCmdList = [repoCmd];
+//     await ghService.fetchAndStoreGithubInfo(githubCmd);
+//     // const files = await adapter.fetchGithubFilesInfo();
+//     // console.log('Fetched files:', files);
+//     // expect(files).toBeDefined();
+//     // expect(Array.isArray(files)).toBe(true);
+//     // if (files.length > 0) {
+//     //   expect(files[0]).toHaveProperty('path');
+//     //   expect(files[0]).toHaveProperty('sha');
+//     //   expect(files[0]).toHaveProperty('content');
+//     // }
+//   });
+
+  it('should fetch pull requests with all related information', async () => {
+        const githubCmd = new GithubCmd();
     // githubCmd.lastUpdate = new Date(Date.now());
     const repoCmd = new RepoCmd();
     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
     repoCmd.branch_name = "develop"
-    githubCmd.repoCmdList = [repoCmd];
-    await ghService.fetchAndStoreGithubInfo(githubCmd);
-    // const files = await adapter.fetchGithubFilesInfo();
-    // console.log('Fetched files:', files);
-    // expect(files).toBeDefined();
-    // expect(Array.isArray(files)).toBe(true);
-    // if (files.length > 0) {
-    //   expect(files[0]).toHaveProperty('path');
-    //   expect(files[0]).toHaveProperty('sha');
-    //   expect(files[0]).toHaveProperty('content');
-    // }
-  });
-
-//   it('should fetch pull requests with all related information', async () => {
-//     const pullRequests = await adapter.fetchGithubPullRequestsInfo(new GithubCmd());
-//     console.log('Fetched pull requests:', pullRequests);
-//     expect(pullRequests).toBeDefined();
-//     expect(Array.isArray(pullRequests)).toBe(true);
-//     if (pullRequests.length > 0) {
-//       expect(pullRequests[0]).toHaveProperty('id');
-//       expect(pullRequests[0]).toHaveProperty('number');
-//       expect(pullRequests[0]).toHaveProperty('title');
-//       expect(pullRequests[0]).toHaveProperty('state');
-//       expect(pullRequests[0]).toHaveProperty('assignees');
-//       expect(pullRequests[0]).toHaveProperty('requested_reviewers');
-//       expect(pullRequests[0]).toHaveProperty('files');
-//     }
-//   });
+    const repoCmd2 = new RepoCmd();
+    repoCmd2.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+    repoCmd2.repoName = process.env.GITHUB_REPO || 'Docs';
+    repoCmd2.branch_name = "master"
+    githubCmd.repoCmdList = [repoCmd, repoCmd2];
+    const pullRequests = await adapter.fetchGithubPullRequestsInfo(githubCmd);
+    console.log('Fetched pull requests:', pullRequests);
+    expect(pullRequests).toBeDefined();
+    expect(Array.isArray(pullRequests)).toBe(true);
+    if (pullRequests.length > 0) {
+      expect(pullRequests[0]).toHaveProperty('id');
+      expect(pullRequests[0]).toHaveProperty('number');
+      expect(pullRequests[0]).toHaveProperty('title');
+      expect(pullRequests[0]).toHaveProperty('state');
+      expect(pullRequests[0]).toHaveProperty('assignees');
+      expect(pullRequests[0]).toHaveProperty('requested_reviewers');
+      expect(pullRequests[0]).toHaveProperty('files');
+    }
+  }, 10000);
 
  /** correct test
   *   it('should fetch repository information', async () => {

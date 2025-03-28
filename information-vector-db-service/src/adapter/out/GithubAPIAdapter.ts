@@ -13,6 +13,7 @@ import { Workflow } from "../../domain/business/Workflow.js";
 import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
 import { GithubCmd } from "src/domain/command/GithubCmd.js";
 import { FileCmd } from "src/domain/command/FileCmd.js";
+import { CommentPR } from "../../domain/business/CommentPR.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{
@@ -72,7 +73,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return !binaryExtensions.some(ext => filename.toLowerCase().endsWith(ext));
   }
 
-  
+
 //if a file is not found the method continue as commits can delete files or move it in new location
   async fetchGithubFilesInfo(req: FileCmd[]): Promise<File[]> {
     const result: File[] = [];
@@ -105,34 +106,55 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
   }
 
   async fetchGithubPullRequestsInfo(req: GithubCmd): Promise<PullRequest[]> {
-    const pullRequestsInfo = await this.githubAPI.fetchPullRequestsInfo();
     const result: PullRequest[] = [];
-    for(const pullRequest of pullRequestsInfo.data){
+
+    for (const repoCmd of req.repoCmdList) {
+      const pullRequestsInfo = await this.githubAPI.fetchPullRequestsInfo(repoCmd.owner, repoCmd.repoName, repoCmd.branch_name);
+
+      for (const pullRequest of pullRequestsInfo.data) {
         const assignees: string[] = [];
-        for(const assignee of pullRequest.assignees || []){
-            assignees.push(assignee.login);
+        for (const assignee of pullRequest.assignees || []) {
+          assignees.push(assignee.login);
         }
         const requested_reviewers: string[] = [];
-        for(const reviewer of pullRequest.requested_reviewers || []){
-            requested_reviewers.push(reviewer.login);
+        for (const reviewer of pullRequest.requested_reviewers || []) {
+          requested_reviewers.push(reviewer.login);
         }
-        const pr_comments = await this.githubAPI.fetchPullRequestComments(pullRequest.number);
-        pr_comments.concat(await this.githubAPI.fetchPullRequestReviewComments(pullRequest.number));
-        const filenames = await this.githubAPI.fetchPullRequestModifiedFiles(pullRequest.number);
+
+        const pr_comment_res = await this.githubAPI.fetchPullRequestReviewComments(repoCmd.owner, repoCmd.repoName, pullRequest.number);
+        const comments: CommentPR[] = [];
+        
+        if (Array.isArray(pr_comment_res.data)) {
+          for (const comment of pr_comment_res.data) {
+            if (comment && comment.user && comment.body) {
+              comments.push(new CommentPR(
+                comment.user.login,
+                comment.body,
+                new Date(comment.created_at)
+              ));
+            }
+          }
+        }
+
+        const filenames = await this.githubAPI.fetchPullRequestModifiedFiles(repoCmd.owner, repoCmd.repoName, pullRequest.number);
+        
         result.push(new PullRequest(
-            pullRequest.id,
-            pullRequest.number,
-            pullRequest.title,
-            pullRequest.body || '',
-            pullRequest.state,
-            assignees,
-            requested_reviewers,
-            pr_comments, //to fix comments
-            filenames,
-            pullRequest.head.ref,
-            pullRequest.base.ref
+          pullRequest.id,
+          pullRequest.number,
+          pullRequest.title,
+          pullRequest.body || '',
+          pullRequest.state,
+          assignees,
+          requested_reviewers,
+          comments,
+          filenames,
+          pullRequest.head.ref,
+          pullRequest.base.ref,
+          repoCmd.repoName
         ));
+      }
     }
+
     return result;
   }
 
