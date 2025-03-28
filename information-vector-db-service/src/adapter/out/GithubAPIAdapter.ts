@@ -166,7 +166,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     const lastUpdate = req.lastUpdate;
     
     for (const repoCmd of req.repoCmdList) {
-      const repoInfo = await this.githubAPI.fetchRepositoryInfo(repoCmd);
+      const repoInfo = await this.githubAPI.fetchRepositoryInfo(repoCmd.owner, repoCmd.repoName);
       
       if (lastUpdate) {
         const lastUpdateDate = new Date(lastUpdate);
@@ -197,24 +197,27 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
   }
 
   async fetchGithubWorkflowInfo(req: GithubCmd): Promise<Workflow[]> {
-    const workflowInfo = await this.githubAPI.fetchWorkflowsInfo();
     const result: Workflow[] = [];
     
-    for (const workflow of workflowInfo) {
-      const workflowRuns = workflow.runs.map(run => new WorkflowRun(
-        run.id,
-        run.status,
-        run.duration,
-        run.log,
-        run.trigger
-      ));
+    for (const repoCmd of req.repoCmdList) {
+      const workflowInfo = await this.githubAPI.fetchWorkflowsInfo(repoCmd.owner, repoCmd.repoName);
       
-      result.push(new Workflow(
-        workflow.id,
-        workflow.name,
-        workflow.state,
-        workflowRuns
-      ));
+      for (const workflow of workflowInfo) {
+        const workflowRuns = workflow.runs.map(run => new WorkflowRun(
+          run.id,
+          run.status,
+          run.duration,
+          run.log,
+          run.trigger
+        ));
+        
+        result.push(new Workflow(
+          workflow.id,
+          workflow.name,
+          workflow.state,
+          workflowRuns
+        ));
+      }
     }
     
     return result;

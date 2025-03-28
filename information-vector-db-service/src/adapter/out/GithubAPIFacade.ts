@@ -18,28 +18,102 @@ export class GithubAPIFacade{
 
 async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
   try {
-    const params = lastUpdate 
-      ? { owner, repo: repoName,sha:branch, since: lastUpdate.toISOString() }
-      : { owner, repo: repoName, sha:branch };
+    let allCommits: any[] = [];
+    let hasMorePages = true;
+    let currentUrl: string | undefined;
 
-    const data = await this.octokit.rest.repos.listCommits(params);
-    
-    return data;
+    while (hasMorePages) {
+      const params = lastUpdate 
+        ? { 
+            owner, 
+            repo: repoName,
+            sha: branch,
+            per_page:100,
+            since: lastUpdate.toISOString()
+          }
+        : { 
+            owner, 
+            repo: repoName, 
+            sha: branch,
+            per_page:100
+          };
+
+      const response = currentUrl 
+        ? await this.octokit.request(currentUrl)
+        : await this.octokit.rest.repos.listCommits(params);
+      
+      if (!response.data.length) break;
+      
+      allCommits.push(...response.data);
+
+      const linkHeader = response.headers.link;
+      if (!linkHeader) {
+        hasMorePages = false;
+        break;
+      }
+
+      const nextMatch = linkHeader.match(/<([^>]+)>; rel="next"/);
+      currentUrl = nextMatch ? nextMatch[1] : undefined;
+      hasMorePages = !!currentUrl;
+    }
+
+    return {
+      data: allCommits,
+      status: 200,
+      headers: {},
+      url: ''
+    } as OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>;
   } catch (error) {
-    // Proper error handling
     console.error('Failed to fetch commits:', error);
     throw error;
   }
 }
 
   async fetchCommitModifiedFilesInfo(owner: string, repoName: string, commitSha: string): Promise<OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>> {
-    const data = await this.octokit.rest.repos.getCommit({
-      owner: owner,
-      repo: repoName,
-      ref: commitSha
-    })
+    try {
+      let allFiles: any[] = [];
+      let hasMorePages = true;
+      let currentUrl: string | undefined;
+      let lastResponse: any;
 
-    return data;
+      while (hasMorePages) {
+        lastResponse = currentUrl 
+          ? await this.octokit.request(currentUrl)
+          : await this.octokit.rest.repos.getCommit({
+              owner: owner,
+              repo: repoName,
+              per_page:100,
+              ref: commitSha
+            });
+
+        if (!lastResponse.data.files?.length) break;
+        
+        allFiles.push(...lastResponse.data.files);
+
+        const linkHeader = lastResponse.headers.link;
+        if (!linkHeader) {
+          hasMorePages = false;
+          break;
+        }
+
+        const nextMatch = linkHeader.match(/<([^>]+)>; rel="next"/);
+        currentUrl = nextMatch ? nextMatch[1] : undefined;
+        hasMorePages = !!currentUrl;
+      }
+
+      return {
+        data: {
+          ...lastResponse.data,
+          files: allFiles
+        },
+        status: 200,
+        headers: {},
+        url: ''
+      } as OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>;
+    } catch (error) {
+      console.error(`Failed to fetch modified files for commit ${commitSha}:`, error);
+      throw error;
+    }
   }
 
   async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
@@ -107,15 +181,15 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     return data;
   }
   
-  async fetchRepositoryInfo(req:RepoCmd): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf
+  async fetchRepositoryInfo(owner: string, repoName:string): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf
     const data = await this.octokit.rest.repos.get({
-        owner: req.owner,
-        repo: req.repoName,
+        owner: owner,
+        repo: repoName,
     });
     return data;
   }
 
-  async fetchWorkflowsInfo(): Promise<{
+  async fetchWorkflowsInfo(owner: string, repoName:string): Promise<{
     id: number,
     name: string,
     state: string,
@@ -128,8 +202,8 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     }[]
   }[]> {
     const data = await this.octokit.rest.actions.listRepoWorkflows({
-      owner: this.owner,
-      repo: this.repo
+      owner: owner,
+      repo: repoName
     });
 
     // Create an array of promises for parallel execution
@@ -143,7 +217,7 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
       }[] = [];
       
       try {
-        runs = await this.fetchWorkflowRuns(workflow.id);
+        runs = await this.fetchWorkflowRuns(owner, repoName, workflow.id);
       } catch (error) {
         console.warn(`No runs found for workflow ${workflow.id}: ${error.message}`);
       }
@@ -159,7 +233,7 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     return Promise.all(workflowPromises);
   }
 
-  async fetchWorkflowRuns(workflow_id: number): Promise<{
+  async fetchWorkflowRuns(owner: string, repoName:string, workflow_id: number): Promise<{
     id: number;
     status: string;
     duration: number;
@@ -171,8 +245,8 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
 
     while (true) {
       const { data } = await this.octokit.rest.actions.listWorkflowRuns({
-        owner: this.owner,
-        repo: this.repo,
+        owner: owner,
+        repo: repoName,
         workflow_id,
         per_page: 100,
         page
