@@ -2,8 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatEntity } from './chat-entity';
 import { ChatConsumer } from 'src/adapter/in/event/chat.consumer';
-import { RabbitMQService } from 'src/adapter/in/event/rabbitmq.service';
-import { insertChatController } from 'src/adapter/in/event/insertChat.controller';
 import { InsertChatService } from 'src/application/insertChat.service';
 import { IC_USE_CASE } from 'src/application/port/in/insertChat-usecase.port';
 import { IC_PORT_OUT } from 'src/application/port/out/insertChat.port';
@@ -14,8 +12,8 @@ import { ChatRepository } from './chat.repository';
   imports: [
     TypeOrmModule.forFeature([ChatEntity]),
   ],
-  exports: [TypeOrmModule, RabbitMQService],
-  providers: [RabbitMQService,
+  exports: [TypeOrmModule],
+  providers: [
     {
       provide: IC_USE_CASE,
       useClass: InsertChatService
@@ -25,6 +23,6 @@ import { ChatRepository } from './chat.repository';
       useClass: InsertChatAdapter
     }, ChatRepository
   ],
-  controllers: [ChatConsumer, insertChatController]
+  controllers: [ChatConsumer]
 })
 export class ChatModule { }

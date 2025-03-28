@@ -13,7 +13,7 @@ import { IC_USE_CASE } from './application/port/in/insertChat-usecase.port'
 import { InsertChatService } from './application/insertChat.service';
 import { IC_PORT_OUT } from './application/port/out/insertChat.port';
 import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
-import { insertChatController } from './adapter/in/event/insertChat.controller';
+import { ChatConsumer } from './adapter/in/event/chat.consumer';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { insertChatController } from './adapter/in/event/insertChat.controller';
     }),
     ChatModule,
   ],
-  controllers: [FetchHistoryController, insertChatController],
+  controllers: [FetchHistoryController, ChatConsumer],
   providers: [
     {
       provide: FH_USE_CASE,
