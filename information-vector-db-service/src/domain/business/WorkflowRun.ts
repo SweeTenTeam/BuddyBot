@@ -2,9 +2,11 @@ export class WorkflowRun {
   constructor(
     private readonly id: number,
     private readonly status: string,
-    private readonly duration_secsonds: number,
+    private readonly duration_seconds: number,
     private log: string,
     private trigger: string,
+    private workflow_id: number,
+    private workflow_name: string
   ) {}
 
   getId(): number {
@@ -16,7 +18,7 @@ export class WorkflowRun {
   }
 
   getDuration(): number {
-    return this.duration_secsonds;
+    return this.duration_seconds;
   }
 
 } 

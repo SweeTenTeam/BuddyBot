@@ -2,10 +2,11 @@ import { WorkflowRun } from './WorkflowRun.js';
 
 export class Workflow {
     constructor(
-        private readonly id: number,
-        private readonly name: string,
-        private readonly state: string,
-        private readonly runs: WorkflowRun[] = []
+        private  id: number,
+        private  name: string,
+        private  state: string,
+        private repository_name: string,
+
     ) {}
 
     getId(): number {
@@ -19,12 +20,7 @@ export class Workflow {
     getState(): string {
         return this.state;
     }
-
-    getRuns(): WorkflowRun[] {
-        return this.runs;
-    }
-
-    addRun(run: WorkflowRun): void {
-        this.runs.push(run);
+    getRepositoryName(): string{
+        return this.repository_name;
     }
 }

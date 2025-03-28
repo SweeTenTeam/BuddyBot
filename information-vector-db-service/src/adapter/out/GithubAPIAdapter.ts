@@ -14,6 +14,7 @@ import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
 import { GithubCmd } from "src/domain/command/GithubCmd.js";
 import { FileCmd } from "src/domain/command/FileCmd.js";
 import { CommentPR } from "../../domain/business/CommentPR.js";
+import { WorkflowRunCmd } from "../../domain/command/WorkflowRunCmd.js";
 
 @Injectable()
 export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPort, GithubPullRequestsAPIPort, GithubRepositoryAPIPort, GithubWorkflowsAPIPort{
@@ -218,23 +219,36 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
       const workflowInfo = await this.githubAPI.fetchWorkflowsInfo(repoCmd.owner, repoCmd.repoName);
       
       for (const workflow of workflowInfo) {
-        const workflowRuns = workflow.runs.map(run => new WorkflowRun(
-          run.id,
-          run.status,
-          run.duration,
-          run.log,
-          run.trigger
-        ));
-        
         result.push(new Workflow(
           workflow.id,
           workflow.name,
           workflow.state,
-          workflowRuns
+          repoCmd.repoName
         ));
       }
     }
     
     return result;
   }
+
+
+  async fetchGithubWorkflowRuns(req: WorkflowRunCmd): Promise<WorkflowRun[]> {
+    try {
+      const runResults = await this.githubAPI.fetchWorkflowRuns(req.owner, req.repository, req.workflow_id, req.since_created);
+
+      return runResults.map(run => new WorkflowRun(
+        run.id,
+        run.status,
+        run.duration,
+        run.log,
+        run.trigger,
+        req.workflow_id,
+        req.workflow_name
+      ));
+    } catch (error) {
+      console.error(`Failed to fetch workflow runs for workflow ${req.workflow_id}:`, error);
+      throw error;
+    }
+  }
+
 }

@@ -20,7 +20,7 @@ describe('GithubAPIAdapter Integration Tests', () => {
   // it('should fetch commits and their modified files', async () => {
   //   const githubCmd = new GithubCmd();
   //   // githubCmd.lastUpdate = new Date(Date.now());
-  //  githubCmd.lastUpdate =  new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  // //  githubCmd.lastUpdate =  new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   //   const repoCmd = new RepoCmd();
   //   repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
   //   repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
@@ -39,28 +39,28 @@ describe('GithubAPIAdapter Integration Tests', () => {
   //   }
   // },20000);
 
-  it('should fetch files with content', async () => {
+  // it('should fetch files with content', async () => {
     
-    const githubCmd = new GithubCmd();
-    // githubCmd.lastUpdate = new Date(Date.now());
-     githubCmd.lastUpdate =  new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  //   const githubCmd = new GithubCmd();
+  //   // githubCmd.lastUpdate = new Date(Date.now());
+  //    githubCmd.lastUpdate =  new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
 
-    const repoCmd = new RepoCmd();
-    repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-    repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
-    repoCmd.branch_name = "develop"
-    githubCmd.repoCmdList = [repoCmd];
-    await ghService.fetchAndStoreGithubInfo(githubCmd);
-    // const files = await adapter.fetchGithubFilesInfo();
-    // console.log('Fetched files:', files);
-    // expect(files).toBeDefined();
-    // expect(Array.isArray(files)).toBe(true);
-    // if (files.length > 0) {
-    //   expect(files[0]).toHaveProperty('path');
-    //   expect(files[0]).toHaveProperty('sha');
-    //   expect(files[0]).toHaveProperty('content');
-    // }
-  });
+  //   const repoCmd = new RepoCmd();
+  //   repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+  //   repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+  //   repoCmd.branch_name = "develop"
+  //   githubCmd.repoCmdList = [repoCmd];
+  //   await ghService.fetchAndStoreGithubInfo(githubCmd);
+  //   // const files = await adapter.fetchGithubFilesInfo();
+  //   // console.log('Fetched files:', files);
+  //   // expect(files).toBeDefined();
+  //   // expect(Array.isArray(files)).toBe(true);
+  //   // if (files.length > 0) {
+  //   //   expect(files[0]).toHaveProperty('path');
+  //   //   expect(files[0]).toHaveProperty('sha');
+  //   //   expect(files[0]).toHaveProperty('content');
+  //   // }
+  // });
 
   // it('should fetch pull requests with all related information', async () => {
   //       const githubCmd = new GithubCmd();
@@ -76,6 +76,7 @@ describe('GithubAPIAdapter Integration Tests', () => {
   //   githubCmd.repoCmdList = [repoCmd, repoCmd2];
   //   const pullRequests = await adapter.fetchGithubPullRequestsInfo(githubCmd);
   //   console.log('Fetched pull requests:', pullRequests);
+  //   console.log(pullRequests.length);
   //   expect(pullRequests).toBeDefined();
   //   expect(Array.isArray(pullRequests)).toBe(true);
   //   if (pullRequests.length > 0) {
@@ -114,24 +115,36 @@ describe('GithubAPIAdapter Integration Tests', () => {
 
   */
 
-  // it('should fetch workflow information', async () => {
-  //   const workflows = await adapter.fetchGithubWorkflowInfo(new GithubCmd());
-  //   console.log('Fetched workflows:', workflows);
-  //   expect(workflows).toBeDefined();
-  //   expect(Array.isArray(workflows)).toBe(true);
-  //   if (workflows.length > 0) {
-  //     expect(workflows[0]).toHaveProperty('id');
-  //     expect(workflows[0]).toHaveProperty('name');
-  //     expect(workflows[0]).toHaveProperty('state');
-  //     const runs = workflows[0].getRuns();
-  //     expect(Array.isArray(runs)).toBe(true);
-  //     if (runs.length > 0) {
-  //       expect(runs[0]).toHaveProperty('id');
-  //       expect(runs[0]).toHaveProperty('status');
-  //       expect(runs[0]).toHaveProperty('duration_secsonds');
-  //       expect(runs[0]).toHaveProperty('log');
-  //       expect(runs[0]).toHaveProperty('trigger');
-  //     }
-  //   }
-  // });
+  it('should fetch workflow information', async () => {
+   const githubCmd = new GithubCmd();
+    // githubCmd.lastUpdate = new Date(Date.now());
+    //  githubCmd.lastUpdate =  new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const repoCmd = new RepoCmd();
+    repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+    repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+    repoCmd.branch_name = "master"
+    githubCmd.repoCmdList = [repoCmd];
+    await ghService.fetchAndStoreGithubInfo(githubCmd);
+
+
+    // // const workflows = await adapter.fetchGithubWorkflowInfo(new GithubCmd());
+    // // console.log('Fetched workflows:', workflows);
+    // // expect(workflows).toBeDefined();
+    // // expect(Array.isArray(workflows)).toBe(true);
+    // // if (workflows.length > 0) {
+    // //   expect(workflows[0]).toHaveProperty('id');
+    // //   expect(workflows[0]).toHaveProperty('name');
+    // //   expect(workflows[0]).toHaveProperty('state');
+    // //   const runs = workflows[0].getRuns();
+    // //   expect(Array.isArray(runs)).toBe(true);
+    // //   if (runs.length > 0) {
+    // //     expect(runs[0]).toHaveProperty('id');
+    // //     expect(runs[0]).toHaveProperty('status');
+    // //     expect(runs[0]).toHaveProperty('duration_secsonds');
+    // //     expect(runs[0]).toHaveProperty('log');
+    // //     expect(runs[0]).toHaveProperty('trigger');
+    // //   }
+    // // }
+  });
 }); 

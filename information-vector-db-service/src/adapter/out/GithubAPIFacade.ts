@@ -18,44 +18,25 @@ export class GithubAPIFacade{
 
 async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
   try {
-    let allCommits: any[] = [];
-    let hasMorePages = true;
-    let currentUrl: string | undefined;
+    const params = lastUpdate 
+      ? { 
+          owner, 
+          repo: repoName,
+          sha: branch,
+          per_page: 100,
+          since: lastUpdate.toISOString()
+        }
+      : { 
+          owner, 
+          repo: repoName, 
+          sha: branch,
+          per_page: 100
+        };
 
-    while (hasMorePages) {
-      const params = lastUpdate 
-        ? { 
-            owner, 
-            repo: repoName,
-            sha: branch,
-            per_page:100,
-            since: lastUpdate.toISOString()
-          }
-        : { 
-            owner, 
-            repo: repoName, 
-            sha: branch,
-            per_page:100
-          };
-
-      const response = currentUrl 
-        ? await this.octokit.request(currentUrl)
-        : await this.octokit.rest.repos.listCommits(params);
-      
-      if (!response.data.length) break;
-      
-      allCommits.push(...response.data);
-
-      const linkHeader = response.headers.link;
-      if (!linkHeader) {
-        hasMorePages = false;
-        break;
-      }
-
-      const nextMatch = linkHeader.match(/<([^>]+)>; rel="next"/);
-      currentUrl = nextMatch ? nextMatch[1] : undefined;
-      hasMorePages = !!currentUrl;
-    }
+    const allCommits = await this.octokit.paginate(
+      this.octokit.rest.repos.listCommits,
+      params
+    );
 
     return {
       data: allCommits,
@@ -163,46 +144,72 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
   }
 
   async fetchPullRequestsInfo(owner: string, repoName:string, baseBranchName: string): Promise<OctokitTypes.OctokitResponse<{id: number, number: number, title: string, body: string | null, state: string, assignees?: {login: string}[] | undefined | null, requested_reviewers?: {login: string}[] | null, head: {ref: string}, base: {ref: string}}[], 200>> {
-    const data = await this.octokit.rest.pulls.list({
-        owner: owner,
-        repo: repoName,
-        state: 'all',
-        base: baseBranchName
-    });
-    return data;
+    try {
+      const pulls = await this.octokit.paginate(
+        this.octokit.rest.pulls.list,
+        {
+          owner: owner,
+          repo: repoName,
+          state: 'all',
+          base: baseBranchName,
+          per_page: 100
+        }
+      );
+
+      return {
+        data: pulls,
+        status: 200,
+        headers: {},
+        url: ''
+      } as OctokitTypes.OctokitResponse<{id: number, number: number, title: string, body: string | null, state: string, assignees?: {login: string}[] | undefined | null, requested_reviewers?: {login: string}[] | null, head: {ref: string}, base: {ref: string}}[], 200>;
+    } catch (error) {
+      console.error(`Failed to fetch pull requests for base branch ${baseBranchName}:`, error);
+      throw error;
+    }
   }
 
-  async fetchPullRequestInfo(owner: string, repoName:string): Promise<OctokitTypes.OctokitResponse<{}, 200>> {
-    const data = await this.octokit.rest.pulls.get({
-        owner: owner,
-        repo: repoName,
-        pull_number: 1 
-        
-    });
-    return data;
-  }
 
   async fetchPullRequestModifiedFiles(owner: string, repoName:string, pull_number: number): Promise<string[]> {
-    const data = await this.octokit.rest.pulls.listFiles({
-        owner: owner,
-        repo: repoName,
-        pull_number: pull_number
-    });
+    try {
+      const files = await this.octokit.paginate(
+        this.octokit.rest.pulls.listFiles,
+        {
+          owner: owner,
+          repo: repoName,
+          pull_number: pull_number,
+          per_page: 100
+        }
+      );
 
-    const filenames: string[] = [];
-    for(const file of data.data){
-        filenames.push(file.filename);
+      return files.map(file => file.filename);
+    } catch (error) {
+      console.error(`Failed to fetch modified files for PR #${pull_number}:`, error);
+      throw error;
     }
-    return filenames;
   }
 
   async fetchPullRequestReviewComments(owner: string, repoName:string, pull_number: number) {
-    const data = await this.octokit.pulls.listReviewComments({
-        owner: owner,
-        repo: repoName,
-        pull_number: pull_number,
-    });
-    return data;
+    try {
+      const comments = await this.octokit.paginate(
+        this.octokit.pulls.listReviewComments,
+        {
+          owner: owner,
+          repo: repoName,
+          pull_number: pull_number,
+          per_page: 100
+        }
+      );
+
+      return {
+        data: comments,
+        status: 200,
+        headers: {},
+        url: ''
+      } as OctokitTypes.OctokitResponse<any[], 200>;
+    } catch (error) {
+      console.error(`Failed to fetch review comments for PR #${pull_number}:`, error);
+      throw error;
+    }
   }
   
   async fetchRepositoryInfo(owner: string, repoName:string): Promise<OctokitTypes.OctokitResponse<{id: number, name: string, created_at: string, updated_at: string, language: string | null}, 200>>{ //wtf
@@ -216,93 +223,70 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
   async fetchWorkflowsInfo(owner: string, repoName:string): Promise<{
     id: number,
     name: string,
-    state: string,
-    runs: {
-      id: number,
-      status: string,
-      duration: number,
-      log: string,
-      trigger: string
-    }[]
+    state: string
   }[]> {
-    const data = await this.octokit.rest.actions.listRepoWorkflows({
-      owner: owner,
-      repo: repoName
-    });
+    try {
+      const workflows = await this.octokit.paginate(
+        this.octokit.rest.actions.listRepoWorkflows,
+        {
+          owner: owner,
+          repo: repoName,
+          per_page: 100
+        }
+      );
 
-    // Create an array of promises for parallel execution
-    const workflowPromises = data.data.workflows.map(async (workflow) => {
-      let runs: {
-        id: number,
-        status: string,
-        duration: number,
-        log: string,
-        trigger: string
-      }[] = [];
-      
-      try {
-        runs = await this.fetchWorkflowRuns(owner, repoName, workflow.id);
-      } catch (error) {
-        console.warn(`No runs found for workflow ${workflow.id}: ${error.message}`);
-      }
-
-      return {
+      return workflows.map(workflow => ({
         id: workflow.id,
         name: workflow.name,
-        state: workflow.state,
-        runs
-      };
-    });
-
-    return Promise.all(workflowPromises);
+        state: workflow.state
+      }));
+    } catch (error) {
+      console.error(`Failed to fetch workflows for repo ${owner}/${repoName}:`, error);
+      throw error;
+    }
   }
 
-  async fetchWorkflowRuns(owner: string, repoName:string, workflow_id: number): Promise<{
+  async fetchWorkflowRuns(owner: string, repoName:string, workflow_id: number, since_created?: Date): Promise<{
     id: number;
     status: string;
     duration: number;
     log: string;
     trigger: string;
   }[]> {
-    let allRuns: any[] = [];
-    let page = 1;
-
-    while (true) {
-      const { data } = await this.octokit.rest.actions.listWorkflowRuns({
+    try {
+      const params: any = {
         owner: owner,
         repo: repoName,
         workflow_id,
-        per_page: 100,
-        page
-      });
-
-      if (!data.workflow_runs.length) break;
-
-      allRuns.push(...data.workflow_runs);
-      page++;
-
-      if (data.workflow_runs.length < 100) break;
-    }
-
-    if (!allRuns.length) throw new Error('No workflow runs found');
-
-    return allRuns.map((run) => {
-      const startTime = new Date(run.run_started_at || run.created_at);
-      const endTime = run.updated_at ? new Date(run.updated_at) : new Date();
-      return {
-        id: run.id,
-        status: run.status || 'unknown',
-        duration: Math.round((endTime.getTime() - startTime.getTime()) / 1000),
-        log: run.html_url || '',
-        trigger: run.event || 'unknown'
+        per_page: 100
       };
-    });
+      
+      // Add created date filter if provided
+      if (since_created) {
+        // Format as >=YYYY-MM-DD for GitHub API date filtering
+        params.created = `>=${since_created.toISOString().split('T')[0]}`;
+      }
+      
+      const runs = await this.octokit.paginate(
+        this.octokit.rest.actions.listWorkflowRuns,
+        params
+      );
+
+      return runs.map((run: any) => {
+        const startTime = new Date(run.run_started_at || run.created_at);
+        const endTime = run.updated_at ? new Date(run.updated_at) : new Date();
+        return {
+          id: run.id,
+          status: run.status || 'unknown',
+          duration: Math.round((endTime.getTime() - startTime.getTime()) / 1000),
+          log: run.html_url || '',
+          trigger: run.event || 'unknown'
+        };
+      });
+    } catch (error) {
+      console.error(`Failed to fetch workflow runs for workflow ${workflow_id}:`, error);
+      throw error;
+    }
   }
-
-//const githubAPI = new GithubAPIFacade();
-//async function ziomela(): Promise<void> {
-//  console.log(await githubAPI.fetchPullRequestsInfo()); //127703483 //124129218
-//}
-//ziomela();
-
+  
 }
