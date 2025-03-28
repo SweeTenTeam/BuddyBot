@@ -1,9 +1,9 @@
-export class Chat{
-    constructor(
-        public readonly id: string, //UUID?
-        public readonly question: string,
-        public readonly questionDate: Date,
-        public readonly answer: string,
-        public readonly answerDate: Date,
-    ) {}
+import { Message } from "./message";
+
+export class Chat {
+  constructor(
+    public readonly id: string,
+    public readonly question: Message,
+    public readonly answer: Message,
+  ) {}
 }

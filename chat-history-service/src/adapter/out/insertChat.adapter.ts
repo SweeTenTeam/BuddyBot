@@ -7,7 +7,7 @@ import { Injectable } from '@nestjs/common';
 export class InsertChatAdapter implements InsertChatPort {
     constructor(private readonly insertRepository: ChatRepository) { }
 
-    insertChat(cmd: InsertChatCmd): Promise<boolean> {
-        return this.insertRepository.insertChat(cmd.question, cmd.answer, cmd.date);
+    async insertChat(cmd: InsertChatCmd): Promise<boolean> {
+        return await this.insertRepository.insertChat(cmd.question, cmd.answer, cmd.date);
     }
 }

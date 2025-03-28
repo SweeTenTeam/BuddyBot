@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { rabbitMQConfig } from './history.rabbit.options';
+import { rabbitMQConfig } from './chatbot.rabbit.options';
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 
 @Injectable()
-export class HistoryService {
+export class ChatBotService {
   private client: ClientProxy;
 
   constructor() {

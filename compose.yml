@@ -6,6 +6,8 @@ services:
 
   api-gateway:
     build: apiGateway
+    ports:
+      - "80:80"
   
   history-service:
     build: chat-history-service

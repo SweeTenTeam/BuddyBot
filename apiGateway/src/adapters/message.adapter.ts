@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { ChatBotPort } from '../core/ports/chatbot.port';
 import { ReqAnswerCmd } from '../core/domain/req-answer-cmd';
 import { ProvChat } from '../core/domain/prov-chat';
-import { RabbitMQService } from '../infrastructure/rabbitmq/rabbitmq.service';
+import { ChatBotService } from '@infrastructure/rabbitmq/chatbot.service';
 
 @Injectable()
 export class MessageAdapter implements ChatBotPort {
-  constructor(private readonly rabbitMQService: RabbitMQService) {}
+  constructor(private readonly chatbotService: ChatBotService) {}
 
   /* */
   async getRisposta(req: ReqAnswerCmd): Promise<ProvChat> {
@@ -21,7 +21,7 @@ export class MessageAdapter implements ChatBotPort {
 
     console.log(`Richiesta inviata al chatbot:`, request);
 
-    const response = await this.rabbitMQService.sendToQueue<ReqAnswerCmd, ProvChat>('chatbot_queue', request);
+    const response = await this.chatbotService.sendMessage('chatbot_queue', request); // no chatbotqueue ma messagepattern
 
     if (!response || !response.answer) {
       console.error(" Errore: Risposta non valida da RabbitMQ", response);
