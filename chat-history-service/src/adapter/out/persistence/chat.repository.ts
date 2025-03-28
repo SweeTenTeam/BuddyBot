@@ -8,7 +8,7 @@ export class ChatRepository {
   constructor(
     @InjectRepository(ChatEntity)
     private readonly chatRepo: Repository<ChatEntity>,
-  ) { }
+  ) {}
 
   async insertChat(question: string, answer: string, date: Date): Promise<boolean> {
     try {
@@ -25,13 +25,14 @@ export class ChatRepository {
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
     try {
       const take = numChat ? numChat : 5;
+      console.log("Last chat id: "+ lastChatId)
       return await this.chatRepo.find({
-        where: { id: lastChatId },
+        //where: { id: lastChatId },
         take,
         order: { answerDate: 'DESC' },
       });
     } catch(error) {
-      throw new Error('Error during History-fetch')
+      throw new Error(`Error during History-fetch : ${error}`)
     }
   }
 

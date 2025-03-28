@@ -7,7 +7,7 @@ import { FetchRequestDTO } from "./dto/FetchRequestDTO";
 import { ChatDTO } from "./dto/ChatDTO";
 import { FetchHistoryCmd } from "src/domain/fetchHistoryCmd";
 
-@Controller('api/chat')
+@Controller()
 export class FetchHistoryController {
   constructor(@Inject(FH_USE_CASE) private readonly FetchHistoryService: FetchHistoryUseCase) { }
   /*

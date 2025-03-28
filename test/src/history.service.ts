@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { rabbitMQConfig } from './rabbit.options';
+import { rabbitMQConfig } from './history.rabbit.options';
 import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 
 @Injectable()
-export class ProducerService {
+export class HistoryService {
   private client: ClientProxy;
 
   constructor() {
@@ -11,6 +11,7 @@ export class ProducerService {
   }
 
   async sendMessage(pattern: string, data: any) {
+    console.log("Sending");
     return this.client.send(pattern, data).toPromise(); //lastValueFrom (?)
   }
 }

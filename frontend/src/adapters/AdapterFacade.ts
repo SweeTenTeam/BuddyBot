@@ -11,13 +11,13 @@ export class AdapterFacade {
         //return [];
 
         try {
-            const response = await fetch(`https://api.example.com/history`, {
-                method: "POST",
+            const response = await fetch(`https://api-gateway/api/get-storico/1`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     // Eventuali header necessari
                 },
-                body: JSON.stringify({ id, offset }),
+                //body: JSON.stringify({ id, offset }),
                 signal: controller.signal,
             });
             clearTimeout(timeoutId);
@@ -34,7 +34,7 @@ export class AdapterFacade {
         //return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
 
         try {
-            const response = await fetch(`https://api.example.com/send`, {
+            const response = await fetch(`http://api-gateway/api/get-risposta`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
