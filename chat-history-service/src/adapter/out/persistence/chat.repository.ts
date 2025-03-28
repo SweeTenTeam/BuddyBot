@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThan, DataSource } from 'typeorm';
+import { Repository, LessThan, DataSource, LessThanOrEqual } from 'typeorm';
 import { ChatEntity } from './chat-entity';
 
 @Injectable()
@@ -38,9 +38,19 @@ export class ChatRepository {
   */
 
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
-    try {
-      const take = numChat ? numChat : 5;
-      // Trova la chat corrente (quella dell'ID)
+  try {
+    const take = numChat ? numChat : 5;
+
+    //caso senza ID (quindi primo accesso)
+    if (!lastChatId) {
+      const lastChats = await this.chatRepo.find({
+        order: { answerDate: 'DESC' },
+        take,
+      });
+      return lastChats.reverse()
+    }
+
+    //caso con ID trovo e prendo la prima chat e poi le n-1 rimanenti
     const lastChat = await this.chatRepo.findOne({
       where: { id: lastChatId },
     });
@@ -49,26 +59,22 @@ export class ChatRepository {
       throw new Error('Last chat ID not found');
     }
 
-    // Recupera le (numChat - 1) chat precedenti
     const previousChats = await this.chatRepo.find({
       where: {
         answerDate: LessThan(lastChat.answerDate),
       },
       order: { answerDate: 'DESC' },
       take: take - 1,
-    });
+});
+    const combo = [...previousChats.reverse(), lastChat]
 
-    // Combina: [lastChat, ...previousChats] mantenendo l’ordine corretto
-    const combined = [lastChat, ...previousChats];
+    return combo;
 
-    // Se vuoi mostrarli dal più vecchio al più recente
-    return combined.sort((a, b) => a.answerDate.getTime() - b.answerDate.getTime());
-
-    } catch(error) {
-      throw new Error('Error during History-fetch')
-    }
+  } catch (error) {
+    console.error('Error during History-fetch:', error);
+    throw new Error('Error during History-fetch');
   }
-
+}
 
 
 }
