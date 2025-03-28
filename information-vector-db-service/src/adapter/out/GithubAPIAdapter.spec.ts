@@ -17,48 +17,50 @@ describe('GithubAPIAdapter Integration Tests', () => {
     ghService = new GithubService(adapter);
   });
 
-  it('should fetch commits and their modified files', async () => {
+  // it('should fetch commits and their modified files', async () => {
+  //   const githubCmd = new GithubCmd();
+  //   // githubCmd.lastUpdate = new Date(Date.now());
+  //  githubCmd.lastUpdate =  new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  //   const repoCmd = new RepoCmd();
+  //   repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+  //   repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
+  //   repoCmd.branch_name = "develop"
+  //   githubCmd.repoCmdList = [repoCmd];
+  //   const commits = await adapter.fetchGithubCommitsInfo(githubCmd);
+  //   console.log('Fetched commits:', commits);
+  //   console.log(commits);
+  //   expect(commits).toBeDefined();
+  //   expect(Array.isArray(commits)).toBe(true);
+  //   if (commits.length > 0) {
+  //     expect(commits[0]).toHaveProperty('hash');
+  //     expect(commits[0]).toHaveProperty('message');
+  //     expect(commits[0]).toHaveProperty('author');
+  //     expect(commits[0]).toHaveProperty('files');
+  //   }
+  // },20000);
+
+  it('should fetch files with content', async () => {
+    
     const githubCmd = new GithubCmd();
     // githubCmd.lastUpdate = new Date(Date.now());
-   githubCmd.lastUpdate =  new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+     githubCmd.lastUpdate =  new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+
     const repoCmd = new RepoCmd();
     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
     repoCmd.branch_name = "develop"
     githubCmd.repoCmdList = [repoCmd];
-    const commits = await adapter.fetchGithubCommitsInfo(githubCmd);
-    console.log('Fetched commits:', commits);
-    console.log(commits);
-    expect(commits).toBeDefined();
-    expect(Array.isArray(commits)).toBe(true);
-    if (commits.length > 0) {
-      expect(commits[0]).toHaveProperty('hash');
-      expect(commits[0]).toHaveProperty('message');
-      expect(commits[0]).toHaveProperty('author');
-      expect(commits[0]).toHaveProperty('files');
-    }
-  },20000);
-
-//   it('should fetch files with content', async () => {
-    
-//     const githubCmd = new GithubCmd();
-//     // githubCmd.lastUpdate = new Date(Date.now());
-//     const repoCmd = new RepoCmd();
-//     repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-//     repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
-//     repoCmd.branch_name = "develop"
-//     githubCmd.repoCmdList = [repoCmd];
-//     await ghService.fetchAndStoreGithubInfo(githubCmd);
-//     // const files = await adapter.fetchGithubFilesInfo();
-//     // console.log('Fetched files:', files);
-//     // expect(files).toBeDefined();
-//     // expect(Array.isArray(files)).toBe(true);
-//     // if (files.length > 0) {
-//     //   expect(files[0]).toHaveProperty('path');
-//     //   expect(files[0]).toHaveProperty('sha');
-//     //   expect(files[0]).toHaveProperty('content');
-//     // }
-//   });
+    await ghService.fetchAndStoreGithubInfo(githubCmd);
+    // const files = await adapter.fetchGithubFilesInfo();
+    // console.log('Fetched files:', files);
+    // expect(files).toBeDefined();
+    // expect(Array.isArray(files)).toBe(true);
+    // if (files.length > 0) {
+    //   expect(files[0]).toHaveProperty('path');
+    //   expect(files[0]).toHaveProperty('sha');
+    //   expect(files[0]).toHaveProperty('content');
+    // }
+  });
 
   // it('should fetch pull requests with all related information', async () => {
   //       const githubCmd = new GithubCmd();

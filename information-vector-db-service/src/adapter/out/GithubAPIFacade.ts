@@ -116,16 +116,16 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     }
   }
 
-  async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
-    const data = await this.octokit.rest.git.getTree({
-      owner: this.owner,
-      repo: this.repo,
-      tree_sha: branch_name, //can also be the branch's name
-      recursive: 'true',
-    });
+  // async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
+  //   const data = await this.octokit.rest.git.getTree({
+  //     owner: this.owner,
+  //     repo: this.repo,
+  //     tree_sha: branch_name, //can also be the branch's name
+  //     recursive: 'true',
+  //   });
 
-    return data;
-  }
+  //   return data;
+  // }
 
   async fetchFileInfo(path: string, owner: string, repo: string, branch:string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
     const data = await this.octokit.rest.repos.getContent({
@@ -136,6 +136,30 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     });
 
     return data;
+  }
+
+  async fetchRawFileContent(owner: string, repo: string, path: string, branch: string): Promise<string> {
+    try {
+      console.log("insisde fetch raw")
+      const response = await this.octokit.request('GET /repos/{owner}/{repo}/contents/{path}', {
+        owner,
+        repo,
+        path,
+        ref: branch,
+        headers: {
+          accept: 'application/vnd.github.raw'
+        }
+      });
+
+      if (typeof response.data !== 'string') {
+        throw new Error('Expected string response for raw content');
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching file content:', error);
+      throw error;
+    }
   }
 
   async fetchPullRequestsInfo(owner: string, repoName:string, baseBranchName: string): Promise<OctokitTypes.OctokitResponse<{id: number, number: number, title: string, body: string | null, state: string, assignees?: {login: string}[] | undefined | null, requested_reviewers?: {login: string}[] | null, head: {ref: string}, base: {ref: string}}[], 200>> {

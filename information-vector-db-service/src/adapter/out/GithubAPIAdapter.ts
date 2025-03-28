@@ -82,12 +82,27 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
       if (!this.isTextFile(fileCmd.path)) continue;
       
       try {
-        const fileContents = await this.githubAPI.fetchFileInfo(fileCmd.path, fileCmd.owner, fileCmd.repository, fileCmd.branch);
-        let content = Buffer.from(fileContents.data.content.replaceAll("\n",""), 'base64') + '';
+        const fileInfo = await this.githubAPI.fetchFileInfo(fileCmd.path, fileCmd.owner, fileCmd.repository, fileCmd.branch);
+        //can't get the content of files over 100mb
+        if(fileInfo.data.size && fileInfo.data.size >104857600) continue; 
+
+        const isLargeFile = fileInfo.data.size && fileInfo.data.size > 1048576;
         
+        let content: string;
+        if (isLargeFile) { // For large files use raw content
+          content = await this.githubAPI.fetchRawFileContent(
+            fileCmd.owner,
+            fileCmd.repository,
+            fileCmd.path,
+            fileCmd.branch
+          );
+          
+        } else {
+          content = Buffer.from(fileInfo.data.content.replaceAll("\n",""), 'base64') + '';
+        }
         result.push(new File(
-          fileContents.data.path,
-          fileContents.data.sha,
+          fileInfo.data.path,
+          fileInfo.data.sha,
           fileCmd.repository,
           fileCmd.branch,
           content
