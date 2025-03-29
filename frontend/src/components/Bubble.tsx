@@ -20,6 +20,7 @@ export default function Bubble({ message, user, error, loading }: { message: Mes
         ? "ml-auto bg-popover dark:bg-muted-foreground rounded-br-none flex justify-end"
         : "mr-auto bg-chart-1 rounded-bl-none flex justify-start";
 
+    const parsedTimestamp: number = Date.parse(message.timestamp);
     return (
         <>
             {!user && loading ? (
@@ -34,7 +35,7 @@ export default function Bubble({ message, user, error, loading }: { message: Mes
                         <p className="w-full h-full">{message.content}</p>
                     )}
 
-                    <p className="text-sm opacity-80 text-right">{formatDate(Date.parse(message.timestamp))}</p>
+                    <p className="text-sm opacity-80 text-right">{formatDate(parsedTimestamp)}</p>
                 </div>
             )}
         </>
