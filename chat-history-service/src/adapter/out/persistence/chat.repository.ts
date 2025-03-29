@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan, DataSource, LessThanOrEqual } from 'typeorm';
 import { ChatEntity } from './chat-entity';
+import { ChatDTO } from 'src/adapter/in/dto/ChatDTO';
+import { Chat } from 'src/domain/chat';
 
 @Injectable()
 export class ChatRepository {
@@ -10,16 +12,12 @@ export class ChatRepository {
     private readonly chatRepo: Repository<ChatEntity>,
   ) { }
 
-  async insertChat(question: string, answer: string, date: Date): Promise<boolean> {
-    try {
-      const newChat = this.chatRepo.create({ question, questionDate: date, answer });
-      await this.chatRepo.save(newChat);
-      console.log("Vamos")
-      return true;
-    } catch (error) {
-      console.error('Error inserting chat:', error);
-      return false;
-    }
+  async insertChat(question: string, answer: string, date: Date): Promise<Chat> {
+    const newChat = this.chatRepo.create({ question, questionDate: date, answer });
+    await this.chatRepo.save(newChat);
+    console.log(newChat)
+    console.log("Vamos")
+    return newChat;
   }
 
   /*
