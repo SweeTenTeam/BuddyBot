@@ -4,13 +4,15 @@
   answer: string;
   date: Date;
 }*/
-export class Message { 
-  content: string; 
-  timestamp: string; 
-}
+
+import { Message } from "./message";
+
+
 
 export class Chat {
-  id: string;
-  question: Message;
-  answer: Message;
+  constructor(
+    public readonly id: string,
+    public readonly question: Message,
+    public readonly answer: Message,
+  ) {}
 }

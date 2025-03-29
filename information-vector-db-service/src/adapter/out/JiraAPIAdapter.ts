@@ -29,6 +29,7 @@ export class JiraAPIAdapter implements JiraAPIPort {
         }
         result.push(
           new Ticket(
+            issues[i].id ?? '',
             fields.summary,
             fields.description ?? 'No description',
             fields.assignee ? fields.assignee.displayName : 'No assignee',

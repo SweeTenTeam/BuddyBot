@@ -26,11 +26,18 @@ export class ChatRepository {
     try {
       const take = numChat ? numChat : 5;
       console.log("Last chat id: "+ lastChatId)
-      return await this.chatRepo.find({
-        //where: { id: lastChatId },
+      if(lastChatId === ''){
+        return await this.chatRepo.find({
         take,
         order: { answerDate: 'DESC' },
       });
+      } else {
+        return await this.chatRepo.find({
+        where: { id: lastChatId },
+        take,
+        order: { answerDate: 'DESC' },
+        });
+      }      
     } catch(error) {
       throw new Error(`Error during History-fetch : ${error}`)
     }

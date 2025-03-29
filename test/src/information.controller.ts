@@ -3,10 +3,18 @@ import { InformationService } from './information.service';
 import { FetchGithubDto } from './dto/FetchGithub.dto';
 import { FetchJiraDto } from './dto/FetchJira.dto';
 import { FetchConfluenceDto } from './dto/FetchConfluence.dto';
+import { RetrieveCmd } from './cmd/RetrieveCmd';
 
 @Controller()
 export class InformationController {
   constructor(private readonly producerService: InformationService) {}
+
+  @Get('/retrieve')
+  async retrieve() {
+    const wtf = await this.producerService.sendMessage('retrieve.information', new RetrieveCmd('Can you tell me the latest commits?'));
+    console.log(wtf);
+    return 'Message sent!';
+  }
 
   @Get('/github')
   async sendMessage() {

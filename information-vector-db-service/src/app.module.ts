@@ -25,6 +25,9 @@ import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase.js';
 import { ConfluenceAPIPort } from './application/port/out/ConfluenceAPIPort.js';
 import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter.js';
 import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
+import { GithubStoreAdapter } from './adapter/out/GithubStoreAdapter.js';
+import { ConfluenceStoreAdapter } from './adapter/out/ConfluenceStoreAdapter.js';
+import { JiraStoreAdapter } from './adapter/out/JiraStoreAdapter.js';
 
 @Module({
   imports: [],
@@ -70,6 +73,7 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
     },
     GithubAPIAdapter,
     GithubAPIFacade,
+    GithubStoreAdapter,
     {
       provide: JIRA_USECASE, 
       useClass: JiraService, 
@@ -79,6 +83,7 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
       useClass: JiraAPIAdapter, 
     },
     JiraAPIFacade,
+    JiraStoreAdapter,
     {
       provide: CONFLUENCE_USECASE,
       useClass: ConfluenceService
@@ -87,7 +92,8 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
       provide: ConfluenceAPIPort,
       useClass: ConfluenceAPIAdapter,
     },
-    ConfluenceAPIFacade
+    ConfluenceAPIFacade,
+    ConfluenceStoreAdapter
   ],
 })
 export class AppModule {}

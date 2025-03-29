@@ -1,4 +1,6 @@
 export class RequestChatDTO {
-  id: string; // UUID
-  numChat: number;
+  constructor(
+    public readonly id: string, // UUID
+    public readonly numChat: number
+  ) {}
 }

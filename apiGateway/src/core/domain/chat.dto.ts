@@ -1,17 +1,9 @@
-/*export class ChatDTO {
-  id: string; // UUID
-  question: string;
-  answer: string;
-  date: Date;
-}
-*/
-export class ChatDTO {
-  id: string;
-  question: Message;
-  answer: Message;
-}
+import { MessageDto } from "./message.dto";
 
-export class Message { 
-  content: string; 
-  timestamp: string; 
+export class ChatDTO {
+  constructor(
+    public readonly id: string,
+    public readonly question: MessageDto,
+    public readonly answer: MessageDto,
+  ) {}
 }

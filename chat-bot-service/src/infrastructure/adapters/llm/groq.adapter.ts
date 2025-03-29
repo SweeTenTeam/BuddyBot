@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Chat } from '../../../domain/entities/chat.entity';
-import { ReqAnswerCmd } from '../../../application/commands/request-answer.cmd';
-import { LLMPort } from '../../../core/ports/llm.port';
-import { Groq } from 'groq-sdk';
-import { Information } from 'src/domain/entities/information.entity';
+import { Chat } from '../../../domain/entities/chat.entity.js';
+import { ReqAnswerCmd } from '../../../application/commands/request-answer.cmd.js';
+import { LLMPort } from '../../../core/ports/llm.port.js';
+import { Information } from 'src/domain/entities/information.entity.js';
 import { PromptTemplate } from "@langchain/core/prompts";
-import { StringOutputParser } from '@langchain/core/dist/output_parsers';
+import { StringOutputParser } from '@langchain/core/output_parsers';
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
 import { ChatGroq } from "@langchain/groq";
 

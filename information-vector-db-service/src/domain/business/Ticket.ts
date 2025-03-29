@@ -1,4 +1,7 @@
+import { Metadata, Origin, Type } from "./metadata.js";
+
 export class Ticket {
+  public id: string;
   public title: string;
   public description: string;
   public assignee: string;
@@ -13,6 +16,7 @@ export class Ticket {
   public relatedTickets: string[];
 
   constructor(
+    id: string,
     title: string,
     description: string,
     assignee: string,
@@ -26,6 +30,7 @@ export class Ticket {
     comments: string[],
     relatedTickets: string[],
   ) {
+    this.id = id;
     this.title = title;
     this.description = description;
     this.assignee = assignee;
@@ -40,12 +45,11 @@ export class Ticket {
     this.relatedTickets = relatedTickets;
   }
 
-  toJson(): JSON {
-    const result: JSON = JSON;
-    result['title'] = this.title;
-    result['description'] = this.description;
-    result['assignee'] = this.assignee;
-    result['status'] = this.status;
-    return result;
+  toStringifiedJson(): string {
+    return JSON.stringify(this);
+  }
+
+  getMetadata(): Metadata {
+    return new Metadata(Origin.JIRA, Type.TICKET, this.id);
   }
 }

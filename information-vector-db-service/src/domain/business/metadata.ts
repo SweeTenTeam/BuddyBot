@@ -1,11 +1,17 @@
 export enum Origin {
-  GITHUB = 'SYSTEM',
-  JIRA = 'USER',
+  GITHUB = 'GITHUB',
+  JIRA = 'JIRA',
   CONFLUENCE = "CONFLUENCE"
 }
 
 export enum Type {
-  COMMMIT = 'COMMIT',
+  COMMIT = 'COMMIT',
+  DOCUMENT = 'DOCUMENT',
+  FILE = 'FILE',
+  PULLREQUEST = 'PULLREQUEST',
+  REPOSITORY = 'REPOSITORY',
+  TICKET = 'TICKET',
+  WORKFLOW = 'WORKFLOW'
 }
 
 export class Metadata {

@@ -8,13 +8,14 @@ import { InsertChatCmd } from "src/domain/insertChatCmd";
 @Controller()
 export class ChatConsumer {
     constructor(@Inject(IC_USE_CASE) private readonly insertChatService: InsertChatUseCase) {}
+
     @MessagePattern('chat_message')
-    handleMessage(@Payload() data: CreateChatDTO) {
+    async handleMessage(@Payload() data: CreateChatDTO) {
         const insertChatCmd: InsertChatCmd = { 
             question: data.question,
             answer: data.answer,
             date: data.date
         }
-        this.insertChatService.insertChat(insertChatCmd)
+        return await this.insertChatService.insertChat(insertChatCmd);
     }
 }

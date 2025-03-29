@@ -6,12 +6,12 @@ export class AdapterFacade {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
-        if (id === "") return historyData1;
-        else if (id == "240") return historyData;
-        return [];
+        //if (id === "") return historyData1;
+        //else if (id == "240") return historyData;
+        //return [];
 
         try {
-            const response = await fetch(`http://api-gateway/api/get-storico/${id}?num=${offset}`, {
+            const response = await fetch(`http://localhost/api/get-storico?id=${id}&num=${offset}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -30,10 +30,10 @@ export class AdapterFacade {
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
-        return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
+        //return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
 
         try {
-            const response = await fetch(`http://api-gateway/api/get-risposta`, {
+            const response = await fetch(`http://localhost/api/get-risposta`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
