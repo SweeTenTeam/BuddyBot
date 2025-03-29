@@ -30,6 +30,7 @@ export class Ticket {
     comments: string[],
     relatedTickets: string[],
   ) {
+    this.id = id;
     this.title = title;
     this.description = description;
     this.assignee = assignee;

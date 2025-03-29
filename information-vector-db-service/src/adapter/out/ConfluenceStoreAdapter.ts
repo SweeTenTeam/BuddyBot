@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { ConfluenceStoreInfoPort } from "src/application/port/out/ConfluenceStoreInfoPort.js";
-import { ConfluenceDocument } from "src/domain/business/ConfluenceDocument.js";
+import { ConfluenceStoreInfoPort } from "../../application/port/out/ConfluenceStoreInfoPort.js";
+import { ConfluenceDocument } from "../../domain/business/ConfluenceDocument.js";
 import { QdrantInformationRepository } from "./persistance/qdrant-information-repository.js";
-import { Information } from "src/domain/business/information.js";
+import { Information } from "../../domain/business/information.js";
 
 @Injectable()
 export class ConfluenceStoreAdapter implements ConfluenceStoreInfoPort {

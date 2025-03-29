@@ -4,8 +4,8 @@ import { InformationEntity } from "./entities/information.entity.js";
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import { Document } from "langchain/document";
 import { MetadataEntity } from "./entities/metadata.entity.js";
-import { Information } from "src/domain/business/information.js";
-import { Metadata } from "src/domain/business/metadata.js";
+import { Information } from "../../../domain/business/information.js";
+import { Metadata } from "../../../domain/business/metadata.js";
 
 @Injectable()
 export class QdrantInformationRepository {
@@ -128,5 +128,4 @@ export class QdrantInformationRepository {
       return false;
     }
   }
-
 }

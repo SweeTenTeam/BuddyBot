@@ -21,7 +21,9 @@ export class MessageAdapter implements ChatBotPort {
 
     console.log(`Richiesta inviata al chatbot:`, request);
 
-    const response = await this.chatbotService.sendMessage('chatbot_queue', request); // no chatbotqueue ma messagepattern
+    const response = await this.chatbotService.sendMessage('get-answer', request); // no chatbotqueue ma messagepattern
+
+    console.log(response);
 
     if (!response || !response.answer) {
       console.error(" Errore: Risposta non valida da RabbitMQ", response);

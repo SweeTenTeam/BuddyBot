@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { GithubStoreInfoPort } from "src/application/port/out/GithubStoreInfoPort.js";
-import { GithubInfo } from "src/domain/business/GithubInfo.js";
+import { GithubStoreInfoPort } from "../../application/port/out/GithubStoreInfoPort.js";
+import { GithubInfo } from "../../domain/business/GithubInfo.js";
 import { QdrantInformationRepository } from "./persistance/qdrant-information-repository.js";
-import { Information } from "src/domain/business/information.js";
+import { Information } from "../../domain/business/information.js";
 
 @Injectable()
 export class GithubStoreAdapter implements GithubStoreInfoPort {

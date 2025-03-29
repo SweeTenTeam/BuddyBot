@@ -1,10 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Chat } from '../../domain/entities/chat.entity';
-import { ReqAnswerCmd } from '../../application/commands/request-answer.cmd';
-import { LLMPort, LLM_PORT } from '../ports/llm.port';
-import { VECTOR_DB_PORT, VectorDbPort } from '../ports/vector-db.port';
-import { VectorDbAdapter } from 'src/infrastructure/adapters/message-broker/vector-db.adapter';
-import { ElaborazioneUseCase } from 'src/application/use-cases/elaborazione.use-case';
+import { Chat } from '../../domain/entities/chat.entity.js';
+import { ReqAnswerCmd } from '../../application/commands/request-answer.cmd.js';
+import { LLMPort, LLM_PORT } from '../ports/llm.port.js';
+import { VECTOR_DB_PORT, VectorDbPort } from '../ports/vector-db.port.js';
+import { ElaborazioneUseCase } from '../../application/use-cases/elaborazione.use-case.js';
 
 @Injectable()
 export class ElaborazioneService implements ElaborazioneUseCase{

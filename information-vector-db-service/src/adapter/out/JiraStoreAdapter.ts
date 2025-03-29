@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { JiraStoreInfoPort } from "src/application/port/out/JiraStoreInfoPort.js";
-import { Information } from "src/domain/business/information.js";
-import { Ticket } from "src/domain/business/Ticket.js";
+import { JiraStoreInfoPort } from "../../application/port/out/JiraStoreInfoPort.js";
+import { Information } from "../../domain/business/information.js";
+import { Ticket } from "../../domain/business/Ticket.js";
 import { QdrantInformationRepository } from "./persistance/qdrant-information-repository.js";
 
 @Injectable()

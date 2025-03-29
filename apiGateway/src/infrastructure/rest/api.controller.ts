@@ -6,6 +6,7 @@ import { RequestChatDTO } from '../../core/domain/request-chat.dto';
 import { ReqAnswerDTO } from '../../core/domain/req-answer.dto';
 import { ChatDTO } from '../../core/domain/chat.dto';
 import { Chat } from 'src/core/domain/chat';
+import { ReqAnswerCmd } from 'src/core/domain/req-answer-cmd';
 
 @Controller('api')
 export class ApiController {
@@ -60,14 +61,15 @@ export class ApiController {
    * Endpoint per ottenere una risposta dal chatbot.
    */
   @Post('get-risposta')
-  async getRisposta(@Body() req: ReqAnswerDTO): Promise<ChatDTO> {
+  async getRisposta(@Body('text') text: string): Promise<ChatDTO> {
     //const requestWithDate: ReqAnswerDTO = {
     //  text: req.text,
     //  date: req.date || new Date().toISOString(),
     //};
     // why?
 
-    const chatSalvata = await this.getRispostaUseCase.execute(req);
+    const chatSalvata = await this.getRispostaUseCase.execute(new ReqAnswerCmd(text,new Date().toISOString()));
+    console.log(chatSalvata);
     //!!!
     if (!chatSalvata || !chatSalvata.question || !chatSalvata.answer) {
       throw new Error("Risposta non valida dal microservizio.");

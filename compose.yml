@@ -8,6 +8,11 @@ services:
     build: apiGateway
     ports:
       - "80:80"
+
+  chat-bot:
+    build: chat-bot-service
+    env_file:
+      - ./chat-bot-service/.env
   
   history-service:
     build: chat-history-service

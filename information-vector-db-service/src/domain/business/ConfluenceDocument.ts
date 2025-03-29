@@ -45,6 +45,6 @@ export class ConfluenceDocument {
   }
 
   getMetadata(): Metadata {
-    return new Metadata(Origin.CONFLUENCE, Type.PULLREQUEST, this.id.toString());
+    return new Metadata(Origin.CONFLUENCE, Type.DOCUMENT, this.id.toString());
   }
 }

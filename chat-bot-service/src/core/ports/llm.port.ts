@@ -1,6 +1,6 @@
-import { Chat } from '../../domain/entities/chat.entity';
-import { ReqAnswerCmd } from '../../application/commands/request-answer.cmd';
-import { Information } from 'src/domain/entities/information.entity';
+import { Chat } from '../../domain/entities/chat.entity.js';
+import { ReqAnswerCmd } from '../../application/commands/request-answer.cmd.js';
+import { Information } from '../../domain/entities/information.entity.js';
 
 export const LLM_PORT = 'LLM_PORT'; // Token simbolico
 

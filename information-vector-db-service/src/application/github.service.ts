@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { GithubUseCase } from './port/in/GithubUseCase.js';
 import { GithubAPIAdapter } from '../adapter/out/GithubAPIAdapter.js';
 import { GithubCmd } from '../domain/command/GithubCmd.js';
-import { GithubStoreAdapter } from 'src/adapter/out/GithubStoreAdapter.js';
-import { GithubInfo } from 'src/domain/business/GithubInfo.js';
+import { GithubStoreAdapter } from '../adapter/out/GithubStoreAdapter.js';
+import { GithubInfo } from '../domain/business/GithubInfo.js';
 
 @Injectable()
 export class GithubService implements GithubUseCase {
