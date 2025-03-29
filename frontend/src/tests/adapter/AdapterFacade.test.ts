@@ -25,13 +25,12 @@ describe('AdapterFacade', () => {
       const result = await adapter.fetchHistory('123', 0);
 
       expect(fetch).toHaveBeenCalledWith(
-        'https://api.example.com/history',
+        'http://localhost/api/get-storico?id=123&num=0',
         expect.objectContaining({
-          method: 'POST',
+          method: 'GET',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
           }),
-          body: JSON.stringify({ id: '123', offset: 0 }),
         })
       );
       expect(result).toEqual(mockResponse);
@@ -71,7 +70,7 @@ describe('AdapterFacade', () => {
       const result = await adapter.fetchQuestion({ question: 'Test?' });
 
       expect(fetch).toHaveBeenCalledWith(
-        'https://api.example.com/send',
+        'http://localhost/api/get-risposta',
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({

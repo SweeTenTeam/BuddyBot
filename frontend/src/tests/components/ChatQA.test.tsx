@@ -15,8 +15,8 @@ describe('ChatQA component', () => {
     // Crea un oggetto questionAnswer con l'id aggiunto
     const questionAnswer: QuestionAnswer = {
       id: '123',
-      question: { content: "What is React?", timestamp: Date.now() },
-      answer: { content: "React is a JavaScript library.", timestamp: Date.now() },
+      question: { content: "What is React?", timestamp: new Date().toISOString() },
+      answer: { content: "React is a JavaScript library.", timestamp: new Date().toISOString() },
       error: false,
       loading: false
     };

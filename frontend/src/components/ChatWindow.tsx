@@ -5,9 +5,10 @@ import InputForm from './InputForm';
 import { ChatProvider } from "@/providers/chatProvider";
 import { Adapter } from "@/adapters/Adapter";
 import Chat from './Chat';
+import { Target } from "@/adapters/Target";
 
 export default function ChatWindow() {
-    const adapter = new Adapter();
+    const adapter: Target = new Adapter();
 
     return (
         <ChatProvider adapter={adapter}>

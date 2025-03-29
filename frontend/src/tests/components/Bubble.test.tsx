@@ -16,7 +16,7 @@ jest.mock('rehype-highlight', () => ({}));
 describe('Bubble component', () => {
   it('renders Bubble component correctly, user', () => {
     // Crea un oggetto message che viene passato al componente
-    const message: Message = { content: "Hello, World!", timestamp: Date.now().toString() };
+    const message: Message = { content: "Hello, World!", timestamp: new Date().toISOString() };
 
     // Renderizza il componente Bubble
     render(
@@ -30,7 +30,7 @@ describe('Bubble component', () => {
 
   it('renders Bubble component correctly, bot', () => {
     // Crea un oggetto message che viene passato al componente
-    const message: Message = { content: "Hello, World!", timestamp: Date.now().toString() };
+    const message: Message = { content: "Hello, World!", timestamp: new Date().toISOString() };
 
     // Renderizza il componente Bubble
     render(
@@ -44,7 +44,7 @@ describe('Bubble component', () => {
 
   it('renders Bubble component correctly, alert', () => {
     // Crea un oggetto message che viene passato al componente
-    const message: Message = { content: "Hello, World!", timestamp: Date.now().toString() };
+    const message: Message = { content: "Hello, World!", timestamp: new Date().toISOString() };
 
     // Renderizza il componente Bubble
     render(
@@ -56,7 +56,7 @@ describe('Bubble component', () => {
 
   it('renders Bubble component correctly, loading', () => {
     // Crea un oggetto message che viene passato al componente
-    const message: Message = { content: "Hello, World!", timestamp: Date.now().toString() };
+    const message: Message = { content: "Hello, World!", timestamp: new Date().toISOString() };
 
     // Renderizza il componente Bubble
     render(

@@ -18,8 +18,8 @@ describe("Adapter", () => {
 
   it("should fetch and adapt history correctly", async () => {
     const mockResponse = [
-      { id: "1", question: { content: "Q1", timestamp: 12345 }, answer: { content: "A1", timestamp: 12346 }, error: false, loading: false },
-      { id: "2", question: { content: "Q2", timestamp: 12346 }, answer: { content: "A2", timestamp: 12347 }, error: false, loading: false },
+      { id: "1", question: { content: "Q1", timestamp: "12345" }, answer: { content: "A1", timestamp: "12346" }, error: false, loading: false },
+      { id: "2", question: { content: "Q2", timestamp: "12346" }, answer: { content: "A2", timestamp: "12347" }, error: false, loading: false },
     ];
     mockFacade.fetchHistory.mockResolvedValue(mockResponse);
 
@@ -33,19 +33,19 @@ describe("Adapter", () => {
   });
 
   it("should fetch and adapt an answer correctly", async () => {
-    const question: Message = { content: "What is AI?", timestamp: 12345 };
-    const mockResponse = { id: "2", answer: { content: "Artificial Intelligence", timestamp: 12346 } };
+    const question: Message = { content: "What is AI?", timestamp: "12345" };
+    const mockResponse = { id: "2", answer: { content: "Artificial Intelligence", timestamp: "12346" } };
     mockFacade.fetchQuestion.mockResolvedValue(mockResponse);
 
     const result = await adapter.requestAnswer(question);
     expect(result).toEqual({
       id: "2",
-      answer: { content: "Artificial Intelligence", timestamp: 12346 },
+      answer: { content: "Artificial Intelligence", timestamp: "12346" },
     });
   });
 
   it("should throw an error with a specific message if fetching an answer fails", async () => {
-    const question: Message = { content: "What is AI?", timestamp: 12345 };
+    const question: Message = { content: "What is AI?", timestamp: "12345" };
     mockFacade.fetchQuestion.mockRejectedValue(new Error("Error fetching"));
     await expect(adapter.requestAnswer(question)).rejects.toThrow("Error fetching history");
   });
@@ -53,7 +53,7 @@ describe("Adapter", () => {
   it("should generate an id if data.id is missing", async () => {
     const mockGenerateId = jest.spyOn(generateIdModule, "generateId").mockReturnValue("generated-id");
 
-    const mockData = { question: { content: "What is AI?", timestamp: 12345 }, answer: { content: "Artificial Intelligence", timestamp: 12346 }, error: false, loading: false };
+    const mockData = { question: { content: "What is AI?", timestamp: "12345" }, answer: { content: "Artificial Intelligence", timestamp: "12346" }, error: false, loading: false };
     
     const adapted = adapter["adaptQuestionAnswer"](mockData);
 
