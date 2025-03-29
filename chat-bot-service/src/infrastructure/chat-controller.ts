@@ -8,7 +8,7 @@ import { ReqAnswerDTO } from 'src/interfaces/dto/request-answer.dto';
 export class ChatController {
   constructor(@Inject(ELABORAZIONE_USE_CASE) private readonly elaborazioneUseCase: ElaborazioneUseCase) {}
 
-  @MessagePattern('get.answer')
+  @MessagePattern('get-answer')
   async getAnswer(@Payload() queryData: ReqAnswerDTO) {
     this.elaborazioneUseCase.getAnswer(new ReqAnswerCmd(queryData.text, queryData.date));
   }

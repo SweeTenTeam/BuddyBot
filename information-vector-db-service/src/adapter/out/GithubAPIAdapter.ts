@@ -87,17 +87,15 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
     return result;
   }
 
-  async fetchGithubRepositoryInfo(): Promise<Repository[]> {
+  async fetchGithubRepositoryInfo(): Promise<Repository> {
     const repoInfo = await this.githubAPI.fetchRepositoryInfo();
-    const repos: Repository[] = [];
-    repos.push(new Repository(
+    return new Repository(
         repoInfo.data.id,
         repoInfo.data.name,
         repoInfo.data.created_at,
         repoInfo.data.updated_at,
         repoInfo.data.language || ''
-    ));
-    return repos;
+    );
   }
 
   async fetchGithubWorkflowInfo(): Promise<Workflow[]> {

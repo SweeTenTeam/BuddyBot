@@ -14,7 +14,7 @@ export class FetchHistoryAdapter implements FetchHistoryPort{
         const chats = await this.fetchRepository.fetchStoricoChat(req.id, req.numChat);
         const result: Chat[] = [];
         for(const chat of chats){
-            result.push(new Chat(chat.id,new Message(chat.question,chat.questionDate.to),new Message(chat.answer,chat.answerDate.toISOString())))
+            result.push(new Chat(chat.id,new Message(chat.question,chat.questionDate.toISOString()),new Message(chat.answer,chat.answerDate.toISOString())))
         }
         return result;
     }

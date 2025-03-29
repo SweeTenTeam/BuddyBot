@@ -17,6 +17,8 @@ export class GetRispostaUseCase implements GetChatInterface{
   async execute(req: ReqAnswerCmd): Promise<Chat> {
     console.log('Ricevuta richiesta per risposta chatbot:', req);
   
+    return new Chat('',new Message(req.text,''),new Message(req.text,''))
+    //returning early for show-off purposes
     const provChat: ProvChat = await this.chatbotPort.getRisposta(req);
   
     console.log('Risposta ottenuta dal chatbot:', provChat);

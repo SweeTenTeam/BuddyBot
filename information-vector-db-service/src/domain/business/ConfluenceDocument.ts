@@ -1,3 +1,5 @@
+import { Metadata, Origin, Type } from "./metadata.js";
+
 export class ConfluenceDocument {
   constructor(
     private id: string,
@@ -36,5 +38,13 @@ export class ConfluenceDocument {
 
   getSpace(): number {
     return this.space;
+  }
+
+  toStringifiedJson(): string {
+    return JSON.stringify(this);
+  }
+
+  getMetadata(): Metadata {
+    return new Metadata(Origin.CONFLUENCE, Type.PULLREQUEST, this.id.toString());
   }
 }

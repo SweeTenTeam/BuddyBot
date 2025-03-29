@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Post } from '@nestjs/common';
+import { Controller, Get, Body, Post, Query } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { FetchHistoryDto } from './dto/FetchHistory.dto';
 import { CreateChatDTO } from './dto/CreateChat.dto';
@@ -16,9 +16,9 @@ export class HistoryController {
   }
 
   @Get('/insertChat')
-  async createMessage() {
+  async createMessage(@Query('question') question: string, @Query('answer') answer: string) {
     console.log("Trying to create message");
-    const wtf = await this.historyService.sendMessage('chat_message', new CreateChatDTO('Question',new Date(),'Answer'));
+    const wtf = await this.historyService.sendMessage('chat_message', new CreateChatDTO(question,new Date(),answer));
     console.log(wtf);
     return 'Message sent!';
   }

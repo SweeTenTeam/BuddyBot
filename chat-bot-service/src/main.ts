@@ -10,7 +10,7 @@ async function bootstrap() {
       transport: Transport.RMQ,
       options: {
         urls: [process.env.RABBITMQ_URL || 'amqp://rabbitmq'],
-        queue: 'msgToChatBot',
+        queue: 'chatbot-queue',
         queueOptions: {
           durable: true,
         },

@@ -1,3 +1,5 @@
 export class ConfluenceCmd {
-  lastUpdate: Date;
+  constructor(
+    public readonly lastUpdate: string
+  ){}
 }

@@ -31,7 +31,7 @@ import { ChatGroq } from '@langchain/groq';
           transport: Transport.RMQ,
           options: {
             urls: ['amqp://rabbitmq'],
-            queue: 'information-queue', // Define the queue name
+            queue: 'information-queue',
             queueOptions: {
               durable: true,
             },
