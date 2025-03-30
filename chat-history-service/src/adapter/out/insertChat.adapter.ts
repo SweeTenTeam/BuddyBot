@@ -10,6 +10,7 @@ export class InsertChatAdapter implements InsertChatPort {
     constructor(private readonly insertRepository: ChatRepository) { }
 
     async insertChat(cmd: InsertChatCmd): Promise<Chat> {
-        return await this.insertRepository.insertChat(cmd.question, cmd.answer, cmd.date);
+        console.log("Date for insert chat: "+ new Date(cmd.date));
+        return await this.insertRepository.insertChat(cmd.question, cmd.answer, new Date(cmd.date));
     }
 }

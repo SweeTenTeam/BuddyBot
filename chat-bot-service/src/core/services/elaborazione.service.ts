@@ -17,7 +17,8 @@ export class ElaborazioneService implements ElaborazioneUseCase{
   async getAnswer(req: ReqAnswerCmd): Promise<Chat> {
       // 1. Ricerca del contesto rilevante nel database vettoriale tramite RabbitMQ
       const relevantContext = await this.vectorDbPort.searchVectorDb(req);
-      console.log(`Retrieved ${relevantContext.length} relevant documents`);
+      console.log(`Retrieved ${relevantContext.length} relevant documents: `);
+      //console.log(relevantContext);
       
       // 2. Genera la risposta utilizzando l'LLM con il contesto recuperato
       const chat = await this.llmPort.generateAnswer(req, relevantContext);

@@ -36,7 +36,7 @@ export class GetRispostaUseCase implements GetChatInterface{
     //};
     // non serve
   
-    return this.storicoPort.postStorico(new Chat('',new Message(provChat.question,provChat.timestamp),new Message(provChat.answer,''))); //RETUREN RISPOSTA CON TUTTI I DATI DA STORICO SERV
+    return this.storicoPort.postStorico(new Chat('',new Message(provChat.question,req.date),new Message(provChat.answer,''))); //RETUREN RISPOSTA CON TUTTI I DATI DA STORICO SERV
   }
   
 }

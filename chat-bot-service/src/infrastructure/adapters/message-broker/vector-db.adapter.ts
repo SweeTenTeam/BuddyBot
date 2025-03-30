@@ -17,6 +17,8 @@ export class VectorDbAdapter implements VectorDbPort {
             let i = new Information(r.content, new Metadata(r.metadata.origin, r.metadata.type, r.metadata.originID))
             result.push(i);
         }
+        //console.log("Documents received from chatbot: ");
+        //console.log(result);
         return result;
     
 

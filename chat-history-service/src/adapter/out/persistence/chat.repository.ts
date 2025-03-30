@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan, DataSource, LessThanOrEqual } from 'typeorm';
 import { ChatEntity } from './chat-entity';
 import { Chat } from 'src/domain/chat';
+import { Message } from 'src/domain/message';
 
 @Injectable()
 export class ChatRepository {
@@ -12,11 +13,11 @@ export class ChatRepository {
   ) {}
 
   async insertChat(question: string, answer: string, date: Date): Promise<Chat> {
-    const newChat = this.chatRepo.create({ question, questionDate: date, answer });
+    const newChat: ChatEntity = this.chatRepo.create({ question, questionDate: date, answer });
     await this.chatRepo.save(newChat);
     console.log(newChat)
     console.log("Vamos")
-    return newChat;
+    return new Chat(newChat.id,new Message(newChat.question,newChat.questionDate.toISOString()),new Message(newChat.answer,newChat.answerDate.toISOString()));
   }
 
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {

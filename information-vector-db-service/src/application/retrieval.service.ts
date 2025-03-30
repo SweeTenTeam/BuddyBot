@@ -8,6 +8,9 @@ import { RETRIEVAL_PORT, RetrievalPort } from './port/out/retrieval-info.port.js
 export class RetrievalService implements RetrievalUseCase {
   constructor(@Inject(RETRIEVAL_PORT) private readonly retrievalAdapter: RetrievalPort) {}
   async retrieveRelevantInfo(req: RetrieveCmd): Promise<Information[]> {
-    return await this.retrievalAdapter.retrieveRelevantInfo(req);
+    const result = await this.retrievalAdapter.retrieveRelevantInfo(req);
+    //console.log("Informazioni ritornate a chatbot: ")
+    //console.log(result);
+    return result;
   }
 }
