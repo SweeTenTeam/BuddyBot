@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan, DataSource, LessThanOrEqual } from 'typeorm';
 import { ChatEntity } from './chat-entity';
-import { ChatDTO } from 'src/adapter/in/dto/ChatDTO';
 import { Chat } from 'src/domain/chat';
 
 @Injectable()
@@ -20,21 +19,6 @@ export class ChatRepository {
     return newChat;
   }
 
-  /*
-  async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
-    try {
-      const take = numChat ? numChat : 5;
-      return await this.chatRepo.find({
-        where: { id: lastChatId },
-        take,
-        order: { answerDate: 'DESC' },
-      });
-    } catch(error) {
-      throw new Error('Error during History-fetch')
-    }
-  }
-  */
-
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
   try {
     const take = numChat ? numChat : 5;
@@ -45,7 +29,7 @@ export class ChatRepository {
         order: { answerDate: 'DESC' },
         take,
       });
-      return lastChats.reverse()
+      return lastChats.slice().reverse()
     }
 
     //caso con ID trovo e prendo la prima chat e poi le n-1 rimanenti
@@ -63,9 +47,8 @@ export class ChatRepository {
       },
       order: { answerDate: 'DESC' },
       take: take - 1,
-});
-    const combo = [...previousChats.reverse(), lastChat]
-
+    });
+    const combo = [...previousChats.slice().reverse(), lastChat]
     return combo;
 
   } catch (error) {

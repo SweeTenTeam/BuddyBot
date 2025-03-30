@@ -1,6 +1,7 @@
 import { InsertChatAdapter } from './insertChat.adapter';
 import { InsertChatCmd } from '../../domain/insertChatCmd';
 import { ChatRepository } from './persistence/chat.repository';
+import { Chat } from 'src/domain/chat';
 
 describe('InsertChatAdapter', () => {
   let adapter: InsertChatAdapter;
@@ -17,7 +18,14 @@ describe('InsertChatAdapter', () => {
       answer: 'A!',
       date: new Date(),
     };
-    mockRepo.insertChat.mockResolvedValue(true);
+    const mockChat: Chat = {
+      id: 'abc',
+      question: cmd.question,
+      answer: cmd.answer,
+      questionDate: cmd.date,
+      answerDate: new Date()
+    }
+    mockRepo.insertChat.mockResolvedValue(mockChat);
 
     const result = await adapter.insertChat(cmd);
 
@@ -26,6 +34,6 @@ describe('InsertChatAdapter', () => {
       cmd.answer,
       cmd.date,
     );
-    expect(result).toBe(true);
+    expect(result).toBe(mockChat);
   });
 });
