@@ -9,7 +9,7 @@ export class ChatRepository {
   constructor(
     @InjectRepository(ChatEntity)
     private readonly chatRepo: Repository<ChatEntity>,
-  ) { }
+  ) {}
 
   async insertChat(question: string, answer: string, date: Date): Promise<Chat> {
     const newChat = this.chatRepo.create({ question, questionDate: date, answer });

@@ -21,7 +21,7 @@ import { ChatConsumer } from './adapter/in/event/chat.consumer';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
-      port: 5433,
+      port: 5432,
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,

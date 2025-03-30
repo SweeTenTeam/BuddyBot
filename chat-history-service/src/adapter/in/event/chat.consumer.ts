@@ -8,14 +8,15 @@ import { ChatDTO } from "../dto/ChatDTO";
 @Controller()
 export class ChatConsumer {
     constructor(@Inject(IC_USE_CASE) private readonly insertChatService: InsertChatUseCase) {}
+
     @MessagePattern('chat_message')
-    handleMessage(@Payload() data: CreateChatDTO): Promise<ChatDTO> {
+    async handleMessage(@Payload() data: CreateChatDTO): Promise<ChatDTO> {
         const insertChatCmd: InsertChatCmd = { 
             question: data.question,
             answer: data.answer,
             date: data.date
         }
-        const newMessage = this.insertChatService.insertChat(insertChatCmd)
+        const newMessage = await this.insertChatService.insertChat(insertChatCmd)
         return newMessage;
     }
 }
