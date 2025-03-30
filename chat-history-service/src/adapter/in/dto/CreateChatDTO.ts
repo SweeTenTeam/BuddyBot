@@ -1,5 +1,8 @@
 export class CreateChatDTO {
-    question: string;
-    date: Date;
-    answer: string;
+    constructor(
+        public readonly question: string,
+        public readonly date: Date,
+        public readonly answer: string
+    ) {}
+    
 }
