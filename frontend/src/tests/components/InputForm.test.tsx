@@ -143,5 +143,21 @@ describe('InputForm component', () => {
     expect(sendMessageMock).not.toHaveBeenCalled();
   });
   
+  it('sends message when pressing Enter', async () => {
+  const sendMessageMock = jest.fn();
+  (useChat as jest.Mock).mockReturnValue({ sendMessage: sendMessageMock });
+
+  render(<InputForm />);
+  const textarea = screen.getByPlaceholderText(/Type a message.../i) as HTMLTextAreaElement;
+
+  fireEvent.change(textarea, { target: { value: 'Test message' } });
+  fireEvent.keyDown(textarea, { key: 'Enter', shiftKey: false });
+
+  await waitFor(() => {
+    expect(sendMessageMock).toHaveBeenCalledWith('Test message');
+  });
+
+  expect(textarea).toHaveValue('');
+});
   
 });
