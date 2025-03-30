@@ -48,7 +48,7 @@ export class ChatRepository {
       order: { answerDate: 'DESC' },
       take: take - 1,
     });
-    const combo = [...previousChats.slice().reverse(), lastChat]
+    const combo = previousChats.slice().reverse()
     return combo;
 
   } catch (error) {
