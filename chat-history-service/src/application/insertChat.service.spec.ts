@@ -1,30 +1,42 @@
 import { InsertChatCmd } from "src/domain/insertChatCmd";
 import { InsertChatService } from "./insertChat.service";
 import { InsertChatPort } from "./port/out/insertChat.port";
+import { Message } from "src/domain/message";
+import { Chat } from "src/domain/chat";
 
+describe('InsertChatService', () => {
+  let service: InsertChatService;
+  let mockInsertChatPort: jest.Mocked<InsertChatPort>;
 
-const mockInsertChatPort: jest.Mocked<InsertChatPort> = {
-    insertChat: jest.fn(), //mock func
-};
+  beforeEach(() => {
+    mockInsertChatPort = {
+      insertChat: jest.fn(),
+    };
+    service = new InsertChatService(mockInsertChatPort);
+  });
 
-describe( 'InsertChatService', () => {
-    let service: InsertChatService;
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-    beforeEach(() => {
-        service = new InsertChatService(mockInsertChatPort);
-    });
+  it('should call InsertChatAdapter.insertChat with correct parameters', async () => {
+    //arrange
+    const questionMessage = new Message("What's your name?", new Date().toISOString());
+    const answerMessage = new Message("My name is Mario Rossi", new Date(Date.now() + 1000).toISOString());
 
-    afterEach(() => {
-        jest.clearAllMocks();
-    });
+    const cmdMock: InsertChatCmd = {
+      question: questionMessage,
+      answer: answerMessage
+    };
 
-    it('should call InsertChatAdapter.insertChat with correct parameters', async () => {
-        const cmdMock: InsertChatCmd = { question: 'What\'s your name?', answer: 'My name is Mario Rossi', date: new Date()};
-        mockInsertChatPort.insertChat.mockResolvedValue(true);
+    const expectedChat = new Chat("abc", questionMessage, answerMessage);
+    mockInsertChatPort.insertChat.mockResolvedValue(expectedChat);
 
-        const result = await service.insertChat(cmdMock);
+    //act
+    const result = await service.insertChat(cmdMock);
 
-        expect(mockInsertChatPort.insertChat).toHaveBeenCalledWith(cmdMock);
-        expect(result).toBe(true);
-    });
+    //assert
+    expect(mockInsertChatPort.insertChat).toHaveBeenCalledWith(cmdMock);
+    expect(result).toEqual(expectedChat);
+  });
 });

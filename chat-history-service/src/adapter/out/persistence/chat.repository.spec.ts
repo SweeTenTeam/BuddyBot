@@ -19,22 +19,28 @@ describe('ChatRepository', () => {
     it('should create a new chat', async () => {
         //arrange
         const id = 'abc'
-        const question = 'question?'
-        const answer = 'answer'
+        const questionContent = 'question?'
+        const answerContent = 'answer'
         const questionDate = new Date()
         const answerDate = new Date()
         answerDate.setHours(answerDate.getHours()+1)
-        const mockChat = { id, question, answer, answerDate, questionDate }
+        const mockChat = { id, question: questionContent, answer: answerContent, answerDate, questionDate }
 
         mockRepo.create.mockReturnValue( mockChat )
 
         //act
-        const result = await chatRepository.insertChat(question, answer, questionDate)
+        const result = await chatRepository.insertChat(questionContent, answerContent, questionDate)
 
         //assert
-        expect(mockRepo.create).toHaveBeenCalledWith({ question, questionDate, answer })
+        expect(mockRepo.create).toHaveBeenCalledWith({ question: questionContent, questionDate, answer: answerContent })
         expect(mockRepo.save).toHaveBeenCalledWith(mockChat)
-        expect(result).toEqual(mockChat)
+
+        //qui testo dettagliatamente dato che Chat ha 'question' e 'answer' di tipo Message
+        expect(result.id).toEqual(id)
+        expect(result.question.content).toEqual(questionContent)
+        expect(result.question.timestamp).toEqual(questionDate.toISOString())
+        expect(result.answer.content).toEqual(answerContent)
+        expect(result.answer.timestamp).toEqual(answerDate.toISOString())
     });
 
     it('should fetch \'N\' chats when no lastChatId is provided', async () => {
@@ -84,9 +90,9 @@ describe('ChatRepository', () => {
         expect(mockRepo.find).toHaveBeenCalledWith({
             where: { answerDate: expect.any(Object) },
             order: { answerDate: 'DESC' },
-            take: 3,
+            take: 4,
         });
         
-        expect(result).toEqual([...previousChats.slice().reverse(), lastChat]);
+        expect(result).toEqual(previousChats.slice().reverse());
     });
 }); 

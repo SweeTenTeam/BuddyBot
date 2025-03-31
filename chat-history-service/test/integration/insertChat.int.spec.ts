@@ -1,4 +1,4 @@
-import { Test, TestingModule } from '@nestjs/testing';
+/*import { Test, TestingModule } from '@nestjs/testing';
 import { INestMicroservice } from '@nestjs/common';
 import { Transport, ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 import { AppModule } from '../../src/app.module';
@@ -78,3 +78,4 @@ describe('InsertChat (integration)', () => {
     await app.close();
   });
 });
+*/

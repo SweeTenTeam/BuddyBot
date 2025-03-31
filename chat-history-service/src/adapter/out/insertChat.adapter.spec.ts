@@ -2,6 +2,7 @@ import { InsertChatAdapter } from './insertChat.adapter';
 import { InsertChatCmd } from '../../domain/insertChatCmd';
 import { ChatRepository } from './persistence/chat.repository';
 import { Chat } from 'src/domain/chat';
+import { Message } from 'src/domain/message';
 
 describe('InsertChatAdapter', () => {
   let adapter: InsertChatAdapter;
@@ -12,28 +13,33 @@ describe('InsertChatAdapter', () => {
     adapter = new InsertChatAdapter(mockRepo);
   });
 
-  it('should call ChatRepository.insertChat with correct args', async () => {
+  it('should call ChatRepository.insertChat with correct arguments', async () => {
+    // arrange
+    const questionMessage = new Message('Q?', new Date().toISOString());
+    const answerMessage = new Message('A!', new Date(Date.now() + 1000).toISOString());
+
     const cmd: InsertChatCmd = {
-      question: 'Q?',
-      answer: 'A!',
-      date: new Date(),
+      question: questionMessage,
+      answer: answerMessage
     };
-    const mockChat: Chat = {
-      id: 'abc',
-      question: cmd.question,
-      answer: cmd.answer,
-      questionDate: cmd.date,
-      answerDate: new Date()
-    }
+
+    const mockChat = new Chat('abc', questionMessage, answerMessage);
     mockRepo.insertChat.mockResolvedValue(mockChat);
 
+    // act
     const result = await adapter.insertChat(cmd);
 
+    // assert
     expect(mockRepo.insertChat).toHaveBeenCalledWith(
-      cmd.question,
-      cmd.answer,
-      cmd.date,
+      questionMessage.content,
+      answerMessage.content,
+      new Date(questionMessage.timestamp)
     );
-    expect(result).toBe(mockChat);
+
+    expect(result.id).toEqual('abc');
+    expect(result.question.content).toEqual(questionMessage.content);
+    expect(result.question.timestamp).toEqual(questionMessage.timestamp);
+    expect(result.answer.content).toEqual(answerMessage.content);
+    expect(result.answer.timestamp).toEqual(answerMessage.timestamp);
   });
 });
