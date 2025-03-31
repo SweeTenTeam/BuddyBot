@@ -11,8 +11,8 @@ import { PullRequest } from "../../domain/business/PullRequest.js";
 import { Repository } from "../../domain/business/Repository.js";
 import { Workflow } from "../../domain/business/Workflow.js";
 import { WorkflowRun } from "../../domain/business/WorkflowRun.js";
-import { GithubCmd } from "src/domain/command/GithubCmd.js";
-import { FileCmd } from "src/domain/command/FileCmd.js";
+import { GithubCmd } from "../../domain/command/GithubCmd.js";
+import { FileCmd } from "../../domain/command/FileCmd.js";
 import { CommentPR } from "../../domain/business/CommentPR.js";
 import { WorkflowRunCmd } from "../../domain/command/WorkflowRunCmd.js";
 

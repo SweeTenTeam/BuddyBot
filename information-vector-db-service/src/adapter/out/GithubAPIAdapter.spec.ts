@@ -37,7 +37,6 @@ describe('GithubAPIAdapter', () => {
 
   describe('fetchGithubCommitsInfo', () => {
     it('should fetch and transform commits correctly', async () => {
-      // Mock data
       const ownerName = 'testOwner';
       const repoName = 'testRepo';
       const branchName = 'main';
@@ -79,7 +78,6 @@ describe('GithubAPIAdapter', () => {
       mockGithubAPI.fetchCommitsInfo.mockResolvedValue(mockCommitResponse);
       mockGithubAPI.fetchCommitModifiedFilesInfo.mockResolvedValue(mockFilesResponse);
       
-      // Create command
       const githubCmd = new GithubCmd();
       const repoCmd = new RepoCmd();
       repoCmd.owner = ownerName;
@@ -87,10 +85,8 @@ describe('GithubAPIAdapter', () => {
       repoCmd.branch_name = branchName;
       githubCmd.repoCmdList = [repoCmd];
       
-      // Execute
       const result = await adapter.fetchGithubCommitsInfo(githubCmd);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(Commit);
       expect(result[0].getRepoName()).toBe(repoName);
@@ -102,7 +98,6 @@ describe('GithubAPIAdapter', () => {
       expect(result[0].getModifiedFiles()).toEqual(['test1.js', 'test2.js']);
       expect(result[0].getAuthor()).toBe(authorName);
       
-      // Verify mocks were called correctly
       expect(mockGithubAPI.fetchCommitsInfo).toHaveBeenCalledWith(
         ownerName, repoName, branchName, githubCmd.lastUpdate
       );
@@ -112,7 +107,6 @@ describe('GithubAPIAdapter', () => {
     });
     
     it('should handle multiple repositories', async () => {
-      // Mock data for two repositories
       mockGithubAPI.fetchCommitsInfo.mockResolvedValueOnce({
         data: [{ sha: 'sha1', commit: { message: 'Commit 1', author: { name: 'Author 1', date: '2023-01-01' } } }],
         status: 200,
@@ -139,7 +133,6 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      // Create command with two repositories
       const githubCmd = new GithubCmd();
       const repoCmd1 = new RepoCmd();
       repoCmd1.owner = 'owner1';
@@ -153,10 +146,8 @@ describe('GithubAPIAdapter', () => {
       
       githubCmd.repoCmdList = [repoCmd1, repoCmd2];
       
-      // Execute
       const result = await adapter.fetchGithubCommitsInfo(githubCmd);
       
-      // Assert
       expect(result).toHaveLength(2);
       expect(result[0].getRepoName()).toBe('repo1');
       expect(result[1].getRepoName()).toBe('repo2');
@@ -185,17 +176,14 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      // Create command
       const fileCmd = new FileCmd();
       fileCmd.path = path;
       fileCmd.repository = repository;
       fileCmd.owner = 'testOwner';
       fileCmd.branch = branch;
       
-      // Execute
       const result = await adapter.fetchGithubFilesInfo([fileCmd]);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(File);
       expect(result[0].getPath()).toBe(path);
@@ -217,7 +205,7 @@ describe('GithubAPIAdapter', () => {
           path: path,
           sha: sha,
           size: 2000000, // 2MB (larger than 1MB threshold)
-          content: '' // Not used for large files
+          content: ''
         },
         status: 200 as const,
         headers: {},
@@ -226,17 +214,14 @@ describe('GithubAPIAdapter', () => {
       
       mockGithubAPI.fetchRawFileContent.mockResolvedValue(content);
       
-      // Create command
       const fileCmd = new FileCmd();
       fileCmd.path = path;
       fileCmd.repository = repository;
       fileCmd.owner = 'testOwner';
       fileCmd.branch = branch;
       
-      // Execute
       const result = await adapter.fetchGithubFilesInfo([fileCmd]);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0].getContent()).toBe(content);
       expect(mockGithubAPI.fetchRawFileContent).toHaveBeenCalledWith(
@@ -245,17 +230,14 @@ describe('GithubAPIAdapter', () => {
     });
     
     it('should skip binary files', async () => {
-      // Create command for binary file
       const fileCmd = new FileCmd();
       fileCmd.path = 'image.png';
       fileCmd.repository = 'testRepo';
       fileCmd.owner = 'testOwner';
       fileCmd.branch = 'main';
       
-      // Execute
       const result = await adapter.fetchGithubFilesInfo([fileCmd]);
       
-      // Assert
       expect(result).toHaveLength(0);
       expect(mockGithubAPI.fetchFileInfo).not.toHaveBeenCalled();
     });
@@ -263,24 +245,20 @@ describe('GithubAPIAdapter', () => {
     it('should handle file not found errors gracefully', async () => {
       mockGithubAPI.fetchFileInfo.mockRejectedValue({ status: 404, message: 'Not found' });
       
-      // Create command
       const fileCmd = new FileCmd();
       fileCmd.path = 'non-existent.js';
       fileCmd.repository = 'testRepo';
       fileCmd.owner = 'testOwner';
       fileCmd.branch = 'main';
       
-      // Execute
       const result = await adapter.fetchGithubFilesInfo([fileCmd]);
       
-      // Assert
       expect(result).toHaveLength(0);
     });
   });
 
   describe('fetchGithubPullRequestsInfo', () => {
     it('should fetch and transform pull requests correctly', async () => {
-      // Mock data
       const prId = 123;
       const prNumber = 45;
       const title = 'Test PR';
@@ -326,7 +304,6 @@ describe('GithubAPIAdapter', () => {
         'file1.js', 'file2.js'
       ]);
       
-      // Create command
       const githubCmd = new GithubCmd();
       const repoCmd = new RepoCmd();
       repoCmd.owner = 'testOwner';
@@ -334,10 +311,8 @@ describe('GithubAPIAdapter', () => {
       repoCmd.branch_name = 'main';
       githubCmd.repoCmdList = [repoCmd];
       
-      // Execute
       const result = await adapter.fetchGithubPullRequestsInfo(githubCmd);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(PullRequest);
       expect(result[0].getId()).toBe(prId);
@@ -363,7 +338,6 @@ describe('GithubAPIAdapter', () => {
   
   describe('fetchGithubRepositoryInfo', () => {
     it('should fetch and transform repository info correctly', async () => {
-      // Mock data
       const repoId = 12345;
       const repoName = 'testRepo';
       const createdAt = '2022-01-01T00:00:00Z';
@@ -383,7 +357,6 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      // Create command with lastUpdate date before the repo's update date
       const githubCmd = new GithubCmd();
       githubCmd.lastUpdate = new Date('2022-06-01');
       const repoCmd = new RepoCmd();
@@ -392,10 +365,8 @@ describe('GithubAPIAdapter', () => {
       repoCmd.branch_name = 'main';
       githubCmd.repoCmdList = [repoCmd];
       
-      // Execute
       const result = await adapter.fetchGithubRepositoryInfo(githubCmd);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(Repository);
       expect(result[0].getId()).toBe(repoId);
@@ -406,7 +377,6 @@ describe('GithubAPIAdapter', () => {
     });
     
     it('should filter repositories based on lastUpdate date', async () => {
-      // Mock data with a repo updated before the lastUpdate threshold
       mockGithubAPI.fetchRepositoryInfo.mockResolvedValue({
         data: {
           id: 12345,
@@ -420,26 +390,22 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      // Create command with lastUpdate date after the repo's update date
       const githubCmd = new GithubCmd();
-      githubCmd.lastUpdate = new Date('2022-02-01'); // Later than the repo's update date
+      githubCmd.lastUpdate = new Date('2022-02-01');
       const repoCmd = new RepoCmd();
       repoCmd.owner = 'testOwner';
       repoCmd.repoName = 'testRepo';
       repoCmd.branch_name = 'main';
       githubCmd.repoCmdList = [repoCmd];
       
-      // Execute
       const result = await adapter.fetchGithubRepositoryInfo(githubCmd);
       
-      // Assert - should be empty as the repo was updated before lastUpdate
       expect(result).toHaveLength(0);
     });
   });
   
   describe('fetchGithubWorkflowInfo', () => {
     it('should fetch and transform workflow info correctly', async () => {
-      // Mock data
       const workflowId = 12345;
       const workflowName = 'CI/CD Pipeline';
       const workflowState = 'active';
@@ -453,7 +419,6 @@ describe('GithubAPIAdapter', () => {
         }
       ]);
       
-      // Create command
       const githubCmd = new GithubCmd();
       const repoCmd = new RepoCmd();
       repoCmd.owner = 'testOwner';
@@ -461,10 +426,8 @@ describe('GithubAPIAdapter', () => {
       repoCmd.branch_name = 'main';
       githubCmd.repoCmdList = [repoCmd];
       
-      // Execute
       const result = await adapter.fetchGithubWorkflowInfo(githubCmd);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(Workflow);
       expect(result[0].getId()).toBe(workflowId);
@@ -476,7 +439,6 @@ describe('GithubAPIAdapter', () => {
   
   describe('fetchGithubWorkflowRuns', () => {
     it('should fetch and transform workflow runs correctly', async () => {
-      // Mock data
       const runId = 6789;
       const status = 'completed';
       const duration = 120;
@@ -495,7 +457,6 @@ describe('GithubAPIAdapter', () => {
         }
       ]);
       
-      // Create command
       const workflowRunCmd = new WorkflowRunCmd();
       workflowRunCmd.owner = 'testOwner';
       workflowRunCmd.repository = 'testRepo';
@@ -503,10 +464,8 @@ describe('GithubAPIAdapter', () => {
       workflowRunCmd.workflow_name = workflowName;
       workflowRunCmd.since_created = new Date('2023-01-01');
       
-      // Execute
       const result = await adapter.fetchGithubWorkflowRuns(workflowRunCmd);
       
-      // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toBeInstanceOf(WorkflowRun);
       expect(result[0].getId()).toBe(runId);
@@ -519,17 +478,14 @@ describe('GithubAPIAdapter', () => {
     });
     
     it('should handle errors when fetching workflow runs', async () => {
-      // Mock a failure
       const error = new Error('API failure');
       mockGithubAPI.fetchWorkflowRuns.mockRejectedValue(error);
       
-      // Create command
       const workflowRunCmd = new WorkflowRunCmd();
       workflowRunCmd.owner = 'testOwner';
       workflowRunCmd.repository = 'testRepo';
       workflowRunCmd.workflow_id = 12345;
       
-      // Assert that the error is propagated
       await expect(adapter.fetchGithubWorkflowRuns(workflowRunCmd)).rejects.toThrow(error);
     });
   });

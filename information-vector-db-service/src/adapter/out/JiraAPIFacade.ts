@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { AgileClient, AgileModels, Version3Client, Version3Models } from 'jira.js';
-import { json } from 'stream/consumers';
+import { Version3Client, Version3Models } from 'jira.js';
 
 export class JiraAPIFacade {
   constructor(private jiraClientV3: Version3Client) {}

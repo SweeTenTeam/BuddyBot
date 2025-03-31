@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfluenceClient, Models } from 'confluence.js';
-
 
 export class ConfluenceAPIFacade {
   constructor() {};
