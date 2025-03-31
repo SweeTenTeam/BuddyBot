@@ -42,7 +42,7 @@ describe('RetrievalService', () => {
     mockCmd.query = 'test query';
     
     const mockResults = [
-      new Information('test content', new Metadata(Origin.CONFLUENCE, Type.COMMMIT, 'test-id')),
+      new Information('test content', new Metadata(Origin.CONFLUENCE, Type.COMMIT, 'test-id')),
     ];
     
     retrievalAdapter.retrieveRelevantInfo.mockResolvedValue(mockResults);

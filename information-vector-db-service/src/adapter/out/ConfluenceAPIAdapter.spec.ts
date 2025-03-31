@@ -102,8 +102,7 @@ describe('ConfluenceAPIAdapter', () => {
 
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-    const cmd = new ConfluenceCmd();
-    cmd.lastUpdate = sevenDaysAgo;
+    const cmd = new ConfluenceCmd(sevenDaysAgo);
 
     await adapter.fetchDocuments(cmd);
 

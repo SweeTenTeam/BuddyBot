@@ -55,6 +55,10 @@ export class Ticket {
     return result;
   }
 
+  toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+
    getMetadata(): Metadata {
     return new Metadata(Origin.JIRA, Type.TICKET, this.id);
   }

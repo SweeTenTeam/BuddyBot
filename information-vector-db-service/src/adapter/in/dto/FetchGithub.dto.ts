@@ -1,5 +1,8 @@
+import { RepoGithubDTO } from "./RepoGithubDTO.js";
+
 export class FetchGithubDto {
     constructor (
-        public readonly lastUpdate: string
+        public readonly repoDTOList: RepoGithubDTO[],
+        public readonly lastUpdate?: Date
     ){}
 }

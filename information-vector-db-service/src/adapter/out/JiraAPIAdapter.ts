@@ -58,9 +58,9 @@ export class JiraAPIAdapter implements JiraAPIPort {
     try {
       const result: Ticket[] = [];
       const boardId = req.getBoardId();
-      const lastUpdate = req.getLastUpdate();
+      const lastUpdate = req.lastUpdate;
       const daysBack = lastUpdate ? 
-        Math.ceil((new Date().getTime() - new Date(lastUpdate).getTime()) / (1000 * 60 * 60 * 24)): undefined;//if not last update pass undefined and it will fetch all the issues
+        Math.ceil((new Date().getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;//if not last update pass undefined and it will fetch all the issues
       
       const issues = await this.jiraAPI.fetchRecentIssues(daysBack);
 
@@ -84,6 +84,7 @@ export class JiraAPIAdapter implements JiraAPIPort {
         const sprint = fields.customfield_10020?.name || 'No sprint';
         const storyPoints = fields.customfield_10016?.toString() || '0';
 
+        const id = issue.id;
         const title = typeof fields.summary === 'string' ? fields.summary : 'No title';
         const description = this.extractTextFromADFContent(fields.description, 'No description');
         const assignee = fields.assignee?.displayName || 'No assignee';
@@ -94,6 +95,7 @@ export class JiraAPIAdapter implements JiraAPIPort {
 
         result.push(
           new Ticket(
+            id,
             title,
             description,
             assignee,

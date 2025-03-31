@@ -6,18 +6,49 @@ import { RepoCmd } from '../../domain/command/RepoCmd.js';
 import { GithubService } from '../../application/github.service.js';
 import { timeout } from 'rxjs';
 import { Octokit } from '@octokit/rest';
+import { GithubStoreAdapter } from './GithubStoreAdapter.js';
+import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { QdrantVectorStore } from '@langchain/qdrant';
+import { NomicEmbeddings } from '@langchain/nomic';
+import { QdrantClient } from '@qdrant/js-client-rest';
 
 describe('GithubAPIAdapter Integration Tests', () => {
   let adapter: GithubAPIAdapter;
   let githubAPI: GithubAPIFacade;
   let ghService: GithubService;
+  let githubStoreAdapter: GithubStoreAdapter
 
   beforeEach(() => {
     githubAPI = new GithubAPIFacade(new Octokit({
           auth: process.env.GITHUB_TOKEN || 'your_github_token'
           }));
     adapter = new GithubAPIAdapter(githubAPI);
-    ghService = new GithubService(adapter);
+
+    
+        const qdrantUrl = process.env.QDRANT_URL || "http://qdrant:6333";
+        console.log(`Connecting to Qdrant at: ${qdrantUrl}`);
+        const qdrantClient = new QdrantClient({ 
+          url: qdrantUrl
+        });
+        
+        if (!process.env.NOMIC_API_KEY) {
+          console.warn('NOMIC_API_KEY is not set. Embeddings will not work properly.');
+        }
+        
+        const vectorStore = new QdrantVectorStore(new NomicEmbeddings(), {
+          client: qdrantClient,
+          collectionName: "buddybot_info",
+        });
+
+        const textSplitter = new RecursiveCharacterTextSplitter({ 
+          chunkSize: 1000, 
+          chunkOverlap: 0 
+        });
+        
+      
+    githubStoreAdapter = new GithubStoreAdapter(new QdrantInformationRepository(vectorStore, textSplitter));
+    ghService = new GithubService(adapter,adapter,adapter,adapter,adapter,githubStoreAdapter);
   });
 
   // it('should fetch commits and their modified files', async () => {
@@ -118,16 +149,15 @@ describe('GithubAPIAdapter Integration Tests', () => {
 
   */
 
-  it('should fetch workflow information', async () => {
-   const githubCmd = new GithubCmd();
-    // githubCmd.lastUpdate = new Date(Date.now());
-    //  githubCmd.lastUpdate =  new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
-
-    const repoCmd = new RepoCmd();
-    repoCmd.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-    repoCmd.repoName = process.env.GITHUB_REPO || 'Docs';
-    repoCmd.branch_name = "master"
-    githubCmd.repoCmdList = [repoCmd];
+  it('should fetch all the information through service', async () => {
+    const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
+    const repoName = process.env.GITHUB_REPO || 'Docs';
+    const branch = "master";
+    
+    const repoCmd = new RepoCmd(owner, repoName, branch);
+    const repoCmdList = [repoCmd];
+    const githubCmd = new GithubCmd(repoCmdList);
+    
     await ghService.fetchAndStoreGithubInfo(githubCmd);
   });
 }); 

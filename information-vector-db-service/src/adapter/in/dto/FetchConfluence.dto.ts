@@ -1,5 +1,5 @@
 export class FetchConfluenceDto {
     constructor (
-        public readonly lastUpdate: string
+        public readonly lastUpdate: Date
     ){}
 }

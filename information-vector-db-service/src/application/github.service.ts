@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { GithubUseCase } from './port/in/GithubUseCase.js';
 import { GithubAPIAdapter } from '../adapter/out/GithubAPIAdapter.js';
 import { GithubCmd } from '../domain/command/GithubCmd.js';
@@ -9,12 +9,22 @@ import { Commit } from '../domain/business/Commit.js';
 import { WorkflowRunCmd } from '../domain/command/WorkflowRunCmd.js';
 import { WorkflowRun } from '../domain/business/WorkflowRun.js';
 import { Workflow } from '../domain/business/Workflow.js';
+import { GITHUB_STORE_INFO_PORT, GithubStoreInfoPort } from './port/out/GithubStoreInfoPort.js';
+import { GITHUB_COMMITS_API_PORT, GithubCommitsAPIPort } from './port/out/GithubCommitAPIPort.js';
+import { GITHUB_FILES_API_PORT, GithubFilesAPIPort } from './port/out/GithubFilesAPIPort.js';
+import { GITHUB_PULL_REQUESTS_API_PORT, GithubPullRequestsAPIPort } from './port/out/GithubPullRequestsAPIPort.js';
+import { GITHUB_REPOSITORY_API_PORT, GithubRepositoryAPIPort } from './port/out/GithubRepositoryAPIPort.js';
+import { GITHUB_WORKFLOWS_API_PORT, GithubWorkflowsAPIPort } from './port/out/GithubWorkflowsAPIPort.js';
 
 @Injectable()
 export class GithubService implements GithubUseCase {
   constructor(
-    private readonly githubApi: GithubAPIAdapter,
-    private readonly githubStoreAdapter: GithubStoreAdapter
+    @Inject(GITHUB_COMMITS_API_PORT) private readonly githubCommitsApi: GithubCommitsAPIPort,
+    @Inject(GITHUB_FILES_API_PORT) private readonly githubFilesApi: GithubFilesAPIPort,
+    @Inject(GITHUB_PULL_REQUESTS_API_PORT) private readonly githubPullRequestsApi: GithubPullRequestsAPIPort,
+    @Inject(GITHUB_REPOSITORY_API_PORT) private readonly githubRepositoryApi: GithubRepositoryAPIPort,
+    @Inject(GITHUB_WORKFLOWS_API_PORT) private readonly githubWorkflowsApi: GithubWorkflowsAPIPort,
+    @Inject(GITHUB_STORE_INFO_PORT) private readonly githubStoreAdapter: GithubStoreInfoPort
   ) {}
   
 
@@ -62,7 +72,7 @@ export class GithubService implements GithubUseCase {
         workflowRunCmd.repository = repoCmd.repoName;
         workflowRunCmd.since_created = req.lastUpdate;
         
-        const runs = await this.githubApi.fetchGithubWorkflowRuns(workflowRunCmd);
+        const runs = await this.githubWorkflowsApi.fetchGithubWorkflowRuns(workflowRunCmd);
         workflowRuns.push(...runs);
       } else {
         console.warn(`No matching repository command found for workflow repository: ${repoName}`);
@@ -73,24 +83,16 @@ export class GithubService implements GithubUseCase {
   }
   
   async fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean> {
-    const commits = await this.githubApi.fetchGithubCommitsInfo(req);
-    // console.log(commits);
+    const commits = await this.githubCommitsApi.fetchGithubCommitsInfo(req);
     const fileCmds = this.extractFileCmdsFromCommits(commits);
 
-    const files = await this.githubApi.fetchGithubFilesInfo(fileCmds);
-    // console.log(files)
-    const pullRequests = await this.githubApi.fetchGithubPullRequestsInfo(req);
-    // console.log(pullRequests)
-    const repository = await this.githubApi.fetchGithubRepositoryInfo(req);
-    // console.log(repository)
-    const workflows = await this.githubApi.fetchGithubWorkflowInfo(req);
-    // console.log(workflows)
+    const files = await this.githubFilesApi.fetchGithubFilesInfo(fileCmds);
+    const pullRequests = await this.githubPullRequestsApi.fetchGithubPullRequestsInfo(req);
+    const repository = await this.githubRepositoryApi.fetchGithubRepositoryInfo(req);
+    const workflows = await this.githubWorkflowsApi.fetchGithubWorkflowInfo(req);
     const workflowRuns = await this.getWorkflowRuns(workflows, req);
-    // console.log(workflowRuns)
 
-
-    //store logic
-    await this.githubStoreAdapter.storeGithubInfo(new GithubInfo(commits,files,pullRequests,repository,workflows));
+    await this.githubStoreAdapter.storeGithubInfo(new GithubInfo(commits,files,pullRequests,repository,workflows,workflowRuns));
     return true;
   }
 }

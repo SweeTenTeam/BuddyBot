@@ -103,10 +103,7 @@ describe('JiraAPIAdapter', () => {
 
     mockJiraAPI.fetchRecentIssues.mockResolvedValue([mockIssue as Version3Models.Issue]);
 
-    const result = await adapter.fetchTickets(new JiraCmd(JSON.parse(JSON.stringify({
-      boardId: 1,
-      lastUpdate: new Date().toISOString()
-    }))));
+    const result = await adapter.fetchTickets(new JiraCmd(1,new Date()));
 
 
     expect(result).toHaveLength(1);
@@ -145,10 +142,7 @@ describe('JiraAPIAdapter', () => {
 
     mockJiraAPI.fetchRecentIssues.mockResolvedValue([mockIssue as Version3Models.Issue]);
 
-    const result = await adapter.fetchTickets(new JiraCmd(JSON.parse(JSON.stringify({
-      boardId: 1,
-      lastUpdate: new Date().toISOString()
-    }))));
+    const result = await adapter.fetchTickets(new JiraCmd(1,new Date()));
 
     expect(result).toHaveLength(1);
     expect(result[0].title).toBe('Test Issue');
@@ -205,10 +199,8 @@ describe('JiraAPIAdapter', () => {
 
     mockJiraAPI.fetchRecentIssues.mockResolvedValue([mockIssue as Version3Models.Issue]);
 
-    const result = await adapter.fetchTickets(new JiraCmd(JSON.parse(JSON.stringify({
-      boardId: 1,
-      lastUpdate: new Date().toISOString()
-    }))));
+    const result = await adapter.fetchTickets(new JiraCmd(1,new Date()));
+
 
     expect(result[0].description).toBe('Complex Content\n First paragraph\n First item Second item\n Last paragraph');
   });
@@ -216,10 +208,10 @@ describe('JiraAPIAdapter', () => {
   it('should handle API errors gracefully', async () => {
     mockJiraAPI.fetchRecentIssues.mockRejectedValue(new Error('API Error'));
 
-    await expect(adapter.fetchTickets(new JiraCmd(JSON.parse(JSON.stringify({
-      boardId: 1,
-      lastUpdate: new Date().toISOString()
-    }))))).rejects.toThrow('Failed to fetch tickets: API Error');
+    await expect(adapter.fetchTickets(new JiraCmd(
+      1,
+      new Date()
+    ))).rejects.toThrow('Failed to fetch tickets: API Error');
   });
 
   it('should calculate days correctly from lastUpdate', async () => {
@@ -263,9 +255,7 @@ describe('JiraAPIAdapter', () => {
 
     mockJiraAPI.fetchRecentIssues.mockResolvedValue([mockIssue as Version3Models.Issue]);
 
-    await adapter.fetchTickets(new JiraCmd(JSON.parse(JSON.stringify({
-      boardId: 1
-    }))));
+    await adapter.fetchTickets(new JiraCmd(1));
 
     expect(mockJiraAPI.fetchRecentIssues).toHaveBeenCalledWith(1, 7);
   });

@@ -7,7 +7,11 @@ describe('ConfluenceAPIFacade', () => {
   let confluenceAPIADapter: ConfluenceAPIAdapter;
 
   beforeEach(() => {
-    confluenceAPIFacade = new ConfluenceAPIFacade();
+    confluenceAPIFacade = new ConfluenceAPIFacade(
+      process.env.CONFLUENCE_BASE_URL || 'your_confluence_url',
+      process.env.CONFLUENCE_USERNAME || 'your_confluence_email',
+      process.env.ATLASSIAN_API_KEY || 'your_api_key'
+    );
     confluenceAPIADapter = new ConfluenceAPIAdapter(confluenceAPIFacade);
   });
 
@@ -40,7 +44,7 @@ describe('ConfluenceAPIFacade', () => {
 
     const date = new Date();
     date.setDate(date.getDate() - 100);
-    const cmd = new ConfluenceCmd();
+    const cmd = new ConfluenceCmd(date);
     // cmd.lastUpdate = date;
     confluenceAPIADapter.fetchDocuments(cmd);
   }, 300000); // Increased timeout for multiple API calls

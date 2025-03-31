@@ -5,5 +5,5 @@ export class WorkflowRunCmd{
     owner: string;
     repository: string;
     
-    since_created?: Date; // Optional date for filtering workflow runs by creation date
+    since_created?: Date; 
 }

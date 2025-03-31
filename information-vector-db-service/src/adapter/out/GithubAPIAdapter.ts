@@ -31,7 +31,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
       
       for(const commit of commitsInfo.data){
         const commitFileInfo = await this.githubAPI.fetchCommitModifiedFilesInfo(repoCmd.owner, repoCmd.repoName, commit.sha);
-        const filenames: string[] = []; //to change/fix
+        const filenames: string[] = [];
         for(const filename of commitFileInfo.data.files ?? []){
           filenames.push(filename.filename);
         }

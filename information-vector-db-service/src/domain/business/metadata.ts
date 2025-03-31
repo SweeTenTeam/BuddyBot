@@ -11,7 +11,8 @@ export enum Type {
   PULLREQUEST = 'PULLREQUEST',
   REPOSITORY = 'REPOSITORY',
   TICKET = 'TICKET',
-  WORKFLOW = 'WORKFLOW'
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
 }
 
 export class Metadata {

@@ -78,12 +78,8 @@ describe('GithubAPIAdapter', () => {
       mockGithubAPI.fetchCommitsInfo.mockResolvedValue(mockCommitResponse);
       mockGithubAPI.fetchCommitModifiedFilesInfo.mockResolvedValue(mockFilesResponse);
       
-      const githubCmd = new GithubCmd();
-      const repoCmd = new RepoCmd();
-      repoCmd.owner = ownerName;
-      repoCmd.repoName = repoName;
-      repoCmd.branch_name = branchName;
-      githubCmd.repoCmdList = [repoCmd];
+      const repoCmd = new RepoCmd(ownerName, repoName, branchName);
+      const githubCmd = new GithubCmd([repoCmd]);
       
       const result = await adapter.fetchGithubCommitsInfo(githubCmd);
       
@@ -133,18 +129,9 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      const githubCmd = new GithubCmd();
-      const repoCmd1 = new RepoCmd();
-      repoCmd1.owner = 'owner1';
-      repoCmd1.repoName = 'repo1';
-      repoCmd1.branch_name = 'main';
-      
-      const repoCmd2 = new RepoCmd();
-      repoCmd2.owner = 'owner2';
-      repoCmd2.repoName = 'repo2';
-      repoCmd2.branch_name = 'develop';
-      
-      githubCmd.repoCmdList = [repoCmd1, repoCmd2];
+      const repoCmd1 = new RepoCmd('owner1', 'repo1', 'main');
+      const repoCmd2 = new RepoCmd('owner2', 'repo2', 'develop');
+      const githubCmd = new GithubCmd([repoCmd1, repoCmd2]);
       
       const result = await adapter.fetchGithubCommitsInfo(githubCmd);
       
@@ -304,12 +291,9 @@ describe('GithubAPIAdapter', () => {
         'file1.js', 'file2.js'
       ]);
       
-      const githubCmd = new GithubCmd();
-      const repoCmd = new RepoCmd();
-      repoCmd.owner = 'testOwner';
-      repoCmd.repoName = repoName;
-      repoCmd.branch_name = 'main';
-      githubCmd.repoCmdList = [repoCmd];
+      
+      const repoCmd = new RepoCmd('testOwner', repoName, 'main');
+      const githubCmd = new GithubCmd([repoCmd]);
       
       const result = await adapter.fetchGithubPullRequestsInfo(githubCmd);
       
@@ -357,13 +341,9 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      const githubCmd = new GithubCmd();
-      githubCmd.lastUpdate = new Date('2022-06-01');
-      const repoCmd = new RepoCmd();
-      repoCmd.owner = 'testOwner';
-      repoCmd.repoName = repoName;
-      repoCmd.branch_name = 'main';
-      githubCmd.repoCmdList = [repoCmd];
+      const lastUpdate = new Date('2022-06-01');
+      const repoCmd = new RepoCmd('testOwner', repoName, 'main');
+      const githubCmd = new GithubCmd([repoCmd], lastUpdate);
       
       const result = await adapter.fetchGithubRepositoryInfo(githubCmd);
       
@@ -390,13 +370,9 @@ describe('GithubAPIAdapter', () => {
         url: ''
       });
       
-      const githubCmd = new GithubCmd();
-      githubCmd.lastUpdate = new Date('2022-02-01');
-      const repoCmd = new RepoCmd();
-      repoCmd.owner = 'testOwner';
-      repoCmd.repoName = 'testRepo';
-      repoCmd.branch_name = 'main';
-      githubCmd.repoCmdList = [repoCmd];
+      const lastUpdate = new Date('2022-02-01');
+      const repoCmd = new RepoCmd('testOwner', 'testRepo', 'main');
+      const githubCmd = new GithubCmd([repoCmd], lastUpdate);
       
       const result = await adapter.fetchGithubRepositoryInfo(githubCmd);
       
@@ -419,12 +395,8 @@ describe('GithubAPIAdapter', () => {
         }
       ]);
       
-      const githubCmd = new GithubCmd();
-      const repoCmd = new RepoCmd();
-      repoCmd.owner = 'testOwner';
-      repoCmd.repoName = repoName;
-      repoCmd.branch_name = 'main';
-      githubCmd.repoCmdList = [repoCmd];
+      const repoCmd = new RepoCmd('testOwner', repoName, 'main');
+      const githubCmd = new GithubCmd([repoCmd]);
       
       const result = await adapter.fetchGithubWorkflowInfo(githubCmd);
       
