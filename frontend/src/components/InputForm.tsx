@@ -14,10 +14,10 @@ export default function InputForm() {
 
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (text.trim() === "" || text==="`") return;
     setText("");
     setCharCount(0);
     setHasError(false);
+    if (text.trim() === "" || text==="`" || text==="´") return;
     if (textareaRef.current) {
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
