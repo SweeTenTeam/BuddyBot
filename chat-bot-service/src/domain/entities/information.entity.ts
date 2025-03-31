@@ -1,13 +1,10 @@
 import { Metadata } from "./metadata.entity.js";
 
 export class Information {
-  private content: string;
-  private metadata: Metadata;
-
-  constructor(content: string, metadata: Metadata){
-    this.content = content;
-    this.metadata = metadata;
-  }
+  constructor(
+    public readonly content: string,
+    public readonly metadata: Metadata,
+  ){}
 
   getContent(): string {
     return this.content;

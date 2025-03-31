@@ -12,8 +12,8 @@ export class ChatConsumer {
     @MessagePattern('chat_message')
     async handleMessage(@Payload() data: ChatDTO): Promise<ChatDTO> {
         const insertChatCmd: InsertChatCmd = { 
-            question: data.question.content,
-            answer: data.answer.content,
+            question: data.question,
+            answer: data.answer,
             date: data.question.timestamp
         }
         const newMessage = await this.insertChatService.insertChat(insertChatCmd);
