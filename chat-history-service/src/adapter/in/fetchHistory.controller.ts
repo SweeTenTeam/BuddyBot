@@ -1,6 +1,6 @@
 import { Controller, Inject, Get, Query } from "@nestjs/common";
 import { FetchHistoryUseCase, FH_USE_CASE } from "src/application/port/in/fetchHistory-usecase.port";
-import { FecthHistoryService } from "src/application/fetchHistory.service"
+import { FetchHistoryService } from "src/application/fetchHistory.service"
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { Chat } from "src/domain/chat";
 import { FetchRequestDTO } from "./dto/FetchRequestDTO";

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { FetchHistoryController } from './adapter/in/fetchHistory.controller';
 import { FH_USE_CASE } from './application/port/in/fetchHistory-usecase.port';
-import { FecthHistoryService } from './application/fetchHistory.service';
+import { FetchHistoryService } from './application/fetchHistory.service';
 import { FH_PORT_OUT } from './application/port/out/fetchHistory.port';
 import { FetchHistoryAdapter } from './adapter/out/fetchHistory.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -34,7 +34,7 @@ import { ChatConsumer } from './adapter/in/event/chat.consumer';
   providers: [
     {
       provide: FH_USE_CASE,
-      useClass: FecthHistoryService,
+      useClass: FetchHistoryService,
     },
     {
       provide: FH_PORT_OUT,
