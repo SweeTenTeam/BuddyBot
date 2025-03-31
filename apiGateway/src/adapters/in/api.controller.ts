@@ -1,18 +1,18 @@
 //CONTROLLER
 import { Controller, Get, Post, Param, Query, Body } from '@nestjs/common';
-import { GetStoricoUseCase } from '../../core/services/get-storico.use-case';
-import { GetRispostaUseCase } from '../../core/services/get-risposta.use-case';
-import { RequestChatDTO } from '../../core/domain/request-chat.dto';
-import { ReqAnswerDTO } from '../../core/domain/req-answer.dto';
-import { ChatDTO } from '../../core/domain/chat.dto';
-import { Chat } from 'src/core/domain/chat';
-import { ReqAnswerCmd } from 'src/core/domain/req-answer-cmd';
+import { GetStoricoService } from '../../application/services/storico-message.service';
+import { GetRispostaService } from '../../application/services/chatbot-message.service';
+import { RequestChatDTO } from './dtos/request-chat.dto';
+import { ReqAnswerDTO } from './dtos/req-answer.dto';
+import { ChatDTO } from './dtos/chat.dto';
+
+
 
 @Controller('api')
 export class ApiController {
   constructor(
-    private readonly getStoricoUseCase: GetStoricoUseCase,
-    private readonly getRispostaUseCase: GetRispostaUseCase,
+    private readonly GetStoricoService: GetStoricoService,
+    private readonly GetRispostaService: GetRispostaService,
   ) {}
 
   /**
@@ -24,16 +24,12 @@ export class ApiController {
     @Query('num') numChat?: number 
   ): Promise<ChatDTO[]> {
     const req: RequestChatDTO = new RequestChatDTO(id ?? '',numChat ?? 1) // valore 1 di default, almeno una chat 
-    const storico = await this.getStoricoUseCase.execute(req);
+    const storico = await this.GetStoricoService.execute(req);
   
     //console.log('STORICO DEBUG:', storico); // Debug !!!
-  
-    //if (!Array.isArray(storico)) {
-      //throw new Error("La risposta del microservizio storico non è un array.");
-    //}
 
     if (!Array.isArray(storico) || storico.some(chat => !chat.question || !chat.answer)) {
-      throw new Error("La risposta del microservizio storico non è valida.");
+      throw new Error("NON é STATO RITORNATO UN ARRAY DI CHAT.");
     }
     
     const result: ChatDTO[] = [];
@@ -68,9 +64,10 @@ export class ApiController {
     //};
     // why?
 
-    const chatSalvata = await this.getRispostaUseCase.execute(new ReqAnswerCmd(text,new Date().toISOString()));
+    const chatSalvata = await this.GetRispostaService.execute(new ReqAnswerDTO(text,new Date().toISOString()));
     console.log(chatSalvata);
     //!!!
+
     if (!chatSalvata || !chatSalvata.question || !chatSalvata.answer) {
       throw new Error("Risposta non valida dal microservizio.");
     }

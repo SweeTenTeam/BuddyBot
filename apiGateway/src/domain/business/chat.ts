@@ -1,13 +1,4 @@
-/*export class Chat {
-  id: string;
-  question: string;
-  answer: string;
-  date: Date;
-}*/
-
 import { Message } from "./message";
-
-
 
 export class Chat {
   constructor(

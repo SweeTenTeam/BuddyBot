@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ApiController } from './infrastructure/rest/api.controller';
-import { GetStoricoUseCase } from './core/services/get-storico.use-case';
-import { GetRispostaUseCase } from './core/services/get-risposta.use-case';
-import { MessageAdapter } from './adapters/message.adapter';
-import { StoricoMessageAdapter } from './adapters/storico-message.adapter';
+import { ApiController } from './adapters/in/api.controller';
+import { GetStoricoService } from './application/services/storico-message.service';
+import { GetRispostaService } from './application/services/chatbot-message.service';
+import { MessageAdapter } from './adapters/out/message.adapter';
+import { StoricoMessageAdapter } from './adapters/out/storico-message.adapter';
 import { ChatBotService } from '@infrastructure/rabbitmq/chatbot.service';
 import { HistoryService } from '@infrastructure/rabbitmq/history.service';
 import { InformationService } from '@infrastructure/rabbitmq/information.service';
@@ -12,8 +12,8 @@ import { InformationService } from '@infrastructure/rabbitmq/information.service
   imports: [],
   controllers: [ApiController],
   providers: [
-    GetStoricoUseCase,
-    GetRispostaUseCase,
+    GetStoricoService,
+    GetRispostaService,
     { provide: 'ChatBotPort', useClass: MessageAdapter },
     { provide: 'StoricoPort', useClass: StoricoMessageAdapter },
     //RabbitMQService,
