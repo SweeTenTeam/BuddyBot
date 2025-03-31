@@ -8,12 +8,18 @@ import { ChatBotService } from '@infrastructure/rabbitmq/chatbot.service';
 import { HistoryService } from '@infrastructure/rabbitmq/history.service';
 import { InformationService } from '@infrastructure/rabbitmq/information.service';
 
+import { GetChatUseCase } from 'application/ports/in/get-chat';
+import { GetStoricoUseCase } from 'application/ports/in/get-storico';
+
 @Module({
   imports: [],
   controllers: [ApiController],
   providers: [
-    GetStoricoService,
-    GetRispostaService,
+    //GetStoricoService,
+    //GetRispostaService,
+    { provide: 'GetChatUseCase', useClass: GetRispostaService },
+    { provide: 'GetStoricoUseCase', useClass: GetStoricoService },
+    
     { provide: 'ChatBotPort', useClass: MessageAdapter },
     { provide: 'StoricoPort', useClass: StoricoMessageAdapter },
     //RabbitMQService,

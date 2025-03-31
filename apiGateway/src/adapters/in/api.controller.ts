@@ -6,6 +6,9 @@ import { RequestChatDTO } from './dtos/request-chat.dto';
 import { ReqAnswerDTO } from './dtos/req-answer.dto';
 import { ChatDTO } from './dtos/chat.dto';
 
+//import { GetChatUseCase } from '../../application/ports/in/get-chat';
+//import { GetStoricoUseCase } from '../../application/ports/in/get-storico';
+
 
 
 @Controller('api')
