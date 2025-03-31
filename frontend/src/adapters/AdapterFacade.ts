@@ -30,7 +30,7 @@ export class AdapterFacade {
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
-        //return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
+        return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
 
         try {
             const response = await fetch(`http://localhost/api/get-risposta`, {
