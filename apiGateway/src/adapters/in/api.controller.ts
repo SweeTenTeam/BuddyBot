@@ -5,18 +5,23 @@ import { GetRispostaService } from '../../application/services/chatbot-message.s
 import { RequestChatDTO } from './dtos/request-chat.dto';
 import { ReqAnswerDTO } from './dtos/req-answer.dto';
 import { ChatDTO } from './dtos/chat.dto';
-
-//import { GetChatUseCase } from '../../application/ports/in/get-chat';
-//import { GetStoricoUseCase } from '../../application/ports/in/get-storico';
+import { Injectable, Inject } from '@nestjs/common';
+import { GetChatUseCase } from '../../application/ports/in/get-chat';
+import { GetStoricoUseCase } from '../../application/ports/in/get-storico';
 
 
 
 @Controller('api')
 export class ApiController {
+  /*constructor(
+    private readonly GetStoricoService: GetStoricoUseCase,
+    private readonly GetRispostaService: GetChatUseCase,
+  ) {}*/
+
   constructor(
-    private readonly GetStoricoService: GetStoricoService,
-    private readonly GetRispostaService: GetRispostaService,
-  ) {}
+      @Inject('GetChatUseCase') private readonly GetRispostaService: GetChatUseCase,
+      @Inject('GetStoricoUseCase') private readonly GetStoricoService: GetStoricoUseCase, 
+    ) {}
 
   /**
    * Endpoint per recuperare la cronologia delle conversazioni.
