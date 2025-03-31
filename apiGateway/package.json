@@ -22,8 +22,10 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/microservices": "^11.0.12",
     "@nestjs/platform-express": "^11.0.1",
-    "amqplib": "^0.10.3",
+    "amqp-connection-manager": "^4.1.14",
+    "amqplib": "^0.10.5",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -73,4 +75,3 @@
     "testEnvironment": "node"
   }
 }
-

@@ -1,6 +1,8 @@
 import { Injectable, Inject, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import * as amqp from 'amqplib';
 
+//to remove
+
 @Injectable()
 export class RabbitMQService implements OnModuleInit, OnModuleDestroy {
   private channel: amqp.Channel;

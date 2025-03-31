@@ -53,7 +53,7 @@ describe("ChatProvider", () => {
     });
 
     it("sends message and handles response", async () => {
-        const botResponse = { answer: { content: "Test bot response", timestamp: Date.now() }, id: "bot-id" };
+        const botResponse = { answer: { content: "Test bot response", timestamp: new Date().toISOString() }, id: "bot-id" };
 
         mockAdapter.requestAnswer.mockResolvedValueOnce(botResponse);
 
@@ -70,7 +70,7 @@ describe("ChatProvider", () => {
         });
 
         await waitFor(() => {
-            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: "Test message", timestamp: expect.any(Number) });
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: "Test message", timestamp: expect.any(String) });
         });
     });
 
@@ -92,7 +92,7 @@ describe("ChatProvider", () => {
         });
 
         await waitFor(() => {
-            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: message, timestamp: expect.any(Number) });
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: message, timestamp: expect.any(String) });
         });
     });
 
@@ -127,8 +127,8 @@ describe("ChatProvider", () => {
         const mockMessages: QuestionAnswer[] = [
             { 
                 id: "1", 
-                question: { content: "Previous question", timestamp: 12345 }, 
-                answer: { content: "Previous answer", timestamp: 12346 }, 
+                question: { content: "Previous question", timestamp: "12345" }, 
+                answer: { content: "Previous answer", timestamp: "12346" }, 
                 error: false, 
                 loading: false 
             },
@@ -136,8 +136,8 @@ describe("ChatProvider", () => {
         const mockHistoryResponse: QuestionAnswer[] = [
             { 
                 id: "2", 
-                question: { content: "New question", timestamp: 12347 }, 
-                answer: { content: "New answer", timestamp: 12348 }, 
+                question: { content: "New question", timestamp: "12347" }, 
+                answer: { content: "New answer", timestamp: "12348" }, 
                 error: false, 
                 loading: false 
             },

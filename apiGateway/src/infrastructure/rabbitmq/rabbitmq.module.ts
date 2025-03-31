@@ -8,7 +8,7 @@ import { RabbitMQService } from './rabbitmq.service';
     {
       provide: 'RABBITMQ_CLIENT',
       useFactory: async () => {
-        const connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://localhost');
+        const connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://rabbitmq');
         return connection;
       },
     },

@@ -54,8 +54,8 @@ export class Adapter implements Target {
 
     private adaptMessageToJSON(question: Message): any {
         return {
-            question: question.content,
-            timestamp: question.timestamp,
+            text: question.content,
+            date: question.timestamp,
         };
     };
 }

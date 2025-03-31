@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { FetchHistoryController } from './adapter/in/fetchHistory.controller';
 import { FH_USE_CASE } from './application/port/in/fetchHistory-usecase.port';
-import { FecthHistoryService } from './application/fetchHistory.service';
+import { FetchHistoryService } from './application/fetchHistory.service';
 import { FH_PORT_OUT } from './application/port/out/fetchHistory.port';
 import { FetchHistoryAdapter } from './adapter/out/fetchHistory.adapter';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -13,7 +13,7 @@ import { IC_USE_CASE } from './application/port/in/insertChat-usecase.port'
 import { InsertChatService } from './application/insertChat.service';
 import { IC_PORT_OUT } from './application/port/out/insertChat.port';
 import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
-import { insertChatController } from './adapter/in/event/insertChat.controller';
+import { ChatConsumer } from './adapter/in/event/chat.consumer';
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { insertChatController } from './adapter/in/event/insertChat.controller';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
-      port: 5433,
+      port: 5432,
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
@@ -30,11 +30,11 @@ import { insertChatController } from './adapter/in/event/insertChat.controller';
     }),
     ChatModule,
   ],
-  controllers: [FetchHistoryController, insertChatController],
+  controllers: [FetchHistoryController, ChatConsumer],
   providers: [
     {
       provide: FH_USE_CASE,
-      useClass: FecthHistoryService,
+      useClass: FetchHistoryService,
     },
     {
       provide: FH_PORT_OUT,

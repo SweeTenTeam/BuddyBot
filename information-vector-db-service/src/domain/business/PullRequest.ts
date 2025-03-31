@@ -1,5 +1,5 @@
+import { Metadata, Origin, Type } from "./metadata.js";
 import { CommentPR } from "./CommentPR.js";
-
 export class PullRequest{
     constructor(
         private id: number,
@@ -63,5 +63,13 @@ export class PullRequest{
 
     getRepositoryName(): string {
         return this.repository_name;
+    }
+
+    toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+
+    getMetadata(): Metadata {
+      return new Metadata(Origin.GITHUB, Type.PULLREQUEST, this.id.toString());
     }
 }

@@ -27,6 +27,9 @@ import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter.js';
 import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
 import { Octokit } from '@octokit/rest';
 import { Version3Client } from 'jira.js';
+import { GithubStoreAdapter } from './adapter/out/GithubStoreAdapter.js';
+import { ConfluenceStoreAdapter } from './adapter/out/ConfluenceStoreAdapter.js';
+import { JiraStoreAdapter } from './adapter/out/JiraStoreAdapter.js';
 
 @Module({
   imports: [],
@@ -72,6 +75,7 @@ import { Version3Client } from 'jira.js';
     },
     GithubAPIAdapter,
     GithubAPIFacade,
+    GithubStoreAdapter,
     {
       provide: JIRA_USECASE, 
       useClass: JiraService, 
@@ -81,6 +85,7 @@ import { Version3Client } from 'jira.js';
       useClass: JiraAPIAdapter, 
     },
     JiraAPIFacade,
+    JiraStoreAdapter,
     {
       provide: CONFLUENCE_USECASE,
       useClass: ConfluenceService
@@ -90,6 +95,7 @@ import { Version3Client } from 'jira.js';
       useClass: ConfluenceAPIAdapter,
     },
     ConfluenceAPIFacade,
+    ConfluenceStoreAdapter,
     {
       provide: Octokit,
       useFactory: () => {
@@ -112,8 +118,6 @@ import { Version3Client } from 'jira.js';
           });
       }
     }
-
-
   ],
 })
 export class AppModule {}

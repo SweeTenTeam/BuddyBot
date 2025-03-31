@@ -14,15 +14,15 @@ export default function InputForm() {
 
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (text.trim() === "") return;
-    await sendMessage(text);
     setText("");
     setCharCount(0);
     setHasError(false);
+    if (text.trim() === "" || text==="`" || text==="´") return;
     if (textareaRef.current) {
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
     }
+    await sendMessage(text);
   };
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -37,6 +37,9 @@ export default function InputForm() {
       event.target.value = content.substring(0, MAX_CHARS);
     }
   };
+
+
+
 
   const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
@@ -62,6 +65,13 @@ export default function InputForm() {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage(event as unknown as React.FormEvent);
+    }
+  };
+
   useEffect(() => {
     adjustHeight();
   }, [text]);
@@ -76,6 +86,10 @@ export default function InputForm() {
           value={text}
           onChange={handleInput}
           onPaste={handlePaste}
+          onKeyDown={handleKeyDown}
+          autoComplete="off"
+          autoCorrect="off"
+          spellCheck="false"
           className="w-full min-w-20 m-0 mt-0 mb-0 items-center resize-none border-none text-left rounded-[12px] leading-[1.2em] focus:outline-none overflow-y-auto max-h-[15em] p-[0.6em] whitespace-pre-wrap"
           rows={1}
           placeholder="Type a message..."

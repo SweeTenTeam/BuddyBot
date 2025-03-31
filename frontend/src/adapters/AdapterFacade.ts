@@ -1,23 +1,22 @@
-import historyData from "@/json/history.json";
-import historyData1 from "@/json/history1.json";
+//import historyData from "@/json/history.json";
+//import historyData1 from "@/json/history1.json";
 //import { generateId } from "@/utils/generateId";
 
 export class AdapterFacade {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         //if (id === "") return historyData1;
         //else if (id == "240") return historyData;
         //return [];
 
         try {
-            const response = await fetch(`https://api.example.com/history`, {
-                method: "POST",
+            const response = await fetch(`http://localhost/api/get-storico?id=${id}&num=${offset}`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     // Eventuali header necessari
                 },
-                body: JSON.stringify({ id, offset }),
                 signal: controller.signal,
             });
             clearTimeout(timeoutId);
@@ -30,11 +29,11 @@ export class AdapterFacade {
 
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-        //return { answer: { content: data.question, timestamp: data.timestamp }, id: generateId() };
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        //return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
 
         try {
-            const response = await fetch(`https://api.example.com/send`, {
+            const response = await fetch(`http://localhost/api/get-risposta`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

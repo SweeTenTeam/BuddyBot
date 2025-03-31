@@ -1,4 +1,4 @@
-import { Metadata } from "./metadata.entity";
+import { Metadata } from "./metadata.entity.js";
 
 export class Information {
   private content: string;

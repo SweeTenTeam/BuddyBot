@@ -25,7 +25,7 @@ describe("chatReducer", () => {
   });
 
   it("should handle LOAD_HISTORY_SUCCESS", () => {
-    const action: ChatAction = { type: "LOAD_HISTORY_SUCCESS", payload: [{ id: "1", question: { content: "Q1", timestamp: Date.now() }, answer: {} as Message, error: false, loading: false }], hasMore: true };
+    const action: ChatAction = { type: "LOAD_HISTORY_SUCCESS", payload: [{ id: "1", question: { content: "Q1", timestamp: new Date().toISOString() }, answer: {} as Message, error: false, loading: false }], hasMore: true };
     const newState = chatReducer(initialState, action);
     expect(newState.messages.length).toBe(1);
     expect(newState.loadingHistory).toBe(false);
@@ -42,14 +42,14 @@ describe("chatReducer", () => {
   });
 
   it("should handle ADD_MESSAGE_START", () => {
-    const action: ChatAction = { type: "ADD_MESSAGE_START", id: "1", question: { content: "Test question", timestamp: Date.now() } };
+    const action: ChatAction = { type: "ADD_MESSAGE_START", id: "1", question: { content: "Test question", timestamp: new Date().toISOString() } };
     const newState = chatReducer(initialState, action);
     expect(newState.messages.length).toBe(1);
     expect(newState.messages[0].loading).toBe(true);
   });
 
   it("should handle ADD_MESSAGE_SUCCESS", () => {
-    const stateWithMessage = { ...initialState, messages: [{ id: "1", question: { content: "Q1", timestamp: Date.now() }, answer: {} as Message, loading: true, error: false }] };
+    const stateWithMessage = { ...initialState, messages: [{ id: "1", question: { content: "Q1", timestamp: new Date().toISOString() }, answer: {} as Message, loading: true, error: false }] };
     const action: ChatAction = { type: "ADD_MESSAGE_SUCCESS", id: "1", newid: "2", answer: {} as Message };
     const newState = chatReducer(stateWithMessage, action);
     expect(newState.messages[0].id).toBe("2");
@@ -58,7 +58,7 @@ describe("chatReducer", () => {
   });
 
   it("should handle ADD_MESSAGE_ERROR", () => {
-    const stateWithMessage = { ...initialState, messages: [{ id: "1", question: { content: "Q1", timestamp: Date.now() }, answer: {} as Message, loading: true, error: false }] };
+    const stateWithMessage = { ...initialState, messages: [{ id: "1", question: { content: "Q1", timestamp: new Date().toISOString() }, answer: {} as Message, loading: true, error: false }] };
     const action: ChatAction = { type: "ADD_MESSAGE_ERROR", id: "1" };
     const newState = chatReducer(stateWithMessage, action);
     expect(newState.messages[0].loading).toBe(false);
@@ -75,7 +75,7 @@ describe("chatReducer", () => {
     const stateWithMessages = {
       ...initialState,
       messages: [
-        { id: "1", question: { content: "Q1", timestamp: Date.now() }, answer: {} as Message, loading: true, error: false },
+        { id: "1", question: { content: "Q1", timestamp: new Date().toISOString() }, answer: {} as Message, loading: true, error: false },
       ],
     };
   

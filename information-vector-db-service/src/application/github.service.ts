@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { GithubUseCase } from './port/in/GithubUseCase.js';
 import { GithubAPIAdapter } from '../adapter/out/GithubAPIAdapter.js';
 import { GithubCmd } from '../domain/command/GithubCmd.js';
+import { GithubStoreAdapter } from '../adapter/out/GithubStoreAdapter.js';
+import { GithubInfo } from '../domain/business/GithubInfo.js';
 import { FileCmd } from '../domain/command/FileCmd.js';
 import { Commit } from '../domain/business/Commit.js';
 import { WorkflowRunCmd } from '../domain/command/WorkflowRunCmd.js';
@@ -10,9 +12,14 @@ import { Workflow } from '../domain/business/Workflow.js';
 
 @Injectable()
 export class GithubService implements GithubUseCase {
-  constructor(private readonly githubApi: GithubAPIAdapter) {}
+  constructor(
+    private readonly githubApi: GithubAPIAdapter,
+    private readonly githubStoreAdapter: GithubStoreAdapter
+  ) {}
   
 
+  
+  
   //util function to get the updated files to download from the commits
   private extractFileCmdsFromCommits(commits: Commit[]): FileCmd[] {
     const fileCmds: FileCmd[] = [];
@@ -83,6 +90,7 @@ export class GithubService implements GithubUseCase {
 
 
     //store logic
+    await this.githubStoreAdapter.storeGithubInfo(new GithubInfo(commits,files,pullRequests,repository,workflows));
     return true;
   }
 }

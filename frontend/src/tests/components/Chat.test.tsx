@@ -11,11 +11,11 @@ jest.mock("@/providers/chatProvider", () => ({
 describe("Chat component", () => {
   it("renders the chat component", () => {
     (useChat as jest.Mock).mockReturnValue({
-      state: { 
+      state: {
         messages: [{
           id: "1",
-          question: { content: "What is your name?", timestamp: 123 },
-          answer: { content: "My name is Chatbot.", timestamp: 124 },
+          question: { content: "What is your name?", timestamp: "123" },
+          answer: { content: "My name is Chatbot.", timestamp: "124" },
           error: true,
           loading: false
         }],
@@ -39,7 +39,7 @@ describe("Chat component", () => {
 
   it("renders loading state when loadingHistory is true", () => {
     (useChat as jest.Mock).mockReturnValue({
-      state: { 
+      state: {
         messages: [{
           id: "1",
           question: { content: "What is your name?", timestamp: 123 },
@@ -65,9 +65,9 @@ describe("Chat component", () => {
 
   it("calls loadHistory when 'Load more' is clicked", async () => {
     const loadHistoryMock = jest.fn();
-  
+
     (useChat as jest.Mock).mockReturnValue({
-      state: { 
+      state: {
         messages: [{
           id: "1",
           question: { content: "What is your name?", timestamp: 123 },
@@ -83,16 +83,16 @@ describe("Chat component", () => {
       loadHistory: loadHistoryMock,
       sendMessage: jest.fn(),
     });
-  
+
     render(<Chat />);
-  
+
     // Verifica se il pulsante "load-more" è presente
     const loadMoreButton = screen.getByTestId("load-more");
     expect(loadMoreButton).toBeInTheDocument();
-  
+
     // Simula il click su 'Load more'
     loadMoreButton.click();
-  
+
     // Verifica che loadHistoryMock sia stato chiamato
     expect(loadHistoryMock).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId("load-more")).toBeInTheDocument();
@@ -102,7 +102,7 @@ describe("Chat component", () => {
 
   it("displays an error alert when errorHistory is true", () => {
     (useChat as jest.Mock).mockReturnValue({
-      state: { 
+      state: {
         messages: [{
           id: "1",
           question: { content: "What is your name?", timestamp: 123 },
@@ -129,7 +129,7 @@ describe("Chat component", () => {
 
   it("displays load more when thera are more messages", () => {
     (useChat as jest.Mock).mockReturnValue({
-      state: { 
+      state: {
         messages: [{
           id: "1",
           question: { content: "What is your name?", timestamp: 123 },

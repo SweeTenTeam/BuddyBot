@@ -1,5 +1,6 @@
+import { Message } from "./message";
+
 export class InsertChatCmd {
-    question: string
-    answer: string
-    date: Date
+    question: Message
+    answer: Message
 }

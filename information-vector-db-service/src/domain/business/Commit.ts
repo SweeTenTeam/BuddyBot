@@ -1,3 +1,5 @@
+import { Metadata, Origin, Type } from "./metadata.js";
+
 export class Commit{
     constructor(
         private repoName: string,
@@ -9,8 +11,7 @@ export class Commit{
         private modifiedFiles: string[],
         private author: string,
     ) {}
-
-    getModifiedFiles(): string[] {
+        getModifiedFiles(): string[] {
         return this.modifiedFiles;
     }
 
@@ -39,5 +40,12 @@ export class Commit{
 
     getAuthor(): string {
         return this.author;
+    }
+        toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+
+    getMetadata(): Metadata {
+      return new Metadata(Origin.GITHUB, Type.COMMIT, this.hash);
     }
 }

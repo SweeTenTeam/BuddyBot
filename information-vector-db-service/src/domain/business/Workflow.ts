@@ -1,12 +1,11 @@
-import { WorkflowRun } from './WorkflowRun.js';
+import { Metadata, Origin, Type } from "./metadata.js";
 
-export class Workflow {
+export class Workflow{
     constructor(
         private  id: number,
         private  name: string,
         private  state: string,
         private repository_name: string,
-
     ) {}
 
     getId(): number {
@@ -22,5 +21,13 @@ export class Workflow {
     }
     getRepositoryName(): string{
         return this.repository_name;
+    }
+
+    toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+
+    getMetadata(): Metadata {
+        return new Metadata(Origin.GITHUB, Type.WORKFLOW, this.id.toString());
     }
 }

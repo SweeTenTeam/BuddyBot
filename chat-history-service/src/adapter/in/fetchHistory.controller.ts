@@ -1,13 +1,13 @@
 import { Controller, Inject, Get, Query } from "@nestjs/common";
 import { FetchHistoryUseCase, FH_USE_CASE } from "src/application/port/in/fetchHistory-usecase.port";
-import { FecthHistoryService } from "src/application/fetchHistory.service"
+import { FetchHistoryService } from "src/application/fetchHistory.service"
 import { MessagePattern, Payload } from "@nestjs/microservices";
 import { Chat } from "src/domain/chat";
 import { FetchRequestDTO } from "./dto/FetchRequestDTO";
 import { ChatDTO } from "./dto/ChatDTO";
 import { FetchHistoryCmd } from "src/domain/fetchHistoryCmd";
 
-@Controller('api/chat')
+@Controller()
 export class FetchHistoryController {
   constructor(@Inject(FH_USE_CASE) private readonly FetchHistoryService: FetchHistoryUseCase) { }
   /*
@@ -27,9 +27,12 @@ export class FetchHistoryController {
       numChat: data.numChat
     }
     const chatHistory = await this.FetchHistoryService.fetchStoricoChat(fetchHistoryCmd);
-
-    console.log(chatHistory); //da rimuovere questa riga quando microserv è pronto
-    return chatHistory;
+    const result: ChatDTO[] = [];
+    for(let i=0; i<chatHistory.length; i++){
+      result.push(new ChatDTO(chatHistory[i].id,chatHistory[i].question,chatHistory[i].answer));
+    }
+    console.log(result); //da rimuovere questa riga quando microserv è pronto
+    return result;
   }
 }
 

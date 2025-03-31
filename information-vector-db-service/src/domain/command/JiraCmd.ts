@@ -1,11 +1,8 @@
 export class JiraCmd {
-  private boardId: number;
-  private lastUpdate: string;
-
-  constructor(object: JSON) {
-    this.boardId = object['boardId'];
-    this.lastUpdate = object['lastUpdate'];
-  }
+  constructor(
+    public readonly boardId: number,
+    public readonly lastUpdate: string
+  ) {}
 
   getBoardId(): number {
     return this.boardId;

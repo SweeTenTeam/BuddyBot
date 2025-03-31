@@ -1,6 +1,9 @@
+import { Metadata, Origin, Type } from "./metadata.js";
 import { JiraComment } from './JiraComment.js';
 
+
 export class Ticket {
+  public id: string;
   public title: string;
   public description: string;
   public assignee: string;
@@ -14,6 +17,7 @@ export class Ticket {
   public relatedTickets: string[];
 
   constructor(
+    id: string,
     title: string,
     description: string,
     assignee: string,
@@ -26,6 +30,7 @@ export class Ticket {
     comments: JiraComment[],
     relatedTickets: string[],
   ) {
+    this.id = id;
     this.title = title;
     this.description = description;
     this.assignee = assignee;
@@ -46,6 +51,11 @@ export class Ticket {
     result['assignee'] = this.assignee;
     result['status'] = this.status;
     result['comments'] = this.comments.map(comment => comment.toJson());
+
     return result;
+  }
+
+   getMetadata(): Metadata {
+    return new Metadata(Origin.JIRA, Type.TICKET, this.id);
   }
 }

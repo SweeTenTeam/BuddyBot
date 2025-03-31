@@ -13,7 +13,7 @@ describe('ChatWindow', () => {
   beforeEach(() => {
     // Mock the methods of Adapter
     requestHistoryMock = jest.fn().mockResolvedValue([]);
-    requestAnswerMock = jest.fn().mockResolvedValue({ answer: { content: 'Mock Answer', timestamp: Date.now() }, id: '123' });
+    requestAnswerMock = jest.fn().mockResolvedValue({ answer: { content: 'Mock Answer', timestamp: new Date().toISOString() }, id: '123' });
 
     // Mock the Adapter class constructor and its methods
     (Adapter as jest.Mock).mockImplementation(() => {

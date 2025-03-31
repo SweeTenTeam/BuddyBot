@@ -33,7 +33,7 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
     const id = generateId();
     const newMessage: Message = {
       content: text,
-      timestamp: Date.now(),
+      timestamp: new Date().toISOString(),
     };
     dispatch({ type: "ADD_MESSAGE_START", id: id, question: newMessage });
     dispatch({ type: "SCROLL_DOWN" });
