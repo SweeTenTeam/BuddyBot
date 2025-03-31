@@ -3,13 +3,22 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { JiraAPIAdapter } from './JiraAPIAdapter.js';
 import { JiraCmd } from '../../domain/command/JiraCmd.js';
+import { Version3Client } from 'jira.js';
 
 describe('JiraAPIFacade Integration Tests', () => {
   let jiraAPI: JiraAPIFacade;
   let jiraAPIAdapter: JiraAPIAdapter;
 
   beforeEach(() => {
-    jiraAPI = new JiraAPIFacade();
+    jiraAPI = new JiraAPIFacade(new Version3Client({
+          host: process.env.JIRA_HOST || "your_host_url",
+            authentication: {
+              basic: {
+                username: process.env.JIRA_EMAIL || 'your_email',
+                password: process.env.ATLASSIAN_API_KEY || 'your_api_key',
+              },
+            },
+          }));
     jiraAPIAdapter = new JiraAPIAdapter(jiraAPI);
   });
 

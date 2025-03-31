@@ -1,10 +1,14 @@
+import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
+import { ConfluenceAPIAdapter } from './ConfluenceAPIAdapter.js';
 import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
 
 describe('ConfluenceAPIFacade', () => {
   let confluenceAPIFacade: ConfluenceAPIFacade;
+  let confluenceAPIADapter: ConfluenceAPIAdapter;
 
   beforeEach(() => {
     confluenceAPIFacade = new ConfluenceAPIFacade();
+    confluenceAPIADapter = new ConfluenceAPIAdapter(confluenceAPIFacade);
   });
 
   // it('should fetch Confluence pages', async () => {
@@ -22,7 +26,8 @@ describe('ConfluenceAPIFacade', () => {
 
   it('should fetch Confluence pages with different time ranges', async () => {
     // Test with no time range (all pages)
-    await confluenceAPIFacade.fetchConfluencePages();
+    // const res = await confluenceAPIFacade.fetchConfluencePages();
+    // console.log(res);
     
     // Test with last 7 days
     // await confluenceAPIFacade.fetchConfluencePages(7);
@@ -32,5 +37,11 @@ describe('ConfluenceAPIFacade', () => {
     
     // // Test with last 100 days
     // await confluenceAPIFacade.fetchConfluencePages(100);
-  }, 30000); // Increased timeout for multiple API calls
+
+    const date = new Date();
+    date.setDate(date.getDate() - 100);
+    const cmd = new ConfluenceCmd();
+    // cmd.lastUpdate = date;
+    confluenceAPIADapter.fetchDocuments(cmd);
+  }, 300000); // Increased timeout for multiple API calls
 }); 

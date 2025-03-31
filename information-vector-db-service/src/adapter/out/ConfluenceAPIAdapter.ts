@@ -18,10 +18,11 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
       undefined;
     
     const rawData = await this.confluenceAPI.fetchConfluencePages(days);
-    console.log(rawData)
+    // console.log(rawData)
     const documents = rawData.results;
-    
-    return documents.map(document => new ConfluenceDocument(
+
+
+    const conf_docs = documents.map(document => new ConfluenceDocument(
       document.id,
       document.title,
       document.status,
@@ -30,6 +31,9 @@ export class ConfluenceAPIAdapter implements ConfluenceAPIPort {
       document.space?.id,
       document.body?.storage?.value
     ));
+     console.log(conf_docs.length);
+    //  console.log(conf_docs[0].getContent());
+    return conf_docs;
   }
 
 }

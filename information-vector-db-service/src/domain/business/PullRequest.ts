@@ -20,4 +20,48 @@ export class PullRequest{
     getComments():CommentPR[]{
         return this.comments;
     }
+
+    getId(): number {
+        return this.id;
+    }
+
+    getPullNumber(): number {
+        return this.pull_number;
+    }
+
+    getTitle(): string {
+        return this.title;
+    }
+
+    getDescription(): string {
+        return this.description;
+    }
+
+    getStatus(): string {
+        return this.status;
+    }
+
+    getAssignees(): string[] {
+        return this.assignees;
+    }
+
+    getReviewers(): string[] {
+        return this.reviewers;
+    }
+
+    getModifiedFiles(): string[] {
+        return this.modifiedFiles;
+    }
+
+    getFromBranch(): string {
+        return this.fromBranch;
+    }
+
+    getToBranch(): string {
+        return this.toBranch;
+    }
+
+    getRepositoryName(): string {
+        return this.repository_name;
+    }
 }

@@ -24,4 +24,20 @@ export class Commit{
     getRepoOwner(): string{
         return this.ownerRepository;
     }
+
+    getHash(): string {
+        return this.hash;
+    }
+
+    getMessage(): string {
+        return this.message;
+    }
+
+    getDateOfCommit(): string {
+        return this.dateOfCommit;
+    }
+
+    getAuthor(): string {
+        return this.author;
+    }
 }

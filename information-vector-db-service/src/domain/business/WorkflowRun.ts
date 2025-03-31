@@ -21,4 +21,19 @@ export class WorkflowRun {
     return this.duration_seconds;
   }
 
+  getLog(): string {
+    return this.log;
+  }
+
+  getTrigger(): string {
+    return this.trigger;
+  }
+
+  getWorkflowId(): number {
+    return this.workflow_id;
+  }
+
+  getWorkflowName(): string {
+    return this.workflow_name;
+  }
 } 

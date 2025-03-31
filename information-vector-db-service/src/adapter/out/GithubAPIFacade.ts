@@ -1,20 +1,10 @@
 import { Octokit } from '@octokit/rest'
 import type * as OctokitTypes from "@octokit/types";
-import { Workflow } from '../../domain/business/Workflow.js';
-import { WorkflowRun } from '../../domain/business/WorkflowRun.js';
-import { RepoCmd } from 'src/domain/command/RepoCmd.js';
+
 
 export class GithubAPIFacade{
-  private readonly octokit: Octokit;
-  private readonly owner: string;
-  private readonly repo: string;
-  constructor() {
-    this.octokit = new Octokit({
-        auth: process.env.GITHUB_TOKEN || 'your_github_token'
-    });
-    this.owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-    this.repo = process.env.GITHUB_REPO || 'Docs';
-  }
+  constructor(private readonly octokit: Octokit) {};
+
 
 async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpdate?: Date): Promise<OctokitTypes.OctokitResponse<{sha: string, commit: {author: {name?: string, date?: string} | null, message: string}}[], 200>> {
   try {
@@ -49,7 +39,7 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
     throw error;
   }
 }
-
+//can't use paginate() because the endpoint is not a list but the pagination needs to be done for the files attribute
   async fetchCommitModifiedFilesInfo(owner: string, repoName: string, commitSha: string): Promise<OctokitTypes.OctokitResponse<{files?: {filename: string, patch?: string | undefined}[]}, 200>> {
     try {
       let allFiles: any[] = [];
@@ -96,17 +86,6 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
       throw error;
     }
   }
-
-  // async fetchFilesInfo(branch_name: string): Promise<OctokitTypes.OctokitResponse<{tree: {name?: string, path?: string, type?: string, sha?: string, size?: number}[]}, 200>> {
-  //   const data = await this.octokit.rest.git.getTree({
-  //     owner: this.owner,
-  //     repo: this.repo,
-  //     tree_sha: branch_name, //can also be the branch's name
-  //     recursive: 'true',
-  //   });
-
-  //   return data;
-  // }
 
   async fetchFileInfo(path: string, owner: string, repo: string, branch:string): Promise<OctokitTypes.OctokitResponse<{name: string, path: string, content?: string, sha: string} | any, 200>> {
     const data = await this.octokit.rest.repos.getContent({
@@ -261,7 +240,6 @@ async fetchCommitsInfo(owner: string, repoName: string, branch: string, lastUpda
         per_page: 100
       };
       
-      // Add created date filter if provided
       if (since_created) {
         // Format as >=YYYY-MM-DD for GitHub API date filtering
         params.created = `>=${since_created.toISOString().split('T')[0]}`;

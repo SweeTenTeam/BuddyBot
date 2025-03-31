@@ -13,7 +13,7 @@ export class GithubService implements GithubUseCase {
   constructor(private readonly githubApi: GithubAPIAdapter) {}
   
 
-  //utim function to get the updated files to download from the commits
+  //util function to get the updated files to download from the commits
   private extractFileCmdsFromCommits(commits: Commit[]): FileCmd[] {
     const fileCmds: FileCmd[] = [];
     const uniquePaths = new Set<string>();
@@ -38,7 +38,6 @@ export class GithubService implements GithubUseCase {
   private async getWorkflowRuns(workflows: Workflow[], req: GithubCmd): Promise<WorkflowRun[]> {
     const workflowRuns: WorkflowRun[] = [];
     
-    // Create a map of repository names to repoCmds for quick lookup
     const repoCmdMap = new Map();
     for (const repoCmd of req.repoCmdList) {
       repoCmdMap.set(repoCmd.repoName, repoCmd);
@@ -68,22 +67,20 @@ export class GithubService implements GithubUseCase {
   
   async fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean> {
     const commits = await this.githubApi.fetchGithubCommitsInfo(req);
+    // console.log(commits);
     const fileCmds = this.extractFileCmdsFromCommits(commits);
 
     const files = await this.githubApi.fetchGithubFilesInfo(fileCmds);
+    // console.log(files)
     const pullRequests = await this.githubApi.fetchGithubPullRequestsInfo(req);
+    // console.log(pullRequests)
     const repository = await this.githubApi.fetchGithubRepositoryInfo(req);
+    // console.log(repository)
     const workflows = await this.githubApi.fetchGithubWorkflowInfo(req);
+    // console.log(workflows)
     const workflowRuns = await this.getWorkflowRuns(workflows, req);
+    // console.log(workflowRuns)
 
-
-    //DEBUG
-    
-    // console.log(files.length);
-    // console.log(pullRequests[0]);
-    // console.log(repository);
-    // console.log(workflows);
-    // console.log(workflowRuns);
 
     //store logic
     return true;

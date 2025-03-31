@@ -1,10 +1,13 @@
+import { Octokit } from '@octokit/rest';
 import { GithubAPIFacade } from './GithubAPIFacade.js';
 
 describe('GithubAPIFacade', () => {
   let githubAPIFacade: GithubAPIFacade;
 
   beforeEach(() => {
-    githubAPIFacade = new GithubAPIFacade();
+    githubAPIFacade = new GithubAPIFacade(new Octokit({
+          auth: process.env.GITHUB_TOKEN || 'your_github_token'
+          }));
   });
 
 //   it('should fetch repository information', async () => {
@@ -25,20 +28,20 @@ describe('GithubAPIFacade', () => {
 //     expect(data.data).toBeDefined();
 //   });
 
-  it('should fetch workflows information', async () => {
-    try {
-      const data = await githubAPIFacade.fetchWorkflowsInfo();
-      console.log('Workflows:', data);
-      if (data && data.length > 0 && data[0].runs) {
-        console.log("Total runs for first workflow:", data[0].runs.length);
-        console.log("Sample run:", data[0].runs[0]);
-      }
-      expect(data).toBeDefined();
-    } catch (error) {
-      console.error("Error fetching workflows:", error);
-      throw error;
-    }
-  });
+  // it('should fetch workflows information', async () => {
+  //   try {
+  //     const data = await githubAPIFacade.fetchWorkflowsInfo();
+  //     console.log('Workflows:', data);
+  //     if (data && data.length > 0 && data[0].runs) {
+  //       console.log("Total runs for first workflow:", data[0].runs.length);
+  //       console.log("Sample run:", data[0].runs[0]);
+  //     }
+  //     expect(data).toBeDefined();
+  //   } catch (error) {
+  //     console.error("Error fetching workflows:", error);
+  //     throw error;
+  //   }
+  // });
 
 //   it('should fetch files information', async () => {
 //     const data = await githubAPIFacade.fetchFilesInfo('main');

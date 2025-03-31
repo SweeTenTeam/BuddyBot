@@ -25,6 +25,8 @@ import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase.js';
 import { ConfluenceAPIPort } from './application/port/out/ConfluenceAPIPort.js';
 import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter.js';
 import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
+import { Octokit } from '@octokit/rest';
+import { Version3Client } from 'jira.js';
 
 @Module({
   imports: [],
@@ -87,7 +89,31 @@ import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
       provide: ConfluenceAPIPort,
       useClass: ConfluenceAPIAdapter,
     },
-    ConfluenceAPIFacade
+    ConfluenceAPIFacade,
+    {
+      provide: Octokit,
+      useFactory: () => {
+          return new Octokit({
+          auth: process.env.GITHUB_TOKEN || 'your_github_token'
+          });
+        }
+    },
+    {
+      provide: Version3Client,
+      useFactory: () => {
+        return new Version3Client({
+          host: process.env.JIRA_HOST || "your_host_url",
+            authentication: {
+              basic: {
+                username: process.env.JIRA_EMAIL || 'your_email',
+                password: process.env.ATLASSIAN_API_KEY || 'your_api_key',
+              },
+            },
+          });
+      }
+    }
+
+
   ],
 })
 export class AppModule {}
