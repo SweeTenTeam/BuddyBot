@@ -1,3 +1,5 @@
+import { CommentPR } from "./CommentPR.js";
+
 export class PullRequest{
     constructor(
         private id: number,
@@ -7,9 +9,59 @@ export class PullRequest{
         private status: string,
         private assignees: string[],
         private reviewers: string[],
-        private comments: string[],
+        private comments: CommentPR[],
         private modifiedFiles: string[],
         private fromBranch: string,
-        private toBranch: string
+        private toBranch: string,
+        private repository_name: string,
     ) {}
+
+
+    getComments():CommentPR[]{
+        return this.comments;
+    }
+
+    getId(): number {
+        return this.id;
+    }
+
+    getPullNumber(): number {
+        return this.pull_number;
+    }
+
+    getTitle(): string {
+        return this.title;
+    }
+
+    getDescription(): string {
+        return this.description;
+    }
+
+    getStatus(): string {
+        return this.status;
+    }
+
+    getAssignees(): string[] {
+        return this.assignees;
+    }
+
+    getReviewers(): string[] {
+        return this.reviewers;
+    }
+
+    getModifiedFiles(): string[] {
+        return this.modifiedFiles;
+    }
+
+    getFromBranch(): string {
+        return this.fromBranch;
+    }
+
+    getToBranch(): string {
+        return this.toBranch;
+    }
+
+    getRepositoryName(): string {
+        return this.repository_name;
+    }
 }
