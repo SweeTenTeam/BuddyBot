@@ -1,6 +1,6 @@
-import historyData from "@/json/history.json";
-import historyData1 from "@/json/history1.json";
-import { generateId } from "@/utils/generateId";
+//import historyData from "@/json/history.json";
+//import historyData1 from "@/json/history1.json";
+//import { generateId } from "@/utils/generateId";
 
 export class AdapterFacade {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
@@ -30,7 +30,7 @@ export class AdapterFacade {
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
-        return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
+        //return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
 
         try {
             const response = await fetch(`http://localhost/api/get-risposta`, {

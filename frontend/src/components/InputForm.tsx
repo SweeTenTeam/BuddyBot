@@ -14,21 +14,7 @@ export default function InputForm() {
 
   const handleSendMessage = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (text.trim() === "") return;
-
-    // Balance unpaired backticks and preserve valid input
-    const backtickCount = (text.match(/`/g) || []).length;
-    let sanitizedText = text;
-
-    // Add a closing backtick if code blocks are unbalanced
-    if (backtickCount % 2 !== 0) {
-      sanitizedText += "`";
-    }
-
-    console.log("Sanitized text:", sanitizedText); // Debugging log
-    await sendMessage(sanitizedText);
-
-    // Reset state and input field
+    if (text.trim() === "" || text==="`") return;
     setText("");
     setCharCount(0);
     setHasError(false);
@@ -36,31 +22,20 @@ export default function InputForm() {
       textareaRef.current.value = "";
       textareaRef.current.style.height = "auto";
     }
-    console.log("Final message sent:", sanitizedText);
-
+    await sendMessage(text);
   };
-
-  console.log("Text being typed:", text);
-
-  console.log("Textarea value after reset:", textareaRef.current?.value);
-
-
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const content = event.target.value;
-
-    // Allow all characters, including backticks, without filtering
     if (content.length <= MAX_CHARS) {
       setHasError(false);
-      setText(content); // Preserve input exactly as typed
+      setText(content);
       setCharCount(content.length);
       adjustHeight();
     } else {
       setHasError(true);
-      event.target.value = content.substring(0, MAX_CHARS); // Trim input only if necessary
+      event.target.value = content.substring(0, MAX_CHARS);
     }
-
-    console.log("Input text:", content); // Debugging log to verify backticks
   };
 
 
@@ -94,13 +69,8 @@ export default function InputForm() {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSendMessage(event as unknown as React.FormEvent);
-    } else if (event.key === "Enter" && event.shiftKey) {
-      event.preventDefault(); // Prevent browser defaults
-      setText(prevText => prevText + "\n"); // Explicitly add a newline
     }
   };
-
-  console.log("Textarea value after submit:", textareaRef.current?.value);
 
   useEffect(() => {
     adjustHeight();
