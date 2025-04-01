@@ -11,7 +11,7 @@ export default function MarkDown({ content }: { content: string }) {
         content = content.replace(/```(\s*\n*\s*)/g, "```");
         content = content.replace(/(\s*\n*\s*)```/g, "```");
         content = content.replace(/``````/g, "");
-        content = content.replace(/(?<!\n)```([\s\S]*?)```(?<!\n)/g, "```$1```");
+        content = content.replace(/(?<!\n)```([\s\S]*?)```(?<!\n)/g, "\n```$1```\n");
         content = content.replace(/```([\s\S]*?)```/g, (match, p1) => {
             if (p1.includes("\n")) {
                 return `\`\`\`${p1}\n\`\`\``;
