@@ -2,4 +2,5 @@ node_modules
 *.js
 .env
 qdrant-storage/*
+!qdrant-storage/.gitkeep
 dist
