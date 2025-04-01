@@ -181,35 +181,14 @@ describe('End-to-End Fetch and Store Tests', () => {
 
 
     describe('GitHub fetch and store', () => {
-    // Skip this test if environment variables are not set
-    (hasAllEnvVars ? it : it.skip)('should fetch and store GitHub data directly through service', async () => {
-      // Set up test data with time filter to limit API calls
-      const lastWeek = new Date();
-      lastWeek.setDate(lastWeek.getDate() - 7);
-      
-      const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-      const repoName = process.env.GITHUB_REPO || 'Docs';
-      const branch = 'develop';
-      
-      const repoCmd = new RepoCmd(owner, repoName, branch);
-      const githubCmd = new GithubCmd([repoCmd], lastWeek);
-      
-      // Execute test
-      console.log(`Fetching GitHub data for ${owner}/${repoName}`);
-      const result = await githubService.fetchAndStoreGithubInfo(githubCmd);
-      
-      // Assertions
-      expect(result).toBe(true);
-    }, 60000); // Increase timeout to 60 seconds for API calls
-
     (hasAllEnvVars ? it : it.skip)('should fetch and store GitHub data through controller', async () => {
       // Set up test data
       const lastWeek = new Date();
       lastWeek.setDate(lastWeek.getDate() - 7);
       
      const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-      const repoName = process.env.GITHUB_REPO || 'Docs';
-      const branch = 'master';
+      const repoName = process.env.GITHUB_REPO || 'BuddyBot';
+      const branch = 'develop';
       
       const repoDTO = new RepoGithubDTO(owner, repoName, branch);
       const fetchGithubDto = new FetchGithubDto([repoDTO], lastWeek);

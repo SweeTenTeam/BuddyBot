@@ -11,7 +11,7 @@ export class ChatBotService {
   }
 
   async sendMessage(pattern: string, data: any) {
-    console.log("Sending");
+    console.log("Sending message to ChatBot");
     return this.client.send(pattern, data).toPromise(); //lastValueFrom (?)
   }
   
