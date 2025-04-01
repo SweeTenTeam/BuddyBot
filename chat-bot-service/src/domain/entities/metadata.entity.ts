@@ -1,13 +1,12 @@
 export class Metadata {
-  origin: string;
-  type: string;
-  originID: string;
+  
 
-   constructor(origin: string, type: string, originID: string) {
-    this.origin = origin;
-    this.type = type;
-    this.originID = originID;
-  }
+   constructor(
+    public readonly origin: string,
+    public readonly type: string,
+    public readonly originID: string,
+   ) 
+   {}
 
   getOrigin(): string{
     return this.origin;

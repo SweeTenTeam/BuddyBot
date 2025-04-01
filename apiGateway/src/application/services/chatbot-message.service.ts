@@ -5,7 +5,6 @@ import { ReqAnswerCmd } from '../../domain/cmds/req-answer-cmd';
 import { ProvChat } from '../../domain/business/prov-chat';
 import { Chat } from '../../domain/business/chat';
 import { GetChatUseCase } from '../ports/in/get-chat';
-//import { Message } from '../../domain/business/message';
 
 @Injectable()
 export class GetRispostaService implements GetChatUseCase{
@@ -17,13 +16,12 @@ export class GetRispostaService implements GetChatUseCase{
   async execute(req: ReqAnswerCmd): Promise<Chat> {
     console.log('Ricevuta richiesta per risposta chatbot:', req);
   
-    //return new Chat('',new Message(req.text,''),new Message(req.text,''))
-    //returning early for show-off purposes
     const provChat: ProvChat = await this.chatbotPort.getRisposta(req);
   
     console.log('Risposta ottenuta dal chatbot:', provChat);
   
-    return this.storicoPort.postStorico(new ProvChat(provChat.question, provChat.answer, provChat.timestamp)); //RETUREN RISPOSTA CON TUTTI I DATI DA STORICO SERV
+    //return this.storicoPort.postStorico(provChat);//RETUREN RISPOSTA CON TUTTI I DATI DA STORICO SERV
+    return this.storicoPort.postStorico(new ProvChat(provChat.question, provChat.answer, provChat.timestamp || req.date)); // xKE CHATBOT non ritorna date
   }
   
 }

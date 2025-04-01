@@ -16,6 +16,7 @@ import { QdrantClient } from '@qdrant/js-client-rest';
 import { NomicEmbeddings } from '@langchain/nomic';
 import { ClientProxy, ClientsModule, Transport } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { Information } from 'src/domain/business/information.js';
 
 
 
@@ -136,11 +137,11 @@ describe('Retrieval Integration', () => {
   });
 
   it('should store and retrieve information through RabbitMQ messaging', async () => {
-    const testInfo = new InformationEntity(
+    const testInfo = new Information(
       'This is a test document about information retrieval systems and vector databases',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'real-test-id',
       }
     );
@@ -162,32 +163,32 @@ describe('Retrieval Integration', () => {
     expect(testDocument).toBeDefined();
     expect(testDocument.content).toContain('information retrieval');
     expect(testDocument.metadata.origin).toBe(Origin.GITHUB);
-    expect(testDocument.metadata.type).toBe(Type.COMMMIT);
+    expect(testDocument.metadata.type).toBe(Type.COMMIT);
   });
 
   it('should store multiple documents and retrieve the most relevant ones using RabbitMQ', async () => {
   const testDocuments = [
-    new InformationEntity(
+    new Information(
       'TypeScript is a strongly typed programming language that builds on JavaScript',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'typescript-doc',
       }
     ),
-    new InformationEntity(
+    new Information(
       'Node.js is a JavaScript runtime built on Chrome\'s V8 JavaScript engine',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'nodejs-doc',
       }
     ),
-    new InformationEntity(
+    new Information(
       'NestJS is a framework for building efficient, scalable Node.js server-side applications',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'nestjs-doc',
       }
     ),
@@ -217,11 +218,11 @@ describe('Retrieval Integration', () => {
 });
 
   it('should replace document content when storing with same metadata and retrieve via RabbitMQ', async () => {
-    const originalDoc = new InformationEntity(
+    const originalDoc = new Information(
       'Original document that will be replaced',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'replacement-test-id',
       }
     );
@@ -238,11 +239,11 @@ describe('Retrieval Integration', () => {
     expect(originalDocument).toBeDefined();
     expect(originalDocument.content).toBe('Original document that will be replaced');
     
-    const updatedDoc = new InformationEntity(
+    const updatedDoc = new Information(
       'Updated document that replaces the original',
       {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'replacement-test-id',
       }
     );

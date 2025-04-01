@@ -1,4 +1,6 @@
 import { Metadata, Origin, Type } from "./metadata.js";
+import { JiraComment } from './JiraComment.js';
+
 
 export class Ticket {
   public id: string;
@@ -6,13 +8,12 @@ export class Ticket {
   public description: string;
   public assignee: string;
   public status: string;
-  //public mainActivity: string;
   public relatedSprint: string;
   public storyPoint: string;
   public creator: string;
   public priority: string;
   public expiryDate: string;
-  public comments: string[];
+  public comments: JiraComment[];
   public relatedTickets: string[];
 
   constructor(
@@ -21,13 +22,12 @@ export class Ticket {
     description: string,
     assignee: string,
     status: string,
-    //mainActivity: string,
     relatedSprint: string,
     storyPoint: string,
     creator: string,
     priority: string,
     expiryDate: string,
-    comments: string[],
+    comments: JiraComment[],
     relatedTickets: string[],
   ) {
     this.id = id;
@@ -35,7 +35,6 @@ export class Ticket {
     this.description = description;
     this.assignee = assignee;
     this.status = status;
-    //this.mainActivity = mainActivity;
     this.relatedSprint = relatedSprint;
     this.storyPoint = storyPoint;
     this.creator = creator;
@@ -45,11 +44,22 @@ export class Ticket {
     this.relatedTickets = relatedTickets;
   }
 
-  toStringifiedJson(): string {
-    return JSON.stringify(this);
+  toJson(): JSON {
+    const result: JSON = JSON;
+    result['title'] = this.title;
+    result['description'] = this.description;
+    result['assignee'] = this.assignee;
+    result['status'] = this.status;
+    result['comments'] = this.comments.map(comment => comment.toJson());
+
+    return result;
   }
 
-  getMetadata(): Metadata {
+  toStringifiedJson(): string {
+        return JSON.stringify(this);
+    }
+
+   getMetadata(): Metadata {
     return new Metadata(Origin.JIRA, Type.TICKET, this.id);
   }
 }
