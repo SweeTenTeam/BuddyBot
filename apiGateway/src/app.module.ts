@@ -14,14 +14,10 @@ import { GetStoricoUseCase } from './application/ports/in/get-storico';
   imports: [],
   controllers: [ApiController],
   providers: [
-    //GetStoricoService,
-    //GetRispostaService,
     { provide: 'GetChatUseCase', useClass: GetRispostaService },
     { provide: 'GetStoricoUseCase', useClass: GetStoricoService },
-
     { provide: 'ChatBotPort', useClass: MessageAdapter },
     { provide: 'StoricoPort', useClass: StoricoMessageAdapter },
-    //RabbitMQService,
     ChatBotService,
     HistoryService,
     InformationService
