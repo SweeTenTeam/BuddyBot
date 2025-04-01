@@ -45,7 +45,7 @@ describe('RetrieveAdapter', () => {
     const mockResults = [
       new InformationEntity('test content', {
         origin: OriginEntity.CONFLUENCE,
-        type: TypeEntity.COMMMIT,
+        type: TypeEntity.COMMIT,
         originID: 'test-id'
       }),
     ];
