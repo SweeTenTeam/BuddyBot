@@ -101,83 +101,83 @@ describe('End-to-End Fetch and Store Tests', () => {
 
 
 
-  // describe('Jira fetch and store', () => {
-  //   (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets directly through service', async () => {
-  //     // Skip if JIRA_BOARD_ID is not provided
-  //     // if (!process.env.JIRA_BOARD_ID) {
-  //     //   console.warn('Skipping Jira test due to missing JIRA_BOARD_ID');
-  //     //   return;
-  //     // }
+  describe('Jira fetch and store', () => {
+    (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets directly through service', async () => {
+      // Skip if JIRA_BOARD_ID is not provided
+      // if (!process.env.JIRA_BOARD_ID) {
+      //   console.warn('Skipping Jira test due to missing JIRA_BOARD_ID');
+      //   return;
+      // }
       
-  //     // Set up test data with time filter to limit API calls
-  //     const lastMonth = new Date();
-  //     lastMonth.setMonth(lastMonth.getMonth() - 1);
+      // Set up test data with time filter to limit API calls
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
       
-  //     const boardId = 1;
-  //     const jiraCmd = new JiraCmd(boardId, lastMonth);
+      const boardId = 1;
+      const jiraCmd = new JiraCmd(boardId, lastMonth);
       
-  //     // Execute test
-  //     console.log(`Fetching Jira tickets for board ${boardId}`);
-  //     const result = await jiraService.fetchAndStoreJiraInfo(jiraCmd);
+      // Execute test
+      console.log(`Fetching Jira tickets for board ${boardId}`);
+      const result = await jiraService.fetchAndStoreJiraInfo(jiraCmd);
       
-  //     // Assertions
-  //     expect(result).toBe(true);
-  //   }, 60000); // Increase timeout to 60 seconds for API calls
+      // Assertions
+      expect(result).toBe(true);
+    }, 60000); // Increase timeout to 60 seconds for API calls
 
-  //   (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets through controller', async () => {
-  //     // Skip if JIRA_BOARD_ID is not provided
-  //     // if (!process.env.JIRA_BOARD_ID) {
-  //     //   console.warn('Skipping Jira test due to missing JIRA_BOARD_ID');
-  //     //   return;
-  //     // }
+    (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets through controller', async () => {
+      // Skip if JIRA_BOARD_ID is not provided
+      // if (!process.env.JIRA_BOARD_ID) {
+      //   console.warn('Skipping Jira test due to missing JIRA_BOARD_ID');
+      //   return;
+      // }
       
-  //     // Set up test data
-  //     const lastMonth = new Date();
-  //     lastMonth.setMonth(lastMonth.getMonth() - 1);
+      // Set up test data
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 1);
       
-  //     const boardId = 1;
-  //     const fetchJiraDto = new FetchJiraDto(boardId, lastMonth);
+      const boardId = 1;
+      const fetchJiraDto = new FetchJiraDto(boardId, lastMonth);
       
-  //     // Execute test
-  //     console.log(`Fetching Jira tickets through controller for board ${boardId}`);
-  //     const result = await informationController.fetchAndStoreJiraInfo(fetchJiraDto);
+      // Execute test
+      console.log(`Fetching Jira tickets through controller for board ${boardId}`);
+      const result = await informationController.fetchAndStoreJiraInfo(fetchJiraDto);
       
-  //     // Assertions
-  //     expect(result).toBe(true);
-  //   }, 60000); // Increase timeout to 60 seconds for API calls
-  // });
+      // Assertions
+      expect(result).toBe(true);
+    }, 60000); // Increase timeout to 60 seconds for API calls
+  });
 
-  // describe('Confluence fetch and store', () => {
-  //   (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents directly through service', async () => {
-  //     // Set up test data with time filter to limit API calls
-  //     const lastMonth = new Date();
-  //     lastMonth.setMonth(lastMonth.getMonth() - 4);
+  describe('Confluence fetch and store', () => {
+    (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents directly through service', async () => {
+      // Set up test data with time filter to limit API calls
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 4);
       
-  //     const confluenceCmd = new ConfluenceCmd(lastMonth);
+      const confluenceCmd = new ConfluenceCmd(lastMonth);
       
-  //     // Execute test
-  //     console.log('Fetching Confluence documents');
-  //     const result = await confluenceService.fetchAndStoreConfluenceInfo(confluenceCmd);
+      // Execute test
+      console.log('Fetching Confluence documents');
+      const result = await confluenceService.fetchAndStoreConfluenceInfo(confluenceCmd);
       
-  //     // Assertions
-  //     expect(result).toBe(true);
-  //   }, 60000); // Increase timeout to 60 seconds for API calls
+      // Assertions
+      expect(result).toBe(true);
+    }, 60000); // Increase timeout to 60 seconds for API calls
 
-  //   (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents through controller', async () => {
-  //     // Set up test data
-  //     const lastMonth = new Date();
-  //     lastMonth.setMonth(lastMonth.getMonth() - 15);
+    (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents through controller', async () => {
+      // Set up test data
+      const lastMonth = new Date();
+      lastMonth.setMonth(lastMonth.getMonth() - 15);
       
-  //     const fetchConfluenceDto = new FetchConfluenceDto(lastMonth);
+      const fetchConfluenceDto = new FetchConfluenceDto(lastMonth);
       
-  //     // Execute test
-  //     console.log('Fetching Confluence documents through controller');
-  //     const result = await informationController.fetchAndStoreConfluenceInfo(fetchConfluenceDto);
+      // Execute test
+      console.log('Fetching Confluence documents through controller');
+      const result = await informationController.fetchAndStoreConfluenceInfo(fetchConfluenceDto);
       
-  //     // Assertions
-  //     expect(result).toBe(true);
-  //   }, 60000); // Increase timeout to 60 seconds for API calls
-  // });
+      // Assertions
+      expect(result).toBe(true);
+    }, 60000); // Increase timeout to 60 seconds for API calls
+  });
 
 
     describe('GitHub fetch and store', () => {

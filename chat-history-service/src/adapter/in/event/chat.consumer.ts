@@ -11,10 +11,10 @@ export class ChatConsumer {
     constructor(@Inject(IC_USE_CASE) private readonly insertChatService: InsertChatUseCase) {}
 
     @MessagePattern('chat_message')
-    async handleMessage(@Payload() data: ChatDTO): Promise<ChatDTO> {
+    async handleMessage(@Payload() data: CreateChatDTO): Promise<ChatDTO> {
         const insertChatCmd: InsertChatCmd = { 
-            question: new Message(data.question.content, data.question.timestamp),
-            answer: { content: data.answer.content }
+            question: new Message(data.question, data.timestamp),
+            answer: { content: data.answer }
         }
         const newMessage = await this.insertChatService.insertChat(insertChatCmd);
         return newMessage;
