@@ -1,11 +1,11 @@
 export enum OriginEntity {
-  GITHUB = 'SYSTEM',
-  JIRA = 'USER',
+  GITHUB = 'GITHUB',
+  JIRA = 'JIRA',
   CONFLUENCE = "CONFLUENCE"
 }
 
 export enum TypeEntity {
-  COMMMIT = 'COMMIT',
+  COMMIT = 'COMMIT',
 }
 
 export class MetadataEntity {

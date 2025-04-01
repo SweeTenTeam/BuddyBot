@@ -20,7 +20,21 @@ export class GithubStoreAdapter implements GithubStoreInfoPort {
         for(const pullRequest of req.pullRequests){
             await this.repository.storeInformation(new Information(pullRequest.toStringifiedJson(),pullRequest.getMetadata()));
         }
-        await this.repository.storeInformation(new Information(req.repo.toStringifiedJson(),req.repo.getMetadata()));
+        for(const repo of req.repos){
+            await this.repository.storeInformation(new Information(repo.toStringifiedJson(),repo.getMetadata()));
+
+        }
+        
+        for(const workflow of req.workflows){
+             await this.repository.storeInformation(new Information(workflow.toStringifiedJson(),workflow.getMetadata()));
+        }
+        for(const workflowRun of req.workflow_runs){
+             await this.repository.storeInformation(new Information(workflowRun.toStringifiedJson(),workflowRun.getMetadata()));
+        }
+
+
+
+
         //store workflows TBD
         return true;
     }

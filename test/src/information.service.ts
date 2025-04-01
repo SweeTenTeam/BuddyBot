@@ -6,7 +6,7 @@ import { ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
 export class InformationService {
   private client: ClientProxy;
 
-  constructor() {
+  constructor(_client: ClientProxy) {
     this.client = ClientProxyFactory.create(rabbitMQConfig());
   }
 

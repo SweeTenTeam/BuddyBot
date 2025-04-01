@@ -9,6 +9,7 @@ import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
 import { FetchGithubDto } from './dto/FetchGithub.dto.js';
 import { FetchConfluenceDto } from './dto/FetchConfluence.dto.js';
 import { FetchJiraDto } from './dto/FetchJira.dto.js';
+import { RepoCmd } from '../../domain/command/RepoCmd.js';
 
 @Controller()
 export class InformationController {
@@ -28,8 +29,12 @@ export class InformationController {
 
   @MessagePattern('fetchAndStoreGithub')
   async fetchAndStoreGithubInfo(@Payload() req: FetchGithubDto): Promise<boolean> {
+    const repoCmdList = req.repoDTOList.map(repoDto => {
+       return new RepoCmd(repoDto.owner,repoDto.repoName,repoDto.branch_name); 
+    });
+
     const result = await this.githubService.fetchAndStoreGithubInfo(
-      new GithubCmd(req.lastUpdate),
+      new GithubCmd(repoCmdList, req.lastUpdate ? new Date(req.lastUpdate) : undefined)
     );
     return result;
   }
@@ -37,7 +42,7 @@ export class InformationController {
   @MessagePattern('fetchAndStoreJira')
   async fetchAndStoreJiraInfo(@Payload() req: FetchJiraDto): Promise<boolean> {
     const result = await this.jiraService.fetchAndStoreJiraInfo(
-      new JiraCmd(req.boardId,req.lastUpdate),
+      new JiraCmd(req.boardId, req.lastUpdate ? req.lastUpdate : undefined),
     );
     return result;
   }
@@ -45,7 +50,7 @@ export class InformationController {
   @MessagePattern('fetchAndStoreConfluence')
   async fetchAndStoreConfluenceInfo(@Payload() req: FetchConfluenceDto): Promise<boolean> {
     const result = await this.confluenceService.fetchAndStoreConfluenceInfo(
-      new ConfluenceCmd(req.lastUpdate),
+      new ConfluenceCmd(req.lastUpdate ? req.lastUpdate : undefined),
     );
     return result;
   }

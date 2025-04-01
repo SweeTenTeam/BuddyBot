@@ -3,13 +3,15 @@ import { Repository } from "./Repository.js";
 import { File } from "./File.js"
 import { PullRequest } from "./PullRequest.js";
 import { Workflow } from "./Workflow.js";
+import { WorkflowRun } from "./WorkflowRun.js";
 
 export class GithubInfo{
     constructor(
-        public commits: Commit[],
-        public files: File[],
-        public pullRequests: PullRequest[],
-        public repo: Repository,
-        public workflow: Workflow[]
+        public readonly commits: Commit[],
+        public readonly files: File[],
+        public readonly pullRequests: PullRequest[],
+        public readonly repos: Repository[],
+        public readonly workflows: Workflow[],
+        public readonly workflow_runs: WorkflowRun[]
     ) {}
 }

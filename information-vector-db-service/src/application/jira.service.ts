@@ -1,26 +1,18 @@
+import { Inject, Injectable } from '@nestjs/common';
+import { JiraAPIPort, JIRA_API_PORT } from './port/out/JiraAPIPort.js';
+import { JiraStoreInfoPort, JIRA_STORE_INFO_PORT } from './port/out/JiraStoreInfoPort.js';
 import { JiraCmd } from '../domain/command/JiraCmd.js';
-import { JiraUseCase } from './port/in/JiraUseCase.js';
-import { Injectable } from '@nestjs/common';
-import { JiraAPIPort } from './port/out/JiraAPIPort.js';
-import { JiraStoreAdapter } from '../adapter/out/JiraStoreAdapter.js';
+import { Ticket } from '../domain/business/Ticket.js';
 
 @Injectable()
-export class JiraService implements JiraUseCase {
-  private readonly jiraAPIAdapter: JiraAPIPort;
-  private readonly jiraStoreAdapter: JiraStoreAdapter;
+export class JiraService {
   constructor(
-    jiraAPIAdapter: JiraAPIPort,
-    jiraStoreAdapter: JiraStoreAdapter
-  ) {
-    this.jiraAPIAdapter = jiraAPIAdapter;
-    this.jiraStoreAdapter = jiraStoreAdapter;
-  }
+    @Inject(JIRA_API_PORT) private readonly jiraApi: JiraAPIPort,
+    @Inject(JIRA_STORE_INFO_PORT) private readonly jiraStore: JiraStoreInfoPort
+  ) {}
 
   async fetchAndStoreJiraInfo(req: JiraCmd): Promise<boolean> {
-    const tickets = await this.jiraAPIAdapter.fetchTickets(req);
-    console.log(tickets[0]);
-    //store logic
-    await this.jiraStoreAdapter.storeTickets(tickets);
-    return true;
+    const tickets = await this.jiraApi.fetchTickets(req);
+    return this.jiraStore.storeTickets(tickets);
   }
 }
