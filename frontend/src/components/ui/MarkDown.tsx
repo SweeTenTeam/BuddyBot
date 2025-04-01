@@ -3,18 +3,18 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import { Copy, Check } from "lucide-react";
-import "highlight.js/styles/github-dark.css"; // Choose a theme
+import "highlight.js/styles/github-dark.css";
 
 export default function MarkDown({ content }: { content: string }) {
     const preprocessContent = (content: string) => {
         if (!content) return "";
         content = content.replace(/```(\s*\n*\s*)/g, "```");
-        content = content.replace(/(\s*\n*\s*)```/g, "```");
+        content = content.replace(/(\s*\n*\s*)```/g, "\n```");
         content = content.replace(/``````/g, "");
         content = content.replace(/(?<!\n)```([\s\S]*?)```(?<!\n)/g, "\n```$1```\n");
         content = content.replace(/```([\s\S]*?)```/g, (match, p1) => {
             if (p1.includes("\n")) {
-                return `\`\`\`${p1}\n\`\`\``;
+                return `\`\`\`${p1}\`\`\`\n`;
             }
             return match;
         });
