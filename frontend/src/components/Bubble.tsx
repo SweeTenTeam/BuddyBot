@@ -6,12 +6,12 @@ import LoadMessage from "./ui/LoadMessage";
 import MarkDown from "./ui/MarkDown";
 
 
-export default function Bubble({ message, user, error, loading }: { message: Message, user: boolean, error: boolean, loading: boolean }) {
+export default function Bubble({ message, user, error, loading }: { message: Message, user: boolean, error: number, loading: boolean }) {
 
-    if (error) {
+    if (error!=0) {
         return (
             <div id="error-message">
-                <ErrorAlert statusCode={506} />
+                <ErrorAlert statusCode={error} />
             </div>
         );
     }

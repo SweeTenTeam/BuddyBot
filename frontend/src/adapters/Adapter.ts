@@ -3,6 +3,7 @@ import { Message } from "@/types/Message";
 import { Target } from "./Target";
 import { AdapterFacade } from "./AdapterFacade";
 import { generateId } from "@/utils/generateId";
+import { CustomError } from "@/types/CustomError";
 
 export class Adapter implements Target {
     private adapterFacade: AdapterFacade;
@@ -16,7 +17,8 @@ export class Adapter implements Target {
             const jsonResponse = await this.adapterFacade.fetchHistory(id, offset);
             return this.adaptQuestionAnswerArray(jsonResponse);
         } catch (error) {
-            throw new Error("Error fetching history");
+            if (error instanceof CustomError) throw error;
+            throw new CustomError(500, "SERVER", "Errore interno del server");
         }
     }
     async requestAnswer(question: Message): Promise<{ answer: Message; id: string; }> {
@@ -27,7 +29,8 @@ export class Adapter implements Target {
                 id: answer.id
             };
         } catch (error) {
-            throw new Error("Error fetching history");
+            if (error instanceof CustomError) throw error;
+            throw new CustomError(501, "SERVER", "Errore interno del server");
         }
     }
 
@@ -43,8 +46,8 @@ export class Adapter implements Target {
             id: data.id || generateId(),
             question: this.adaptMessage(data.question),
             answer: this.adaptMessage(data.answer),
-            error: data.error || false,
-            loading: data.loading || false,
+            error: 0,
+            loading: false,
         };
     };
 

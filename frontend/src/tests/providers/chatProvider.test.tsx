@@ -1,7 +1,7 @@
 import { render, screen, waitFor, fireEvent, act } from "@testing-library/react";
 import '@testing-library/jest-dom';
 import { ChatProvider, useChat } from "@/providers/chatProvider";
-import { generateId } from "@/utils/generateId";
+import { CustomError } from "@/types/CustomError";
 import { QuestionAnswer } from "@/types/QuestionAnswer";
 
 // Mock della funzione di adapter
@@ -129,7 +129,7 @@ describe("ChatProvider", () => {
                 id: "1", 
                 question: { content: "Previous question", timestamp: "12345" }, 
                 answer: { content: "Previous answer", timestamp: "12346" }, 
-                error: false, 
+                error: 0, 
                 loading: false 
             },
         ];
@@ -138,7 +138,7 @@ describe("ChatProvider", () => {
                 id: "2", 
                 question: { content: "New question", timestamp: "12347" }, 
                 answer: { content: "New answer", timestamp: "12348" }, 
-                error: false, 
+                error: 0, 
                 loading: false 
             },
         ];
@@ -170,5 +170,94 @@ describe("ChatProvider", () => {
         });
     });
     
-    
+    it("marks messages with long content as error when loading history", async () => {
+        const longMessage = "a".repeat(100001);
+        const mockHistoryResponse: QuestionAnswer[] = [
+            { 
+                id: "1", 
+                question: { content: "Previous question", timestamp: "12345" }, 
+                answer: { content: longMessage, timestamp: "12346" }, 
+                error: 0, 
+                loading: false 
+            },
+        ];
+        
+        mockAdapter.requestHistory.mockResolvedValueOnce(mockHistoryResponse);
+
+        await act(async () => {
+            render(
+                <ChatProvider adapter={mockAdapter}>
+                    <div>Test Child</div>
+                </ChatProvider>
+            );
+        });
+
+        await waitFor(() => {
+            expect(mockAdapter.requestHistory).toHaveBeenCalledTimes(1);
+        });
+
+        await waitFor(() => {
+            expect(mockAdapter.requestHistory).toHaveBeenCalledWith("", 10);
+            expect(mockHistoryResponse[0].error).toBe(1);
+        });
+    });
+
+    it("marks bot response as error if content length exceeds 100000 characters", async () => {
+        const longMessage = "a".repeat(100001);
+        const botResponse = { 
+            answer: { content: longMessage, timestamp: new Date().toISOString() }, 
+            id: "bot-id" 
+        };
+
+        mockAdapter.requestAnswer.mockResolvedValueOnce(botResponse);
+
+        await act(async () => {
+            render(
+                <ChatProvider adapter={mockAdapter}>
+                    <TestComponent />
+                </ChatProvider>
+            );
+        });
+
+        await act(async () => {
+            fireEvent.click(screen.getByText("Send Message"));
+        });
+
+        await waitFor(() => {
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: "Test message", timestamp: expect.any(String) });
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledTimes(1);
+        });
+
+        await waitFor(() => {
+            expect(screen.queryByText("Test bot response")).not.toBeInTheDocument();
+        });
+    });
+
+    it("dispatches ADD_MESSAGE_ERROR with specific error code if CustomError occurs", async () => {
+        const customError = new CustomError(403, "Custom error message");
+
+        mockAdapter.requestAnswer.mockRejectedValueOnce(customError);
+
+        await act(async () => {
+            render(
+                <ChatProvider adapter={mockAdapter}>
+                    <TestComponent />
+                </ChatProvider>
+            );
+        });
+
+        await act(async () => {
+            fireEvent.click(screen.getByText("Send Message"));
+        });
+
+        await waitFor(() => {
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledWith({ content: "Test message", timestamp: expect.any(String) });
+            expect(mockAdapter.requestAnswer).toHaveBeenCalledTimes(1);
+        });
+
+        await waitFor(() => {
+            expect(mockAdapter.requestAnswer).toHaveBeenCalled();
+        });
+    });
+
 });

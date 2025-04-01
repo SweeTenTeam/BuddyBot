@@ -33,9 +33,9 @@ export default function Chat() {
                 </div>
             ) : (
                 <>
-                    {state.errorHistory ? (
+                    {state.errorHistory != 0 ? (
                         <div className="w-full h-full flex items-center justify-center" data-testid="error-alert">
-                            <ErrorAlert statusCode={500} />
+                            <ErrorAlert statusCode={state.errorHistory} />
                         </div>
                     ) : (
                         <>

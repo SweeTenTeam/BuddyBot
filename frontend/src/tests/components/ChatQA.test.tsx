@@ -17,7 +17,7 @@ describe('ChatQA component', () => {
       id: '123',
       question: { content: "What is React?", timestamp: new Date().toISOString() },
       answer: { content: "React is a JavaScript library.", timestamp: new Date().toISOString() },
-      error: false,
+      error: 0,
       loading: false
     };
 

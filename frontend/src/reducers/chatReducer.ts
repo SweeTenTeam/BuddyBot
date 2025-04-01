@@ -8,7 +8,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
       return { 
         ...state, 
         loadingHistory: true,
-        errorHistory: false,
+        errorHistory: 0,
         hasMore: false,
       };
     case "LOAD_HISTORY_SUCCESS":
@@ -16,20 +16,20 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
         ...state,
         messages: [...action.payload, ...state.messages],
         loadingHistory: false,
-        errorHistory: false,
+        errorHistory: 0,
         hasMore: action.hasMore,
       };
     case "LOAD_HISTORY_ERROR":
       return {
         ...state,
         loadingHistory: false,
-        errorHistory: true,
+        errorHistory: action.error,
         hasMore: false,
       };
     case "ADD_MESSAGE_START":
       return { 
         ...state, 
-        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: false, loading: true }],
+        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: 0, loading: true }],
       };
     case "ADD_MESSAGE_SUCCESS":
       const updatedMessagesSuccess = state.messages.map((msg) => {
@@ -39,7 +39,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
             id: action.newid,
             answer: action.answer,
             loading: false,
-            error: false,
+            error: 0,
           };
         }
         return msg;
@@ -54,7 +54,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
           return {
             ...msg,
             loading: false,
-            error: true,
+            error: action.error,
           };
         }
         return msg;

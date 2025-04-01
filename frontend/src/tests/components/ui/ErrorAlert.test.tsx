@@ -5,10 +5,13 @@ import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 describe('ErrorAlert component', () => {
   const errorCases = [
-    { code: 404, title: 'Not Found', message: 'The requested resource was not found.' },
-    { code: 500, title: 'Server Error', message: 'Something went wrong on our end. Please try again later.' },
-    { code: 505, title: 'Answer too long', message: 'The answer generated was too long to be handled. Please rephrase your question.' },
-    { code: 506, title: 'No answer', message: 'No answer was generated for your question. Please rephrase it.' },
+    { code: 400, title: "Connection Error", message: "An error occurred while connecting to the server to fetch history." },
+    { code: 401, title: "Connection Error", message: "An error occurred while connecting to the server to send the message." },
+    { code: 408, title: "Timeout", message: "The request took too long to fetch the history." },
+    { code: 409, title: "Timeout", message: "The request took too long to get an answer for the question." },
+    { code: 500, title: "Server Error", message: "An internal server error occurred while fetching history. Please try again later." },
+    { code: 501, title: "Server Error", message: "An internal server error occurred while sending the message. Please try again later." },
+    { code: 1, title: "Answer Too Long", message: "The generated answer was too long to process. Please rephrase your question." },
   ];
 
   errorCases.forEach(({ code, title, message }) => {

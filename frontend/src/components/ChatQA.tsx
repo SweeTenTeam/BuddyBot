@@ -6,7 +6,7 @@ export default function ChatQA({ questionAnswer }: { questionAnswer: QuestionAns
     return (
         <div className="question-answer">
             <div className="question">
-                <Bubble message={questionAnswer.question} user={true} error={false} loading={false} />
+                <Bubble message={questionAnswer.question} user={true} error={0} loading={false} />
             </div>
             <div className="answer">
                 <Bubble message={questionAnswer.answer} user={false} error={questionAnswer.error} loading={questionAnswer.loading} />

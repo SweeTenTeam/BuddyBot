@@ -1,7 +1,7 @@
 import { Adapter } from "@/adapters/Adapter";
 import { AdapterFacade } from "@/adapters/AdapterFacade";
 import { Message } from "@/types/Message";
-import { QuestionAnswer } from "@/types/QuestionAnswer";
+import { CustomError } from "@/types/CustomError";
 import * as generateIdModule from "@/utils/generateId";
 
 jest.mock("@/adapters/AdapterFacade");
@@ -18,8 +18,8 @@ describe("Adapter", () => {
 
   it("should fetch and adapt history correctly", async () => {
     const mockResponse = [
-      { id: "1", question: { content: "Q1", timestamp: "12345" }, answer: { content: "A1", timestamp: "12346" }, error: false, loading: false },
-      { id: "2", question: { content: "Q2", timestamp: "12346" }, answer: { content: "A2", timestamp: "12347" }, error: false, loading: false },
+      { id: "1", question: { content: "Q1", timestamp: "12345" }, answer: { content: "A1", timestamp: "12346" }, error: 0, loading: false },
+      { id: "2", question: { content: "Q2", timestamp: "12346" }, answer: { content: "A2", timestamp: "12347" }, error: 0, loading: false },
     ];
     mockFacade.fetchHistory.mockResolvedValue(mockResponse);
 
@@ -29,7 +29,7 @@ describe("Adapter", () => {
 
   it("should throw an error if fetching history fails", async () => {
     mockFacade.fetchHistory.mockRejectedValue(new Error("Error fetching"));
-    await expect(adapter.requestHistory("1", 0)).rejects.toThrow("Error fetching history");
+    await expect(adapter.requestHistory("1", 0)).rejects.toThrow("SERVER");
   });
 
   it("should fetch and adapt an answer correctly", async () => {
@@ -47,7 +47,7 @@ describe("Adapter", () => {
   it("should throw an error with a specific message if fetching an answer fails", async () => {
     const question: Message = { content: "What is AI?", timestamp: "12345" };
     mockFacade.fetchQuestion.mockRejectedValue(new Error("Error fetching"));
-    await expect(adapter.requestAnswer(question)).rejects.toThrow("Error fetching history");
+    await expect(adapter.requestAnswer(question)).rejects.toThrow("SERVER");
   });
 
   it("should generate an id if data.id is missing", async () => {
@@ -59,6 +59,22 @@ describe("Adapter", () => {
 
     expect(adapted.id).toBe("generated-id");
     expect(mockGenerateId).toHaveBeenCalledTimes(1);
+  });
+
+  it("should rethrow CustomError if thrown by fetchHistory", async () => {
+    const customError = new CustomError(404, "NOT_FOUND", "Not found");
+    mockFacade.fetchHistory.mockRejectedValue(customError);
+
+    await expect(adapter.requestHistory("1", 0)).rejects.toThrow(customError);
+  });
+
+  it("should rethrow CustomError if thrown by fetchQuestion", async () => {
+    const customError = new CustomError(403, "FORBIDDEN", "Forbidden");
+    mockFacade.fetchQuestion.mockRejectedValue(customError);
+
+    const question = { content: "Test question", timestamp: "12345" };
+
+    await expect(adapter.requestAnswer(question)).rejects.toThrow(customError);
   });
 
 });

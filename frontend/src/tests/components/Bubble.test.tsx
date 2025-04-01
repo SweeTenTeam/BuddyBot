@@ -20,7 +20,7 @@ describe('Bubble component', () => {
 
     // Renderizza il componente Bubble
     render(
-      <Bubble message={message} user={true} error={false} loading={false} />
+      <Bubble message={message} user={true} error={0} loading={false} />
     );
 
     // Verifica che il contenuto del messaggio sia visualizzato correttamente
@@ -34,7 +34,7 @@ describe('Bubble component', () => {
 
     // Renderizza il componente Bubble
     render(
-      <Bubble message={message} user={false} error={false} loading={false} />
+      <Bubble message={message} user={false} error={0} loading={false} />
     );
 
     // Verifica che il mock di ReactMarkdown venga usato
@@ -48,7 +48,7 @@ describe('Bubble component', () => {
 
     // Renderizza il componente Bubble
     render(
-      <Bubble message={message} user={false} error={true} loading={false} />
+      <Bubble message={message} user={false} error={501} loading={false} />
     );
 
     expect(screen.getByRole('alert')).toBeInTheDocument();
@@ -60,7 +60,7 @@ describe('Bubble component', () => {
 
     // Renderizza il componente Bubble
     render(
-      <Bubble message={message} user={false} error={false} loading={true} />
+      <Bubble message={message} user={false} error={0} loading={true} />
     );
 
     // Verifica che il componente LoadMessage sia visualizzato
