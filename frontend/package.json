@@ -39,7 +39,7 @@
     "@testing-library/react": "^16.2.0",
     "@types/dotenv": "^6.1.1",
     "@types/jest": "^29.5.14",
-    "@types/node": "^20",
+    "@types/node": "^20.17.28",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

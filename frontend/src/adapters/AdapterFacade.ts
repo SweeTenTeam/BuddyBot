@@ -11,7 +11,7 @@ export class AdapterFacade {
         //return [];
 
         try {
-            const response = await fetch(`http://localhost/api/get-storico?id=${id}&num=${offset}`, {
+            const response = await fetch(`http://${process.env.API_GATEWAY ?? 'localhost'}/api/get-storico?id=${id}&num=${offset}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -33,7 +33,7 @@ export class AdapterFacade {
         //return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
 
         try {
-            const response = await fetch(`http://localhost/api/get-risposta`, {
+            const response = await fetch(`http://${process.env.API_GATEWAY ?? 'localhost'}/api/get-risposta`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
