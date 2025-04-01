@@ -4,6 +4,7 @@ import { CreateChatDTO } from "../dto/CreateChatDTO";
 import { IC_USE_CASE, InsertChatUseCase } from "src/application/port/in/insertChat-usecase.port";
 import { InsertChatCmd } from "src/domain/insertChatCmd";
 import { ChatDTO } from "../dto/ChatDTO";
+import { Message } from "src/domain/message";
 
 @Controller()
 export class ChatConsumer {
@@ -12,9 +13,8 @@ export class ChatConsumer {
     @MessagePattern('chat_message')
     async handleMessage(@Payload() data: ChatDTO): Promise<ChatDTO> {
         const insertChatCmd: InsertChatCmd = { 
-            question: data.question.content,
-            answer: data.answer.content,
-            date: data.question.timestamp
+            question: new Message(data.question.content, data.question.timestamp),
+            answer: { content: data.answer.content }
         }
         const newMessage = await this.insertChatService.insertChat(insertChatCmd);
         return newMessage;

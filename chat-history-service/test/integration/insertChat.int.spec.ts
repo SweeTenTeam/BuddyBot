@@ -1,81 +1,67 @@
-/*import { Test, TestingModule } from '@nestjs/testing';
-import { INestMicroservice } from '@nestjs/common';
-import { Transport, ClientProxy, ClientProxyFactory } from '@nestjs/microservices';
-import { AppModule } from '../../src/app.module';
-import { firstValueFrom } from 'rxjs';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { ChatEntity } from '../../src/adapter/out/persistence/chat-entity';
-import { Repository } from 'typeorm';
+import { Test, TestingModule } from '@nestjs/testing';
+import { ChatConsumer } from 'src/adapter/in/event/chat.consumer';
+import { InsertChatAdapter } from 'src/adapter/out/insertChat.adapter';
+import { InsertChatService } from 'src/application/insertChat.service';
+import { ChatRepository } from 'src/adapter/out/persistence/chat.repository';
+import { Chat } from 'src/domain/chat';
+import { Message } from 'src/domain/message';
+import { ChatDTO } from 'src/adapter/in/dto/ChatDTO';
+import { MessageDTO } from 'src/adapter/in/dto/MessageDTO';
+import { IC_USE_CASE } from 'src/application/port/in/insertChat-usecase.port';
+import { IC_PORT_OUT } from 'src/application/port/out/insertChat.port';
 
-describe('InsertChat (integration)', () => {
-  let app: INestMicroservice;
-  let client: ClientProxy;
-  let chatRepository: Repository<ChatEntity>;
-
-  beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestMicroservice({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://localhost:5672'],
-        queue: 'chat_queue',
-        queueOptions: {
-          durable: false,
-        },
-      },
-    });
-
-    await app.listen();
-
-    client = ClientProxyFactory.create({
-      transport: Transport.RMQ,
-      options: {
-        urls: ['amqp://localhost:5672'],
-        queue: 'chat_queue',
-        queueOptions: {
-          durable: false,
-        },
-      },
-    });
-
-    chatRepository = moduleFixture.get<Repository<ChatEntity>>(
-      getRepositoryToken(ChatEntity),
-    );
-
-    await new Promise((res) => setTimeout(res, 1000));
-  });
+describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)', () => {
+  let controller: ChatConsumer;
+  let chatRepoMock: jest.Mocked<ChatRepository>;
 
   beforeEach(async () => {
-    await chatRepository.clear();
+    chatRepoMock = {
+      insertChat: jest.fn(),
+    } as any;
+
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ChatConsumer],
+      providers: [
+        InsertChatService,
+        InsertChatAdapter,
+        {
+          provide: IC_USE_CASE,
+          useExisting: InsertChatService,
+        },
+        {
+          provide: IC_PORT_OUT,
+          useExisting: InsertChatAdapter,
+        },
+        { provide: ChatRepository, useValue: chatRepoMock }
+      ],
+    }).compile();
+
+    controller = module.get<ChatConsumer>(ChatConsumer);
   });
 
-  it('should insert a chat message and return the full DTO', async () => {
-    const payload = {
-      question: 'Che anno precede il 2025?',
-      answer: '2024',
-      date: new Date().toISOString(),
-    };
+  it('should insert a chat and return ChatDTO', async () => {
+    const question = new MessageDTO('Question test?', new Date().toISOString());
+    const answer = new MessageDTO('Answer test!', new Date(Date.now() + 1000).toISOString());
+    const chatId = 'chatabc';
 
-    const result = await firstValueFrom(
-      client.send('chat_message', payload),
+    const inputDTO = new ChatDTO(chatId, question, answer);
+
+    const expectedChat = new Chat(
+      chatId,
+      new Message(question.content, question.timestamp),
+      new Message(answer.content, answer.timestamp)
     );
 
-    expect(result).toHaveProperty('id');
-    expect(result.question).toBe(payload.question);
-    expect(result.answer).toBe(payload.answer);
+    chatRepoMock.insertChat.mockResolvedValue(expectedChat);
 
-    const saved = await chatRepository.findOneBy({ question: payload.question });
+    const result = await controller.handleMessage(inputDTO);
 
-    expect(saved).toBeDefined();
-    expect(saved?.answer).toBe(payload.answer);
-  });
+    expect(chatRepoMock.insertChat).toHaveBeenCalledWith(
+      question.content,
+      answer.content,
+      new Date(question.timestamp)
+    );
 
-  afterAll(async () => {
-    await client.close();
-    await app.close();
+    expect(result).toEqual(inputDTO);
   });
 });
-*/
