@@ -1,15 +1,15 @@
-//import historyData from "@/json/history.json";
-//import historyData1 from "@/json/history1.json";
-//import { generateId } from "@/utils/generateId";
+import historyData from "@/json/history.json";
+import historyData1 from "@/json/history1.json";
+import { generateId } from "@/utils/generateId";
 import { CustomError } from "@/types/CustomError";
 
 export class AdapterFacade {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 25000);
-        //if (id === "") return historyData1;
-        //else if (id == "240") return historyData;
-        //return [];
+        if (id === "") return historyData1;
+        else if (id == "240") return historyData;
+        return [];
 
         try {
             const response = await fetch(`http://${process.env.API_GATEWAY ?? 'localhost'}/api/get-storico?id=${id}&num=${offset}`, {
@@ -37,7 +37,7 @@ export class AdapterFacade {
     async fetchQuestion(data: any): Promise<any> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 20000);
-        //return { answer: { content: data.text, timestamp: data.date }, id: generateId() };
+        return { answer: { content: data.text, timestamp: data.date }, id: generateId(), lastUpdated: data.date };
 
         try {
             const response = await fetch(`http://${process.env.API_GATEWAY ?? 'localhost'}/api/get-risposta`, {
