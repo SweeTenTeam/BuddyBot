@@ -1,13 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Message } from "@/types/Message";
 import { formatDate } from "@/utils/formatDate";
 import { ErrorAlert } from "./ui/ErrorAlert";
 import LoadMessage from "./ui/LoadMessage";
+import MessageAvatar from "./ui/MessageAvatar";
 import MarkDown from "./ui/MarkDown";
 
 
 export default function Bubble({ message, user, error, loading, lastUpdated }: { message: Message, user: boolean, error: number, loading: boolean, lastUpdated?: string }) {
+    const [isMobile, setIsMobile] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.matchMedia("(hover: none)").matches);
+        };
+
+        checkMobile(); // Check on mount
+        window.addEventListener("resize", checkMobile); // Update on resize
+
+        return () => window.removeEventListener("resize", checkMobile);
+    }, []);
     if (error != 0) {
         return (
             <div id="error-message">
@@ -42,11 +55,19 @@ export default function Bubble({ message, user, error, loading, lastUpdated }: {
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="currentColor"
                                             viewBox="0 0 20 20"
+                                            onClick={() => isMobile && setIsVisible(!isVisible)} // Only toggle on mobile
                                         >
-                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                                            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 1 1 1 1v4h1a1 1 0 1 1 0 2Z" />
                                         </svg>
-                                        <div className="absolute left-0 top-full mt-1 w-max max-w-xs rounded-lg bg-accent px-2 py-1 text-sm text-right hidden group-hover:block shadow-md">
-                                            <p>Last Updated: {formatDate(parsedUpdate)}</p>
+
+                                        {/* Tooltip - Hover for desktop, Click for mobile */}
+                                        <div
+                                            className={`absolute left-0 rounded-sm w-max top-full mt-1 max-w-xs bg-accent p-4 text-sm text-left shadow-md ${isMobile ? (isVisible ? "block" : "hidden") : "hidden group-hover:block"}`}
+                                        >
+
+                                            <p className="italic underline">Last Updated: {formatDate(parsedUpdate)}</p>
+
+                                            {/* <p className="">Information were last updated on <span className="italic bold underline">{formatDate(parsedUpdate)}</span>. To have more information on how they were retrieved, check our <a className="underline" href="link">documentation</a> </p> */}
                                         </div>
                                     </div>
 
