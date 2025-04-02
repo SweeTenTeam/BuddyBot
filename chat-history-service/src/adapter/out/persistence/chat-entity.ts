@@ -17,4 +17,7 @@ export class ChatEntity {
 
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     answerDate: Date = new Date();
+
+    @Column()
+    lastFetch: string;
 }

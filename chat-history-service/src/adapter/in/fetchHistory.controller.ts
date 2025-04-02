@@ -29,7 +29,7 @@ export class FetchHistoryController {
     const chatHistory = await this.FetchHistoryService.fetchStoricoChat(fetchHistoryCmd);
     const result: ChatDTO[] = [];
     for(let i=0; i<chatHistory.length; i++){
-      result.push(new ChatDTO(chatHistory[i].id,chatHistory[i].question,chatHistory[i].answer));
+      result.push(new ChatDTO(chatHistory[i].id,chatHistory[i].question,chatHistory[i].answer,chatHistory[i].lastFetch));
     }
     console.log(result); //da rimuovere questa riga quando microserv è pronto
     return result;

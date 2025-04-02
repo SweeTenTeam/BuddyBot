@@ -8,9 +8,9 @@ export class HistoryController {
   constructor(private readonly historyService: HistoryService) {}
 
   @Get('/history')
-  async sendMessage() {
+  async sendMessage(@Query('id') id: string) {
     console.log("Trying to send message");
-    const wtf = await this.historyService.sendMessage('fetch_queue', new FetchHistoryDto("7a85a871-e511-4838-91a5-3e0cf3c338a7",5));
+    const wtf = await this.historyService.sendMessage('fetch_queue', new FetchHistoryDto(id,5));
     console.log(wtf);
     return 'Message sent!';
   }
