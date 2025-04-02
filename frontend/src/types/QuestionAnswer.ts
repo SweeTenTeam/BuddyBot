@@ -6,4 +6,5 @@ export interface QuestionAnswer {
     answer: Message;
     error: number;
     loading: boolean;
+    lastUpdated: string;
 }

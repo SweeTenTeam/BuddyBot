@@ -45,9 +45,9 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
     dispatch({ type: "ADD_MESSAGE_START", id: id, question: newMessage });
     dispatch({ type: "SCROLL_DOWN" });
     try {
-      const botResponse: { answer: Message, id: string } = await adapter.requestAnswer(newMessage);
+      const botResponse: { answer: Message, id: string, lastUpdated: string } = await adapter.requestAnswer(newMessage);
       if(botResponse.answer.content.length > 100000) dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: 1 });
-      else dispatch({ type: "ADD_MESSAGE_SUCCESS", id: id, answer: botResponse.answer, newid: botResponse.id });
+      else dispatch({ type: "ADD_MESSAGE_SUCCESS", id: id, answer: botResponse.answer, newid: botResponse.id, lastUpdated: botResponse.lastUpdated });
     }
     catch (error) {
       if (error instanceof CustomError) dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: error.code });

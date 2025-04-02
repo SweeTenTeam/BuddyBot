@@ -29,7 +29,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
     case "ADD_MESSAGE_START":
       return { 
         ...state, 
-        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: 0, loading: true }],
+        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: 0, loading: true, lastUpdated: "" }],
       };
     case "ADD_MESSAGE_SUCCESS":
       const updatedMessagesSuccess = state.messages.map((msg) => {
@@ -40,6 +40,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
             answer: action.answer,
             loading: false,
             error: 0,
+            lastUpdated: action.lastUpdated,
           };
         }
         return msg;

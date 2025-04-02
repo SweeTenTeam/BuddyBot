@@ -21,12 +21,13 @@ export class Adapter implements Target {
             throw new CustomError(500, "SERVER", "Errore interno del server");
         }
     }
-    async requestAnswer(question: Message): Promise<{ answer: Message; id: string; }> {
+    async requestAnswer(question: Message): Promise<{ answer: Message; id: string; lastUpdated: string }> {
         try {
             const answer = await this.adapterFacade.fetchQuestion(this.adaptMessageToJSON(question));
             return {
                 answer: this.adaptMessage(answer.answer),
-                id: answer.id
+                id: answer.id,
+                lastUpdated: answer.lastUpdated,
             };
         } catch (error) {
             if (error instanceof CustomError) throw error;
@@ -48,6 +49,7 @@ export class Adapter implements Target {
             answer: this.adaptMessage(data.answer),
             error: 0,
             loading: false,
+            lastUpdated: data.lastUpdated || "",
         };
     };
 
