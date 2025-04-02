@@ -8,7 +8,7 @@ import MarkDown from "./ui/MarkDown";
 
 export default function Bubble({ message, user, error, loading, lastUpdated }: { message: Message, user: boolean, error: number, loading: boolean, lastUpdated?: string }) {
 
-    if (error != 0) {
+    if (error != 0 || message.timestamp == undefined || (!user && lastUpdated == undefined)) {
         return (
             <div id="error-message">
                 <ErrorAlert statusCode={error} />
