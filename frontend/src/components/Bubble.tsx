@@ -62,7 +62,7 @@ export default function Bubble({ message, user, error, loading, lastUpdated }: {
 
                                         {/* Tooltip - Hover for desktop, Click for mobile */}
                                         <div
-                                            className={`absolute left-0 rounded-sm w-max top-full mt-1 max-w-xs bg-accent p-4 text-sm text-left shadow-md ${isMobile ? (isVisible ? "block" : "hidden") : "hidden group-hover:block"}`}
+                                            className={`absolute left-0 rounded-sm w-max top-full mt-1 max-w-xs bg-accent p-2 text-sm text-left shadow-md ${isMobile ? (isVisible ? "block" : "hidden") : "hidden group-hover:block"}`}
                                         >
 
                                             <p className="italic underline">Last Updated: {formatDate(parsedUpdate)}</p>
