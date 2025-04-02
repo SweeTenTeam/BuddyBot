@@ -28,6 +28,7 @@ export class AdapterFacade {
         } catch (error) {
             clearTimeout(timeoutId);
             if (error instanceof DOMException && error.name === "AbortError") throw new CustomError(408, "TIMEOUT", "Timeout della richiesta");
+            if (error instanceof TypeError && error.message === "Failed to fetch") throw new CustomError(400, "CONNESSIONE", "Errore di connessione");
             if (error instanceof CustomError) throw error;
             throw new CustomError(500, "SERVER", "Errore interno del server");
         }
@@ -56,6 +57,7 @@ export class AdapterFacade {
         } catch (error) {
             clearTimeout(timeoutId);
             if (error instanceof DOMException && error.name === "AbortError") throw new CustomError(409, "TIMEOUT", "Timeout della richiesta");
+            if (error instanceof TypeError && error.message === "Failed to fetch") throw new CustomError(401, "CONNESSIONE", "Errore di connessione");
             if (error instanceof CustomError) throw error;
             throw new CustomError(501, "SERVER", "Errore interno del server");
         }
