@@ -32,7 +32,7 @@ export default function Bubble({ message, user, error, loading }: { message: Mes
                     {!user ? (
                         <MarkDown content={message.content} />
                     ) : (
-                        <p className="w-full h-full">{message.content}</p>
+                        <p className="w-full h-full whitespace-pre-line">{message.content}</p>
                     )}
 
                     <p className="text-sm opacity-80 text-right">{formatDate(parsedTimestamp)}</p>

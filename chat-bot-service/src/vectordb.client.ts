@@ -11,7 +11,7 @@ export class VectorDbClient {
   }
 
   async sendMessage(pattern: string, data: any) {
-    console.log("Sending");
+    console.log("Sending message to Information Service");
     return this.client.send(pattern, data).toPromise(); //lastValueFrom (?)
   }
   

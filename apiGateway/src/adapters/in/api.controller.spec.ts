@@ -1,109 +1,83 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiController } from './api.controller';
-import { GetStoricoService } from '../../../application/services/storico-message.service';
-import { GetRispostaService } from '../../../application/services/chatbot-message.service';
-import { ReqAnswerDTO } from '../dtos/req-answer.dto';
+import { GetChatUseCase } from '../../application/ports/in/get-chat';
+import { GetStoricoUseCase } from '../../application/ports/in/get-storico';
+import { ChatDTO } from './dtos/chat.dto';
+import { MessageDto } from './dtos/message.dto';
+import { RequestChatDTO } from './dtos/request-chat.dto';
+import { ReqAnswerDTO } from './dtos/req-answer.dto';
+
 
 describe('ApiController', () => {
   let controller: ApiController;
-  let GetStoricoService: GetStoricoService;
-  let GetRispostaService: GetRispostaService;
+  let getChatUseCase: GetChatUseCase;
+  let getStoricoUseCase: GetStoricoUseCase;
 
   beforeEach(async () => {
-    const mockGetStoricoService = {
-      execute: jest.fn(),
-    };
-    const mockGetRispostaService = {
-      execute: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ApiController],
       providers: [
-        { provide: GetStoricoService, useValue: mockGetStoricoService },
-        { provide: GetRispostaService, useValue: mockGetRispostaService },
+        {
+          provide: 'GetChatUseCase',
+          useValue: { execute: jest.fn() },
+        },
+        {
+          provide: 'GetStoricoUseCase',
+          useValue: { execute: jest.fn() },
+        },
       ],
     }).compile();
 
     controller = module.get<ApiController>(ApiController);
-    GetStoricoService = module.get<GetStoricoService>(GetStoricoService);
-    GetRispostaService = module.get<GetRispostaService>(GetRispostaService);
+    getChatUseCase = module.get<GetChatUseCase>('GetChatUseCase');
+    getStoricoUseCase = module.get<GetStoricoUseCase>('GetStoricoUseCase');
   });
 
-  it('dovrebbe essere definito', () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getStorico', () => {
-    it('dovrebbe usare 1 come valore di default per numChat se non fornito', async () => {
-      const mockResponse = [
-        {
-          id: '123',
-          question: { content: 'Ciao', timestamp: '2024-03-24T10:00:00Z' },
-          answer: { content: 'Salve!', timestamp: '2024-03-24T10:01:00Z' },
-        },
-      ];
-      
-      GetStoricoService.execute = jest.fn().mockResolvedValue(mockResponse);
-      const result = await controller.getStorico('123'); 
-      
-      expect(GetStoricoService.execute).toHaveBeenCalledWith({ id: '123', numChat: 1 });
-      expect(result).toEqual(mockResponse);
-    });
-  
-    it('dovrebbe restituire un array vuoto se lo storico è vuoto', async () => {
-      GetStoricoService.execute = jest.fn().mockResolvedValue([]);
-  
-      const result = await controller.getStorico('123', 2);
-      expect(result).toEqual([]); 
-    });
-  
-    it('dovrebbe lanciare un errore se lo storico ha dati malformati', async () => {
-      GetStoricoService.execute = jest.fn().mockResolvedValue([{ id: '123' }]); 
-    
-      await expect(controller.getStorico('123', 1)).rejects.toThrow(
-        "La risposta del microservizio storico non è valida." 
-      );
-    });
-    
-  });
-  
-  describe('getRisposta', () => {
-    it('dovrebbe aggiungere la data corrente se `date` è undefined', async () => {
-      const mockRequest: ReqAnswerDTO = { text: 'Ciao', date: '' };
-      const mockResponse = {
-        id: '789',
-        question: { content: 'Ciao', timestamp: '2024-03-24T10:00:00Z' },
-        answer: { content: 'Ciao anche a te!', timestamp: '2024-03-24T10:01:00Z' },
-      };
-  
-      GetRispostaService.execute = jest.fn().mockResolvedValue(mockResponse);
-  
-      const result = await controller.getRisposta(mockRequest);
-      expect(GetRispostaService.execute).toHaveBeenCalledWith({
-        text: 'Ciao',
-        date: expect.any(String), 
-      });
-      expect(result).toEqual(mockResponse);
-    });
-  
-    it('dovrebbe gestire il caso in cui `GetRispostaService.execute` restituisce null', async () => {
-      GetRispostaService.execute = jest.fn().mockResolvedValue(null);
-    
-      await expect(controller.getRisposta({ text: 'Ciao', date: ' ' })).rejects.toThrow(
-        'Risposta non valida dal microservizio.' 
-      );
-    });
-    
-  
-    it('dovrebbe gestire il caso in cui la risposta del backend è malformata', async () => {
-      GetRispostaService.execute = jest.fn().mockResolvedValue({ id: '789' }); // Manca question/answer
-  
-      await expect(controller.getRisposta({ text: 'Ciao', date:' '  })).rejects.toThrow(
-        'Risposta non valida dal microservizio.'
-      );
-    });
-  });
-  
+  it('should get storico', async () => {
+    const storicoMock = [new ChatDTO('1', new MessageDto('Q1', '2023-01-01T00:00:00Z'), new MessageDto('A1', '2023-01-01T00:00:00Z'))];
+    jest.spyOn(getStoricoUseCase, 'execute').mockResolvedValue(storicoMock);
 
+    const result = await controller.getStorico('1', 1);
+    expect(result).toEqual(storicoMock);
+  });
+
+  it('should get storico with default values', async () => {
+    const storicoMock = [];
+    jest.spyOn(getStoricoUseCase, 'execute').mockResolvedValue(storicoMock);
+
+    const result = await controller.getStorico();
+    expect(result).toEqual([]);
+  });
+
+  it('should handle error in getStorico', async () => {
+    jest.spyOn(getStoricoUseCase, 'execute').mockRejectedValue(new Error('Errore'));
+
+    await expect(controller.getStorico('1', 1)).rejects.toThrow('Errore');
+  });
+
+  it('should get risposta', async () => {
+    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'));
+    jest.spyOn(getChatUseCase, 'execute').mockResolvedValue(rispostaMock);
+
+    const result = await controller.getRisposta('Test Question', '2023-01-01T00:00:00Z');
+    expect(result).toEqual(rispostaMock);
+  });
+
+  it('should handle error in getRisposta', async () => {
+    jest.spyOn(getChatUseCase, 'execute').mockRejectedValue(new Error('Errore'));
+
+    await expect(controller.getRisposta('Test Question', '2023-01-01T00:00:00Z')).rejects.toThrow('Errore');
+  });
+
+  it('should get risposta senza timestamp', async () => {
+    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'));
+    jest.spyOn(getChatUseCase, 'execute').mockResolvedValue(rispostaMock);
+
+    const result = await controller.getRisposta('Test Question', '');
+    expect(result).toEqual(rispostaMock);
+  });
 });

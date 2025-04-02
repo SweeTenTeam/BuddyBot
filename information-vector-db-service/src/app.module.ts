@@ -165,7 +165,7 @@ import { JIRA_STORE_INFO_PORT } from './application/port/out/JiraStoreInfoPort.j
       provide: Version3Client,
       useFactory: () => {
         return new Version3Client({
-          host: process.env.JIRA_HOST || "your_host_url",
+          host: process.env.JIRA_HOST || "http://your_host_url",
             authentication: {
               basic: {
                 username: process.env.JIRA_EMAIL || 'your_email',

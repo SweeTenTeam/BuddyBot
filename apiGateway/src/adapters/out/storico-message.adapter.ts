@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { StoricoPort } from '../../application/ports/out/storico.port';
 import { RequestChatCMD } from '../../domain/cmds/request-chat-cmd';
 import { Chat } from '../../domain/business/chat';
-import { HistoryService } from '@infrastructure/rabbitmq/history.service';
+import { HistoryService } from '../../infrastructure/rabbitmq/history.service';
+//import { HistoryService } from '@infrastructure/rabbitmq/history.service';
 import { ProvChat } from '../../domain/business/prov-chat';
 
 @Injectable()

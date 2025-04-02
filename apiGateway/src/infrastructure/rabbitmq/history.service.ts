@@ -11,7 +11,7 @@ export class HistoryService {
   }
 
   async sendMessage(pattern: string, data: any) {
-    console.log("Sending");
+    console.log("Sending message to History Service");
     return this.client.send(pattern, data).toPromise(); //lastValueFrom (?)
   }
   

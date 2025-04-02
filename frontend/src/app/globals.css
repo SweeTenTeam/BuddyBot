@@ -226,3 +226,7 @@
 .prose a {
   @apply underline;
 }
+
+.prose div, .prose ol, .prose ul {
+  @apply mb-4;
+}
