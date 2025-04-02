@@ -78,6 +78,12 @@ describe('AdapterFacade', () => {
 
       await expect(adapter.fetchHistory('123', 0)).rejects.toThrowError(new CustomError(400, "CONNESSIONE", "Errore interno del server"));
     });
+
+    it('should throw CONNESSIONE error for TypeError "Failed to fetch" in fetchHistory', async () => {
+      (fetch as jest.Mock).mockRejectedValue(new TypeError("Failed to fetch"));
+
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrowError(new CustomError(400, "CONNESSIONE", "Errore di connessione"));
+    });
   });
 
   describe('fetchQuestion', () => {
@@ -142,6 +148,11 @@ describe('AdapterFacade', () => {
       });
 
       await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrowError(new CustomError(401, "CONNESSIONE", "Errore interno del server"));
+    });
+        it('should throw CONNESSIONE error for TypeError "Failed to fetch" in fetchQuestion', async () => {
+      (fetch as jest.Mock).mockRejectedValue(new TypeError("Failed to fetch"));
+
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrowError(new CustomError(401, "CONNESSIONE", "Errore di connessione"));
     });
   });
 });

@@ -130,7 +130,8 @@ describe("ChatProvider", () => {
                 question: { content: "Previous question", timestamp: "12345" }, 
                 answer: { content: "Previous answer", timestamp: "12346" }, 
                 error: 0, 
-                loading: false 
+                loading: false,
+                lastUpdated: new Date().toISOString(),
             },
         ];
         const mockHistoryResponse: QuestionAnswer[] = [
@@ -139,7 +140,8 @@ describe("ChatProvider", () => {
                 question: { content: "New question", timestamp: "12347" }, 
                 answer: { content: "New answer", timestamp: "12348" }, 
                 error: 0, 
-                loading: false 
+                loading: false,
+                lastUpdated: new Date().toISOString(),
             },
         ];
         mockAdapter.requestHistory.mockResolvedValue(mockMessages);
@@ -178,7 +180,8 @@ describe("ChatProvider", () => {
                 question: { content: "Previous question", timestamp: "12345" }, 
                 answer: { content: longMessage, timestamp: "12346" }, 
                 error: 0, 
-                loading: false 
+                loading: false,
+                lastUpdated: new Date().toISOString(),
             },
         ];
         

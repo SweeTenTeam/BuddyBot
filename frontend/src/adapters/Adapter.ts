@@ -49,7 +49,7 @@ export class Adapter implements Target {
             answer: this.adaptMessage(data.answer),
             error: 0,
             loading: false,
-            lastUpdated: data.lastUpdated || "",
+            lastUpdated: data.lastUpdated,
         };
     };
 
