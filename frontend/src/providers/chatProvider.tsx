@@ -48,7 +48,6 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
     dispatch({ type: "SCROLL_DOWN" });
     try {
       const botResponse: { answer: Message, id: string, lastUpdated: string } = await adapter.requestAnswer(newMessage);
-      console.log(botResponse);
       if (botResponse.answer.content.length > 100000) dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: 1 });
       else dispatch({ type: "ADD_MESSAGE_SUCCESS", id: id, answer: botResponse.answer, newid: botResponse.id, lastUpdated: botResponse.lastUpdated });
 
