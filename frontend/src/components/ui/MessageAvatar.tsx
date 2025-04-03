@@ -4,6 +4,7 @@ export default function MessageAvatar({ user }: { user: boolean }) {
     return (
         <Avatar>
             <AvatarImage
+                data-testid="avatar-image"
                 src={user ? "/AD_favicon.png" : "/buddy_avatar.png"}
                 alt={user ? "User Avatar" : "Bot Avatar"}
             />
