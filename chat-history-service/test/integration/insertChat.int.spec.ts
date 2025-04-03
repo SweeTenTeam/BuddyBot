@@ -5,10 +5,9 @@ import { InsertChatService } from 'src/application/insertChat.service';
 import { ChatRepository } from 'src/adapter/out/persistence/chat.repository';
 import { Chat } from 'src/domain/chat';
 import { Message } from 'src/domain/message';
-import { ChatDTO } from 'src/adapter/in/dto/ChatDTO';
-import { MessageDTO } from 'src/adapter/in/dto/MessageDTO';
 import { IC_USE_CASE } from 'src/application/port/in/insertChat-usecase.port';
 import { IC_PORT_OUT } from 'src/application/port/out/insertChat.port';
+import { CreateChatDTO } from 'src/adapter/in/dto/CreateChatDTO';
 
 describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)', () => {
   let controller: ChatConsumer;
@@ -40,28 +39,38 @@ describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)'
   });
 
   it('should insert a chat and return ChatDTO', async () => {
-    const question = new MessageDTO('Question test?', new Date().toISOString());
-    const answer = new MessageDTO('Answer test!', new Date(Date.now() + 1000).toISOString());
-    const chatId = 'chatabc';
+    // arrange
+    const questionText = 'Question test?';
+    const answerText = 'Answer test!';
+    const questionTimestamp = new Date().toISOString();
+    const lastFetchTimestamp = new Date().toISOString();
 
-    const inputDTO = new ChatDTO(chatId, question, answer);
+    const inputDTO = new CreateChatDTO(questionText, questionTimestamp, answerText);
 
     const expectedChat = new Chat(
-      chatId,
-      new Message(question.content, question.timestamp),
-      new Message(answer.content, answer.timestamp)
+      'chat123',
+      new Message(questionText, questionTimestamp),
+      new Message(answerText, new Date(Date.now() + 1000).toISOString()),
+      lastFetchTimestamp
     );
 
     chatRepoMock.insertChat.mockResolvedValue(expectedChat);
 
+    // act
     const result = await controller.handleMessage(inputDTO);
 
+    // assert
     expect(chatRepoMock.insertChat).toHaveBeenCalledWith(
-      question.content,
-      answer.content,
-      new Date(question.timestamp)
+      questionText,
+      answerText,
+      new Date(questionTimestamp)
     );
 
-    expect(result).toEqual(inputDTO);
+    expect(result).toBeInstanceOf(Chat);
+    expect(result.id).toEqual(expectedChat.id);
+    expect(result.question.content).toEqual(questionText);
+    expect(result.question.timestamp).toEqual(questionTimestamp);
+    expect(result.answer.content).toEqual(answerText);
+    expect(result.lastFetch).toEqual(lastFetchTimestamp);
   });
 });
