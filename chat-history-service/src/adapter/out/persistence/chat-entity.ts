@@ -18,6 +18,6 @@ export class ChatEntity {
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     answerDate: Date = new Date();
 
-    @Column()
+    @Column({ nullable: true }) //da togliere nullable, usato solo in fase di sviluppo
     lastFetch: string;
 }
