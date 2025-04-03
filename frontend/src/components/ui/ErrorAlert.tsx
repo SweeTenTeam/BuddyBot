@@ -30,7 +30,7 @@ export function ErrorAlert({ statusCode }: { statusCode: number }) {
     }, []);
 
     return (
-        <Alert variant="destructive" className="border-2 border-red-500 bg-red-500/80 dark:bg-red-500/50 m-auto p-4 w-[90%]">
+        <Alert variant="destructive" className="border-2 border-red-500 bg-red-500/80 dark:bg-red-500/50 m-2 mt-4 p-4 w-[95%]">
             <AlertCircle className="h-8 w-8 flex flex-col items-center" />
             <AlertTitle>{errorData.title}</AlertTitle>
             <AlertDescription>
