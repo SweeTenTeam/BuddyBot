@@ -30,6 +30,7 @@ describe('FetchHistoryAdapter', () => {
         questionDate: new Date('2025-01-01T10:00:00Z'),
         answer: 'Answer 1',
         answerDate: new Date('2025-01-01T10:01:00Z'),
+        lastFetch: new Date('2025-01-01T10:05:00Z').toISOString(),
       },
       {
         id: 'abc2',
@@ -37,6 +38,7 @@ describe('FetchHistoryAdapter', () => {
         questionDate: new Date('2025-01-02T10:00:00Z'),
         answer: 'Answer 2',
         answerDate: new Date('2025-01-02T10:01:00Z'),
+        lastFetch: new Date('2025-01-02T10:05:00Z').toISOString(),
       },
     ];
 
@@ -59,6 +61,7 @@ describe('FetchHistoryAdapter', () => {
       expect(actual.question.timestamp).toEqual(expected.questionDate.toISOString());
       expect(actual.answer.content).toEqual(expected.answer);
       expect(actual.answer.timestamp).toEqual(expected.answerDate.toISOString());
+      expect(actual.lastFetch).toEqual(expected.lastFetch); // nuova asserzione
     }
   });
 });

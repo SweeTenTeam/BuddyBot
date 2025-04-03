@@ -23,7 +23,7 @@ describe('InsertChatAdapter', () => {
       answer: answerMessage
     };
 
-    const mockChat = new Chat('abc', questionMessage, answerMessage);
+    const mockChat = new Chat('abc', questionMessage, answerMessage, new Date().toISOString());
     mockRepo.insertChat.mockResolvedValue(mockChat);
 
     // act
