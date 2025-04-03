@@ -5,5 +5,6 @@ export class ChatDTO {
     public readonly id: string,
     public readonly question: MessageDto,
     public readonly answer: MessageDto,
+    public readonly lastUpdate: string,
   ) {}
 }
