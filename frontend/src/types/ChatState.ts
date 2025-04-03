@@ -3,7 +3,7 @@ import { QuestionAnswer } from "./QuestionAnswer";
 export interface ChatState {
   messages: QuestionAnswer[];
   loadingHistory: boolean;
-  errorHistory: boolean;
+  errorHistory: number;
   hasMore: boolean;
   hasToScroll: boolean;
 }
@@ -11,7 +11,7 @@ export interface ChatState {
 export const initialState: ChatState = {
   messages: [],
   loadingHistory: true,
-  errorHistory: false,
+  errorHistory: 0,
   hasMore: false,
   hasToScroll: false,
 };

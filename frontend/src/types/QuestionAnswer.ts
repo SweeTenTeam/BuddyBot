@@ -4,6 +4,7 @@ export interface QuestionAnswer {
     id: string;
     question: Message;
     answer: Message;
-    error: boolean;
+    error: number;
     loading: boolean;
+    lastUpdated: string;
 }

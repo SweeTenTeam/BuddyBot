@@ -64,7 +64,7 @@ export default function MarkDown({ content }: { content: string }) {
                                 <pre className="overflow-auto bg-[#1e1e1e] text-white p-4 rounded-lg border border-gray-700 relative shadow-lg">
                                     {/* Language Label */}
                                     <div className="flex justify-between items-center bg-gray-800 text-xs font-bold rounded">
-                                        <p>{language}</p>
+                                        <p className="ml-3">{language}</p>
                                         <button
                                             onClick={handleCopy}
                                             className="bg-gray-800 text-gray-300 p-1.5 rounded hover:bg-gray-700 hover:text-white transition-all duration-200"

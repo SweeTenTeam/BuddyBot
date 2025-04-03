@@ -227,6 +227,8 @@
   @apply underline;
 }
 
-.prose div, .prose ol, .prose ul {
+.prose div,
+.prose ol,
+.prose ul {
   @apply mb-4;
 }

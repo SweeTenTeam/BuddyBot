@@ -1,4 +1,5 @@
 import { AdapterFacade } from "@/adapters/AdapterFacade";
+import { CustomError } from "@/types/CustomError";
 
 // Mock per la funzione fetch
 global.fetch = jest.fn();
@@ -42,20 +43,46 @@ describe('AdapterFacade', () => {
         json: async () => ({ message: "Error" }),
       });
 
-      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('Error fetching history');
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('SERVER');
     });
 
-    it('should handle fetch errors', async () => {
+    it('should handle fetch history errors', async () => {
       (fetch as jest.Mock).mockRejectedValue(new Error('Network Error'));
 
-      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('Error fetching history');
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('SERVER');
     });
 
     it('should handle timeout and abort fetch history', async () => {
       const mockAbortError = new DOMException("The user aborted a request.", "AbortError");
       (fetch as jest.Mock).mockRejectedValue(mockAbortError);
 
-      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('Error fetching history');
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrow('TIMEOUT');
+    });
+
+    it('should throw SERVER error for status >= 500', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      });
+
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrowError(new CustomError(500, "SERVER", "Errore interno del server"));
+    });
+
+    it('should throw CONNESSIONE error for status >= 400 but < 500', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({}),
+      });
+
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrowError(new CustomError(400, "CONNESSIONE", "Errore interno del server"));
+    });
+
+    it('should throw CONNESSIONE error for TypeError "Failed to fetch" in fetchHistory', async () => {
+      (fetch as jest.Mock).mockRejectedValue(new TypeError("Failed to fetch"));
+
+      await expect(adapter.fetchHistory('123', 0)).rejects.toThrowError(new CustomError(400, "CONNESSIONE", "Errore di connessione"));
     });
   });
 
@@ -88,20 +115,44 @@ describe('AdapterFacade', () => {
         json: async () => ({ message: "Error" }),
       });
 
-      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('Error sending message');
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('SERVER');
     });
 
-    it('should handle fetch errors', async () => {
+    it('should handle fetch question errors', async () => {
       (fetch as jest.Mock).mockRejectedValue(new Error('Network Error'));
 
-      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('Error sending message');
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('SERVER');
     });
 
     it('should handle timeout and abort fetch question', async () => {
       const mockAbortError = new DOMException("The user aborted a request.", "AbortError");
       (fetch as jest.Mock).mockRejectedValue(mockAbortError);
 
-      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('Error sending message');
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrow('TIMEOUT');
+    });
+    it('should throw SERVER error for status >= 500', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({}),
+      });
+
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrowError(new CustomError(501, "SERVER", "Errore interno del server"));
+    });
+
+    it('should throw CONNESSIONE error for status >= 400 but < 500', async () => {
+      (fetch as jest.Mock).mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: async () => ({}),
+      });
+
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrowError(new CustomError(401, "CONNESSIONE", "Errore interno del server"));
+    });
+        it('should throw CONNESSIONE error for TypeError "Failed to fetch" in fetchQuestion', async () => {
+      (fetch as jest.Mock).mockRejectedValue(new TypeError("Failed to fetch"));
+
+      await expect(adapter.fetchQuestion({ question: 'Test?' })).rejects.toThrowError(new CustomError(401, "CONNESSIONE", "Errore di connessione"));
     });
   });
 });

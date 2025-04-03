@@ -7,6 +7,7 @@ import { QuestionAnswer } from "@/types/QuestionAnswer";
 import { generateId } from "@/utils/generateId";
 import { ChatContext } from "@/types/ChatContext";
 import { ChatProviderProps } from "@/types/ChatProviderProps";
+import { CustomError } from "@/types/CustomError";
 
 export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
   const [state, dispatch] = useReducer(chatReducer, initialState);
@@ -16,7 +17,13 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
     try {
       if (state.messages.length === 0) {
         const olderMessages: QuestionAnswer[] = await adapter.requestHistory("", 10);
+        for (let i = 0; i < olderMessages.length; i++) {
+          if (olderMessages[i].answer.content.length > 100000) {
+            olderMessages[i].error = 1;
+          }
+        }
         dispatch({ type: "LOAD_HISTORY_SUCCESS", payload: olderMessages, hasMore: !(olderMessages.length < 10) });
+
         dispatch({ type: "SCROLL_DOWN" });
       }
       else {
@@ -25,7 +32,8 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
       }
     }
     catch (error) {
-      dispatch({ type: "LOAD_HISTORY_ERROR" });
+      if (error instanceof CustomError) dispatch({ type: "LOAD_HISTORY_ERROR", error: error.code });
+      else dispatch({ type: "LOAD_HISTORY_ERROR", error: 500 });
     }
   };
 
@@ -35,14 +43,18 @@ export const ChatProvider = ({ children, adapter }: ChatProviderProps) => {
       content: text,
       timestamp: new Date().toISOString(),
     };
+
     dispatch({ type: "ADD_MESSAGE_START", id: id, question: newMessage });
     dispatch({ type: "SCROLL_DOWN" });
     try {
-      const botResponse: { answer: Message, id: string } = await adapter.requestAnswer(newMessage);
-      dispatch({ type: "ADD_MESSAGE_SUCCESS", id: id, answer: botResponse.answer, newid: botResponse.id });
+      const botResponse: { answer: Message, id: string, lastUpdated: string } = await adapter.requestAnswer(newMessage);
+      if (botResponse.answer.content.length > 100000) dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: 1 });
+      else dispatch({ type: "ADD_MESSAGE_SUCCESS", id: id, answer: botResponse.answer, newid: botResponse.id, lastUpdated: botResponse.lastUpdated });
+
     }
     catch (error) {
-      dispatch({ type: "ADD_MESSAGE_ERROR", id: id });
+      if (error instanceof CustomError) dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: error.code });
+      else dispatch({ type: "ADD_MESSAGE_ERROR", id: id, error: 501 });
     }
   };
 
