@@ -1,6 +1,6 @@
 import { RepoGithubCMD } from "./RepoGithubCMD.js";
 
-export class FetchGithubDto {
+export class FetchGithubCMD {
     constructor (
         public readonly repoDTOList: RepoGithubCMD[],
         public readonly lastUpdate?: Date
