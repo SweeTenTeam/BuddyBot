@@ -21,7 +21,7 @@ export default function Bubble({ message, user, error, loading, lastUpdated }: {
 
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
-    if (error != 0 || message.timestamp == undefined || (!user && lastUpdated == undefined)) {
+    if (error != 0 || (!user && lastUpdated == undefined)) {
         return (
             <div id="error-message">
                 <ErrorAlert statusCode={error} />
@@ -38,7 +38,7 @@ export default function Bubble({ message, user, error, loading, lastUpdated }: {
     return (
         <>
             {!user && loading ? (
-                <div className="mr-auto mt-4 mb-4">
+                <div className="mr-auto ml-4">
                     <LoadMessage />
                 </div>
             ) : (

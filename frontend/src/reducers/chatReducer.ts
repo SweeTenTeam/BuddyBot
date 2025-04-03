@@ -29,7 +29,7 @@ export const chatReducer = (state: ChatState, action: ChatAction): ChatState => 
     case "ADD_MESSAGE_START":
       return { 
         ...state, 
-        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: 0, loading: true, lastUpdated: "" }],
+        messages: [...state.messages, { id: action.id, question: action.question, answer: {} as Message, error: 0, loading: true, lastUpdated: new Date().toISOString() }],
       };
     case "ADD_MESSAGE_SUCCESS":
       const updatedMessagesSuccess = state.messages.map((msg) => {
