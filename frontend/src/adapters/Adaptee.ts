@@ -3,7 +3,7 @@
 //import { generateId } from "@/utils/generateId";
 import { CustomError } from "@/types/CustomError";
 
-export class AdapterFacade {
+export class Adaptee {
     async fetchHistory(id: string, offset: number): Promise<any[]> {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 25000);

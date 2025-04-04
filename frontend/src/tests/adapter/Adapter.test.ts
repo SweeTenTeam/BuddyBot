@@ -1,19 +1,19 @@
 import { Adapter } from "@/adapters/Adapter";
-import { AdapterFacade } from "@/adapters/AdapterFacade";
+import { Adaptee } from "@/adapters/Adaptee";
 import { Message } from "@/types/Message";
 import { CustomError } from "@/types/CustomError";
 import * as generateIdModule from "@/utils/generateId";
 
-jest.mock("@/adapters/AdapterFacade");
+jest.mock("@/adapters/Adaptee");
 
 describe("Adapter", () => {
   let adapter: Adapter;
-  let mockFacade: jest.Mocked<AdapterFacade>;
+  let mockFacade: jest.Mocked<Adaptee>;
 
   beforeEach(() => {
-    mockFacade = new AdapterFacade() as jest.Mocked<AdapterFacade>;
+    mockFacade = new Adaptee() as jest.Mocked<Adaptee>;
     adapter = new Adapter();
-    (adapter as any).adapterFacade = mockFacade;
+    (adapter as any).adaptee = mockFacade;
   });
 
   it("should fetch and adapt history correctly", async () => {

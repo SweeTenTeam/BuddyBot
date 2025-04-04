@@ -1,14 +1,14 @@
-import { AdapterFacade } from "@/adapters/AdapterFacade";
+import { Adaptee } from "@/adapters/Adaptee";
 import { CustomError } from "@/types/CustomError";
 
 // Mock per la funzione fetch
 global.fetch = jest.fn();
 
 describe('AdapterFacade', () => {
-  let adapter: AdapterFacade;
+  let adapter: Adaptee;
 
   beforeEach(() => {
-    adapter = new AdapterFacade();
+    adapter = new Adaptee();
   });
 
   afterEach(() => {
