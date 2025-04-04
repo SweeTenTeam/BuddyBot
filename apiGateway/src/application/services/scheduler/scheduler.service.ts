@@ -31,7 +31,7 @@ export class TasksService {
     /** {GITHUB} */
     const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
     const repoName = process.env.GITHUB_REPO || 'BuddyBot';
-    const branch = 'develop';
+    const branch = process.env.GITHUB_BRANCH || 'develop';
     const repoCMD = new RepoGithubCMD(owner, repoName, branch);
     const githubCmd = new FetchGithubCMD([repoCMD], DataFetch);
 
