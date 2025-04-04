@@ -16,18 +16,28 @@ export class ChatRepository {
     private readonly lastUpdateRepo: Repository<LastUpdateEntity>,
   ) {}
 
-  async insertChat(question: string, answer: string, date: Date): Promise<Chat> {
+  async insertChat(question: string, answer: string, date: Date): Promise<ChatEntity> {
     const lastUpdate = await this.lastUpdateRepo.findOne({ where: { id: 1 } });
 
     if (!lastUpdate) {
       throw new Error('LastUpdate entry not found');
     }
-    const newChat: ChatEntity = this.chatRepo.create({ question, questionDate: date, answer, lastFetch: lastUpdate.lastFetch.toISOString() });
+
+    const newChat: ChatEntity = this.chatRepo.create({
+      question,
+      questionDate: date,
+      answer,
+      lastFetch: lastUpdate.lastFetch.toISOString()
+    });
+
     await this.chatRepo.save(newChat);
-    console.log(newChat)
-    console.log("Vamos")
-    return new Chat(newChat.id,new Message(newChat.question,newChat.questionDate.toISOString()),new Message(newChat.answer,newChat.answerDate.toISOString()), newChat.lastFetch);
-  }
+
+    console.log(newChat);
+    console.log("Vamos");
+
+    return newChat;
+}
+
 
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
   try {

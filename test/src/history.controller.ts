@@ -2,6 +2,7 @@ import { Controller, Get, Body, Post, Query } from '@nestjs/common';
 import { HistoryService } from './history.service';
 import { FetchHistoryDto } from './dto/FetchHistory.dto';
 import { CreateChatDTO } from './dto/CreateChat.dto';
+import { LastUpdateDTO } from './dto/LastUpdate.dto';
 
 @Controller()
 export class HistoryController {
@@ -22,4 +23,13 @@ export class HistoryController {
     console.log(wtf);
     return 'Message sent!';
   }
+
+  @Get('/insertLastUpdate')
+  async insertLastUpdate(@Query('lastFetch') lastFetch: string) {
+    console.log("Trying to insert last update");
+    const dto = new LastUpdateDTO(new Date(lastFetch).toISOString());
+    const result = await this.historyService.sendMessage('lastFetch_queue', dto);
+    console.log(result);
+    return 'Last update message sent!';
+}
 }
