@@ -13,6 +13,7 @@ describe('GetStoricoService', () => {
     mockStoricoPort = {
       getStorico: jest.fn(),
       postStorico: jest.fn(),
+      postUpdate: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -39,7 +40,8 @@ describe('GetStoricoService', () => {
         new Chat(
           'chat-1',
           new Message('question 1', '2023-01-01T00:00:00.000Z'),
-          new Message('answer 1', '2023-01-01T00:00:01.000Z')
+          new Message('answer 1', '2023-01-01T00:00:01.000Z'),
+          '2023-01-01T00:00:00Z'
         ),
       ];
 
