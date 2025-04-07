@@ -6,6 +6,7 @@ import { Document } from "langchain/document";
 import { MetadataEntity } from "./entities/metadata.entity.js";
 import { Information } from "../../../domain/business/information.js";
 import { Metadata } from "../../../domain/business/metadata.js";
+import { Result } from "../../../domain/business/Result.js";
 
 @Injectable()
 export class QdrantInformationRepository {
@@ -13,18 +14,23 @@ export class QdrantInformationRepository {
   constructor(private readonly vectorStore: QdrantVectorStore, private readonly textSplitter: RecursiveCharacterTextSplitter ) {}
 
 
-  async storeInformation(infoToStore: Information): Promise<boolean> {
+  async storeInformation(infoToStore: Information): Promise<Result> {
     try {
       // First, delete any existing documents with the same metadata combination
-      await this.deleteByMetadata({
+      console.log('Attempting to delete existing documents with same metadata...');
+      const deleteResult = await this.deleteByMetadata({
         origin: infoToStore.metadata.origin,
         type: infoToStore.metadata.type,
         originID: infoToStore.metadata.originID
       });
       
+      if (!deleteResult.success) {
+        return Result.fail(`Failed to delete existing documents: ${deleteResult.error}`);
+      }
+      
       let documents: Document[] = [];
       
-      if (infoToStore.content.length > 1000) {
+      if (infoToStore.content.length > 32000) {
         const splitDocs = await this.splitDocuments([{ pageContent: infoToStore.content }]);
         
         documents = splitDocs.map(doc => ({
@@ -35,6 +41,7 @@ export class QdrantInformationRepository {
             originID: infoToStore.metadata.originID,
           }
         }));
+        console.log(`Split into ${documents.length} documents`);
       } else {
         documents = [{
           pageContent: infoToStore.content,
@@ -45,17 +52,23 @@ export class QdrantInformationRepository {
           }
         }];
       }
-      
-      await this.vectorStore.addDocuments(documents);
-      console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
-      return true;
+
+        await this.vectorStore.addDocuments(documents);
+        console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
+        return Result.ok();
+
     } catch (error) {
-      console.error(`Error storing information: ${error}`);
-      return false;
+      console.error('Detailed error in storeInformation:', {
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code
+      });
+      return Result.fromError(error);
     }
   }
 
-  async retrieveRelevantInfo(query: string, limit = 10): Promise<InformationEntity[]> {
+  async retrieveRelevantInfo(query: string, limit = 30): Promise<InformationEntity[]> {
     try {
       const results = await this.similaritySearch(query, limit);
       
@@ -97,7 +110,7 @@ export class QdrantInformationRepository {
   }
 
 
-  async deleteByMetadata(metadata: Metadata): Promise<boolean> {
+  async deleteByMetadata(metadata: Metadata): Promise<Result> {
     try {
       const client = this.vectorStore.client;
       const collectionName = this.vectorStore.collectionName;
@@ -122,10 +135,15 @@ export class QdrantInformationRepository {
       await client.delete(collectionName, { filter });
       
       console.log(`Successfully deleted documents with metadata combination: ${JSON.stringify(metadata)}`);
-      return true;
+      return Result.ok();
     } catch (error) {
-      console.error(`Error deleting documents by metadata: ${error}`);
-      return false;
+      console.error('Detailed error in deleteByMetadata:', {
+        error: error.message,
+        stack: error.stack,
+        name: error.name,
+        code: error.code
+      });
+      return Result.fromError(error);
     }
   }
 }

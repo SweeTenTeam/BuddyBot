@@ -102,28 +102,6 @@ describe('End-to-End Fetch and Store Tests', () => {
 
 
   describe('Jira fetch and store', () => {
-    (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets directly through service', async () => {
-      // Skip if JIRA_BOARD_ID is not provided
-      // if (!process.env.JIRA_BOARD_ID) {
-      //   console.warn('Skipping Jira test due to missing JIRA_BOARD_ID');
-      //   return;
-      // }
-      
-      // Set up test data with time filter to limit API calls
-      const lastMonth = new Date();
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
-      
-      const boardId = 1;
-      const jiraCmd = new JiraCmd(boardId, lastMonth);
-      
-      // Execute test
-      console.log(`Fetching Jira tickets for board ${boardId}`);
-      const result = await jiraService.fetchAndStoreJiraInfo(jiraCmd);
-      
-      // Assertions
-      expect(result).toBe(true);
-    }, 60000); // Increase timeout to 60 seconds for API calls
-
     (hasAllEnvVars ? it : it.skip)('should fetch and store Jira tickets through controller', async () => {
       // Skip if JIRA_BOARD_ID is not provided
       // if (!process.env.JIRA_BOARD_ID) {
@@ -148,20 +126,6 @@ describe('End-to-End Fetch and Store Tests', () => {
   });
 
   describe('Confluence fetch and store', () => {
-    (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents directly through service', async () => {
-      // Set up test data with time filter to limit API calls
-      const lastMonth = new Date();
-      lastMonth.setMonth(lastMonth.getMonth() - 4);
-      
-      const confluenceCmd = new ConfluenceCmd(lastMonth);
-      
-      // Execute test
-      console.log('Fetching Confluence documents');
-      const result = await confluenceService.fetchAndStoreConfluenceInfo(confluenceCmd);
-      
-      // Assertions
-      expect(result).toBe(true);
-    }, 60000); // Increase timeout to 60 seconds for API calls
 
     (hasAllEnvVars ? it : it.skip)('should fetch and store Confluence documents through controller', async () => {
       // Set up test data
@@ -184,7 +148,7 @@ describe('End-to-End Fetch and Store Tests', () => {
     (hasAllEnvVars ? it : it.skip)('should fetch and store GitHub data through controller', async () => {
       // Set up test data
       const lastWeek = new Date();
-      lastWeek.setDate(lastWeek.getDate() - 7);
+      lastWeek.setDate(lastWeek.getDate() - 20);
       
      const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
       const repoName = process.env.GITHUB_REPO || 'BuddyBot';
