@@ -1,7 +1,6 @@
 import { InsertChatAdapter } from './insertChat.adapter';
 import { InsertChatCmd } from '../../domain/insertChatCmd';
 import { ChatRepository } from './persistence/chat.repository';
-import { Chat } from 'src/domain/chat';
 import { Message } from 'src/domain/message';
 
 describe('InsertChatAdapter', () => {
@@ -13,18 +12,30 @@ describe('InsertChatAdapter', () => {
     adapter = new InsertChatAdapter(mockRepo);
   });
 
-  it('should call ChatRepository.insertChat with correct arguments', async () => {
+  it('should call ChatRepository.insertChat with correct arguments and return mapped Chat domain object', async () => {
     // arrange
-    const questionMessage = new Message('Q?', new Date().toISOString());
-    const answerMessage = new Message('A!', new Date(Date.now() + 1000).toISOString());
+    const questionTimestamp = new Date('2025-01-01T10:00:00Z');
+    const answerTimestamp = new Date('2025-01-01T10:01:00Z');
+    const lastFetchTimestamp = '2025-01-01T09:55:00Z';
+
+    const questionMessage = new Message('Q?', questionTimestamp.toISOString());
+    const answerMessage = new Message('A!', answerTimestamp.toISOString());
 
     const cmd: InsertChatCmd = {
       question: questionMessage,
-      answer: answerMessage
+      answer: answerMessage,
     };
 
-    const mockChat = new Chat('abc', questionMessage, answerMessage, new Date().toISOString());
-    mockRepo.insertChat.mockResolvedValue(mockChat);
+    const mockChatEntity = {
+      id: 'abc',
+      question: questionMessage.content,
+      questionDate: questionTimestamp,
+      answer: answerMessage.content,
+      answerDate: answerTimestamp,
+      lastFetch: lastFetchTimestamp,
+    };
+
+    mockRepo.insertChat.mockResolvedValue(mockChatEntity);
 
     // act
     const result = await adapter.insertChat(cmd);
@@ -37,9 +48,10 @@ describe('InsertChatAdapter', () => {
     );
 
     expect(result.id).toEqual('abc');
-    expect(result.question.content).toEqual(questionMessage.content);
-    expect(result.question.timestamp).toEqual(questionMessage.timestamp);
-    expect(result.answer.content).toEqual(answerMessage.content);
-    expect(result.answer.timestamp).toEqual(answerMessage.timestamp);
+    expect(result.question.content).toEqual('Q?');
+    expect(result.question.timestamp).toEqual(questionTimestamp.toISOString());
+    expect(result.answer.content).toEqual('A!');
+    expect(result.answer.timestamp).toEqual(answerTimestamp.toISOString());
+    expect(result.lastFetch).toEqual(lastFetchTimestamp);
   });
 });

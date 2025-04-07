@@ -64,10 +64,10 @@ describe('ChatRepository', () => {
     expect(mockChatRepo.save).toHaveBeenCalledWith(mockChatEntity);
 
     expect(result.id).toEqual('abc');
-    expect(result.question.content).toEqual(questionContent);
-    expect(result.question.timestamp).toEqual(questionDate.toISOString());
-    expect(result.answer.content).toEqual(answerContent);
-    expect(result.answer.timestamp).toEqual(mockChatEntity.answerDate.toISOString());
+    expect(result.question).toEqual(questionContent);
+    expect(result.questionDate.toISOString()).toEqual(questionDate.toISOString());
+    expect(result.answer).toEqual(answerContent);
+    expect(result.answerDate.toISOString()).toEqual(mockChatEntity.answerDate.toISOString());
     expect(result.lastFetch).toEqual(lastFetchDate.toISOString());
     });
 

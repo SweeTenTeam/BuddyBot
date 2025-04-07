@@ -43,18 +43,21 @@ describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)'
     const questionText = 'Question test?';
     const answerText = 'Answer test!';
     const questionTimestamp = new Date().toISOString();
+    const answerTimestamp = new Date(Date.now() + 1000).toISOString();
     const lastFetchTimestamp = new Date().toISOString();
 
     const inputDTO = new CreateChatDTO(questionText, questionTimestamp, answerText);
 
-    const expectedChat = new Chat(
-      'chat123',
-      new Message(questionText, questionTimestamp),
-      new Message(answerText, new Date(Date.now() + 1000).toISOString()),
-      lastFetchTimestamp
-    );
+    const mockChatEntity = {
+      id: 'chat123',
+      question: questionText,
+      questionDate: new Date(questionTimestamp),
+      answer: answerText,
+      answerDate: new Date(answerTimestamp),
+      lastFetch: lastFetchTimestamp,
+    };
 
-    chatRepoMock.insertChat.mockResolvedValue(expectedChat);
+    chatRepoMock.insertChat.mockResolvedValue(mockChatEntity);
 
     // act
     const result = await controller.handleMessage(inputDTO);
@@ -66,11 +69,17 @@ describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)'
       new Date(questionTimestamp)
     );
 
-    expect(result).toBeInstanceOf(Chat);
-    expect(result.id).toEqual(expectedChat.id);
-    expect(result.question.content).toEqual(questionText);
-    expect(result.question.timestamp).toEqual(questionTimestamp);
-    expect(result.answer.content).toEqual(answerText);
-    expect(result.lastFetch).toEqual(lastFetchTimestamp);
+    expect(result).toEqual({
+      id: 'chat123',
+      question: {
+        content: questionText,
+        timestamp: questionTimestamp,
+      },
+      answer: {
+        content: answerText,
+        timestamp: answerTimestamp,
+      },
+      lastFetch: lastFetchTimestamp,
+    });
   });
 });
