@@ -32,7 +32,7 @@ export class ApiController {
     
     const result: ChatDTO[] = [];
     for(let i=0; i<storico.length; i++){
-      result.push(new ChatDTO(storico[i].id,storico[i].question,storico[i].answer));
+      result.push(new ChatDTO(storico[i].id, storico[i].question, storico[i].answer, storico[i].lastUpdate));
     }
 
     return result;
@@ -45,12 +45,13 @@ export class ApiController {
   async getRisposta(@Body('text') text: string, @Body('timestamp') timestamp: string): Promise<ChatDTO> {
   
     const chatSalvata = await this.GetRispostaService.execute(new ReqAnswerDTO(text, timestamp || new Date().toISOString()));
-    console.log(chatSalvata);
+    //console.log(chatSalvata);
 
     /***/
     
     console.log('Risposta finale per il frontend:', chatSalvata);
   
-    return new ChatDTO(chatSalvata.id,chatSalvata.question,chatSalvata.answer);
+    return new ChatDTO(chatSalvata.id,chatSalvata.question,chatSalvata.answer,chatSalvata.lastUpdate);
+    //return chatSalvata;
   }
 }

@@ -29,4 +29,14 @@ export class StoricoMessageAdapter implements StoricoPort {
     console.log(` Chat salvata nello storico:`, chatSalvata);
     return chatSalvata;
   }
+
+  /** */
+  async postUpdate(LastFetch: string): Promise<Boolean> {
+    console.log(`Salvataggio data fetch nello storico:`, LastFetch);
+
+    const result = await this.historyService.sendMessage('lastFetch_queue', LastFetch);
+
+    console.log(` Data fetch salvata nello storico:`, result);
+    return result;
+  }
 }
