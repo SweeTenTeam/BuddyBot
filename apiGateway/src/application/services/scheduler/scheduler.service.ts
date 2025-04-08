@@ -6,6 +6,7 @@ import { FetchConfluenceCMD } from '../../../domain/cmds/FetchConfluenceCMD';
 import { FetchJiraCMD } from '../../../domain/cmds/FetchJiraCMD';
 import { FetchGithubCMD } from '../../../domain/cmds/FetchGithubCMD';
 import { RepoGithubCMD } from '../../../domain/cmds/RepoGithubCMD'
+import { LastUpdateCMD } from '../../../domain/cmds/LastUpdateCMD';
 
 
 @Injectable()
@@ -17,7 +18,7 @@ export class TasksService {
     @Inject('StoricoPort') private readonly storicoPort: StoricoPort,
   ) {}
 
-  @Cron('0 */5 * * * *')/**UPDATE EVERY 5 MINUTI */
+  @Cron('0 */60 * * * *')/**UPDATE EVERY 5 MINUTI */
   async handleCron() {
     const DataFetch = new Date();
     this.logger.debug(`Every 5 minuti: ${DataFetch}`);
@@ -43,8 +44,8 @@ export class TasksService {
     /** ONLY IF ALL FETCHS ARE OK SAVE LAST FETCH*/
     if (resultFetchJira && resultFetchGithub && resultFetchConf){
       console.log(`Fetch informazioni in information service successo`);
-
-      const result = await this.storicoPort.postUpdate(DataFetch.toString())
+      const lastUpdateCmd = new LastUpdateCMD(DataFetch.toISOString());
+      const result = await this.storicoPort.postUpdate(lastUpdateCmd);
 
       console.log(`Data fetch salvata?:`, result);
     }else{

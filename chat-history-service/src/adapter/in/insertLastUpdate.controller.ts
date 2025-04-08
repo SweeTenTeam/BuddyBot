@@ -11,6 +11,9 @@ export class InsertLastUpdateController {
 
     @MessagePattern('lastFetch_queue')
     async insertLastRetrieval(data: LastUpdateDTO): Promise<boolean>{
+        console.log("2222222")
+        console.log(data)
+        console.log(data.LastFetch);
         const insertLU: LastUpdateCmd = {
             LastFetch: data.LastFetch
         }

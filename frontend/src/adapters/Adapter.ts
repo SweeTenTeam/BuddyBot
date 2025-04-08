@@ -24,10 +24,12 @@ export class Adapter implements Target {
     async requestAnswer(question: Message): Promise<{ answer: Message; id: string; lastUpdated: string }> {
         try {
             const answer = await this.adaptee.fetchQuestion(this.adaptMessageToJSON(question));
+            console.log("33333333");
+            console.log(answer);
             return {
                 answer: this.adaptMessage(answer.answer),
                 id: answer.id,
-                lastUpdated: answer.lastUpdated,
+                lastUpdated: answer.lastUpdate,
             };
         } catch (error) {
             if (error instanceof CustomError) throw error;
@@ -49,7 +51,7 @@ export class Adapter implements Target {
             answer: this.adaptMessage(data.answer),
             error: 0,
             loading: false,
-            lastUpdated: data.lastUpdated,
+            lastUpdated: data.lastUpdate,
         };
     };
 

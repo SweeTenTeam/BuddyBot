@@ -80,7 +80,9 @@ export class ChatRepository {
   async insertLastRetrieval(date: string): Promise<boolean> {
   try {
     const parsedDate = new Date(date);
-
+    console.log("HEREEEEEEEEE");
+    console.log(date);
+    console.log(parsedDate);
     //id sempre 1
     const existing = await this.lastUpdateRepo.findOne({ where: { id: 1 } });
 

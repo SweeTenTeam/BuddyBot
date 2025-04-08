@@ -68,7 +68,7 @@ export class QdrantInformationRepository {
     }
   }
 
-  async retrieveRelevantInfo(query: string, limit = 30): Promise<InformationEntity[]> {
+  async retrieveRelevantInfo(query: string, limit = 10): Promise<InformationEntity[]> {
     try {
       const results = await this.similaritySearch(query, limit);
       

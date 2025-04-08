@@ -8,6 +8,7 @@ export class InsertLastUpdateService implements InsertLastUpdateUseCase{
     constructor(@Inject(IU_PORT_OUT) private readonly InsertLastUpdateAdapter: InsertLastUpdatePort) {}
 
     async insertLastRetrieval(data: LastUpdateCmd): Promise<boolean> {
+        console.log(data.LastFetch)
         return this.InsertLastUpdateAdapter.insertLastRetrieval(data);
     }
 }
