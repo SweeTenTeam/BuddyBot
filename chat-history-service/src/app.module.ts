@@ -14,6 +14,7 @@ import { InsertChatService } from './application/insertChat.service';
 import { IC_PORT_OUT } from './application/port/out/insertChat.port';
 import { InsertChatAdapter } from './adapter/out/insertChat.adapter';
 import { ChatConsumer } from './adapter/in/event/chat.consumer';
+import { LastUpdateEntity } from './adapter/out/persistence/lastFetch-entity';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ChatConsumer } from './adapter/in/event/chat.consumer';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [ChatEntity],
+      entities: [ChatEntity, LastUpdateEntity],
       synchronize: true,
     }),
     ChatModule,

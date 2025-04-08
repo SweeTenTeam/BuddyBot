@@ -29,7 +29,7 @@ describe('InsertChatService', () => {
       answer: answerMessage
     };
 
-    const expectedChat = new Chat("abc", questionMessage, answerMessage);
+    const expectedChat = new Chat("abc", questionMessage, answerMessage, new Date().toISOString());
     mockInsertChatPort.insertChat.mockResolvedValue(expectedChat);
 
     //act

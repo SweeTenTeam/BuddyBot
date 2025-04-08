@@ -10,7 +10,7 @@ describe('FetchHistoryService', () => {
 
   beforeEach(() => {
     mockAdapter = {
-      fetchStoricoChat: jest.fn()
+      fetchStoricoChat: jest.fn(),
     };
     service = new FetchHistoryService(mockAdapter);
   });
@@ -23,20 +23,22 @@ describe('FetchHistoryService', () => {
     //arrange
     const cmd: FetchHistoryCmd = {
       id: 'abc1',
-      numChat: 2
+      numChat: 2,
     };
 
     const mockResult: Chat[] = [
       new Chat(
         'abc1',
         new Message('Quest 1', new Date('2025-01-01T10:00:00Z').toISOString()),
-        new Message('Answer 1', new Date('2025-01-01T10:01:00Z').toISOString())
+        new Message('Answer 1', new Date('2025-01-01T10:01:00Z').toISOString()),
+        new Date('2025-01-01T10:05:00Z').toISOString() 
       ),
       new Chat(
         'abc2',
         new Message('Quest 2', new Date('2025-01-02T10:00:00Z').toISOString()),
-        new Message('Answer 2', new Date('2025-01-02T10:01:00Z').toISOString())
-      )
+        new Message('Answer 2', new Date('2025-01-02T10:01:00Z').toISOString()),
+        new Date('2025-01-02T10:05:00Z').toISOString()
+      ),
     ];
 
     mockAdapter.fetchStoricoChat.mockResolvedValue(mockResult);
