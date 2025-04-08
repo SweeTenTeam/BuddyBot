@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan, DataSource, LessThanOrEqual } from 'typeorm';
 import { ChatEntity } from './chat-entity';
-import { Chat } from 'src/domain/chat';
-import { Message } from 'src/domain/message';
 import { LastUpdateEntity } from './lastFetch-entity';
 
 @Injectable()
@@ -101,6 +99,14 @@ export class ChatRepository {
     console.error('Errore durante insertLastRetrieval:', error);
     return false;
   }
+  }
+
+  async fetchLastUpdate(): Promise<LastUpdateEntity> {
+  const entity = await this.lastUpdateRepo.findOne({ where: { id: 1 } });
+  if (!entity) {
+    throw new Error('LastUpdate-record not found (in db)');
+  }
+  return entity;
 }
 
 }

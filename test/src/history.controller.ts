@@ -31,5 +31,13 @@ export class HistoryController {
     const result = await this.historyService.sendMessage('lastFetch_queue', dto);
     console.log(result);
     return 'Last update message sent!';
-}
+  }
+
+  @Get('/fetchLastUpdate')
+  async fetchLastUpdate() {
+    console.log("Trying to fetch last update")
+    const result = await this.historyService.sendMessage('getLastUpdate_queue', {}) 
+    console.log(result);
+    return 'Last Update fetched!'
+  }
 }
