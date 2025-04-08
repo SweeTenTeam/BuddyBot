@@ -26,7 +26,7 @@ describe('ChatRepository', () => {
   });
 
     it('should create a new chat using last fetch date from LastUpdateEntity', async () => {
-    // arrange
+    //arrange
     const questionContent = 'question?';
     const answerContent = 'answer!';
     const questionDate = new Date('2025-01-01T10:00:00Z');
@@ -50,10 +50,10 @@ describe('ChatRepository', () => {
     mockChatRepo.create.mockReturnValue(mockChatEntity);
     mockChatRepo.save.mockResolvedValue(mockChatEntity);
 
-    // act
+    //act
     const result = await chatRepository.insertChat(questionContent, answerContent, questionDate);
 
-    // assert
+    //assert
     expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
     expect(mockChatRepo.create).toHaveBeenCalledWith({
         question: questionContent,
@@ -72,7 +72,7 @@ describe('ChatRepository', () => {
     });
 
     it('should fetch "N" chats when no lastChatId is provided', async () => {
-        // arrange
+        //arrange
         const mockChats = [
             {
             id: 'abe',
@@ -102,10 +102,10 @@ describe('ChatRepository', () => {
 
         mockChatRepo.find.mockResolvedValue(mockChats);
 
-        // act
+        //act
         const result = await chatRepository.fetchStoricoChat('');
 
-        // assert
+        //assert
         expect(mockChatRepo.find).toHaveBeenCalledWith({
             order: { answerDate: 'DESC' },
             take: 5,
@@ -115,7 +115,7 @@ describe('ChatRepository', () => {
     });
 
     it('should fetch chat history with a given lastChatId', async () => {
-        // arrange
+        //arrange
         const lastChat = {
             id: 'abf',
             question: 'question4?',
@@ -155,10 +155,10 @@ describe('ChatRepository', () => {
         mockChatRepo.findOne.mockResolvedValue(lastChat);
         mockChatRepo.find.mockResolvedValue(previousChats);
 
-        // act
+        //act
         const result = await chatRepository.fetchStoricoChat('abf', 4);
 
-        // assert
+        //assert
         expect(mockChatRepo.findOne).toHaveBeenCalledWith({ where: { id: 'abf' } });
 
         expect(mockChatRepo.find).toHaveBeenCalledWith({
@@ -173,7 +173,7 @@ describe('ChatRepository', () => {
     });
 
     it('should update existing LastUpdateEntity if it exists', async () => {
-        // arrange
+        //arrange
         const inputDate = '2025-04-01T09:50:00Z';
         const parsedDate = new Date(inputDate);
 
@@ -185,10 +185,10 @@ describe('ChatRepository', () => {
         mockLastUpdateRepo.findOne.mockResolvedValue(existingRecord);
         mockLastUpdateRepo.save.mockResolvedValue({ ...existingRecord, lastFetch: parsedDate });
 
-        // act
+        //act
         const result = await chatRepository.insertLastRetrieval(inputDate);
 
-        // assert
+        //assert
         expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
         expect(existingRecord.lastFetch).toEqual(parsedDate);
         expect(mockLastUpdateRepo.save).toHaveBeenCalledWith(existingRecord);
@@ -196,7 +196,7 @@ describe('ChatRepository', () => {
     });
 
     it('should create new LastUpdateEntity if none exists', async () => {
-        // arrange
+        //arrange
         const inputDate = '2025-04-01T09:50:00Z';
         const parsedDate = new Date(inputDate);
 
@@ -210,10 +210,10 @@ describe('ChatRepository', () => {
         mockLastUpdateRepo.create.mockReturnValue(newEntry);
         mockLastUpdateRepo.save.mockResolvedValue(newEntry);
 
-        // act
+        //act
         const result = await chatRepository.insertLastRetrieval(inputDate);
 
-        // assert
+        //assert
         expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
         expect(mockLastUpdateRepo.create).toHaveBeenCalledWith({ id: 1, lastFetch: parsedDate });
         expect(mockLastUpdateRepo.save).toHaveBeenCalledWith(newEntry);

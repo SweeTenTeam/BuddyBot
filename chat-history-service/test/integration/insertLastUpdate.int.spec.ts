@@ -40,7 +40,7 @@ describe('InsertLastUpdate Integration (Controller → Service → Adapter → R
   });
 
   it('should insert last fetch date and return true', async () => {
-    // arrange
+    //arrange
     const mockLastFetch = '2025-04-03T12:00:00Z';
     const inputDTO: LastUpdateDTO = {
       LastFetch: mockLastFetch,
@@ -48,10 +48,10 @@ describe('InsertLastUpdate Integration (Controller → Service → Adapter → R
 
     mockChatRepo.insertLastRetrieval.mockResolvedValue(true);
 
-    // act
+    //act
     const result = await controller.insertLastRetrieval(inputDTO);
 
-    // assert
+    //assert
     expect(mockChatRepo.insertLastRetrieval).toHaveBeenCalledWith(mockLastFetch);
     expect(result).toBe(true);
   });

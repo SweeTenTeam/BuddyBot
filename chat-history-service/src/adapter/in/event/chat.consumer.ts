@@ -20,14 +20,3 @@ export class ChatConsumer {
         return newMessage;
     }
 }
-
-/* richiesta insert simulata rmq
-{
-  "pattern": "chat_message",
-  "data": {
-    "question": "Che anno precede il 2025?",
-    "answer": "2024",
-    "date": "2025-03-29T12:13:00.000Z"
-  }
-}
-*/

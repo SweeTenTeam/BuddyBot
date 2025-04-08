@@ -17,7 +17,7 @@ describe('FetchHistoryAdapter', () => {
   });
 
   it('should fetch chat history and map it to Chat domain objects', async () => {
-    // arrange
+    //arrange
     const fetchCmd: FetchHistoryCmd = {
       id: 'abc1',
       numChat: 2,
@@ -44,10 +44,10 @@ describe('FetchHistoryAdapter', () => {
 
     mockRepo.fetchStoricoChat.mockResolvedValue(mockEntities);
 
-    // act
+    //act
     const result = await adapter.fetchStoricoChat(fetchCmd);
 
-    // assert
+    //assert
     expect(mockRepo.fetchStoricoChat).toHaveBeenCalledWith(fetchCmd.id, fetchCmd.numChat);
     expect(result).toHaveLength(mockEntities.length);
 

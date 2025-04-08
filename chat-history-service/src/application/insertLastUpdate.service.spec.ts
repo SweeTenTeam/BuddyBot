@@ -14,17 +14,17 @@ describe('InsertLastUpdateService', () => {
   });
 
   it('should call InsertLastUpdateAdapter.insertLastRetrieval with the correct data and return true', async () => {
-    // arrange
+    //arrange
     const mockCmd: LastUpdateCmd = {
       LastFetch: '2025-04-03T12:00:00Z',
     };
 
     mockAdapter.insertLastRetrieval.mockResolvedValue(true);
 
-    // act
+    //act
     const result = await service.insertLastRetrieval(mockCmd);
 
-    // assert
+    //assert
     expect(mockAdapter.insertLastRetrieval).toHaveBeenCalledWith(mockCmd);
     expect(result).toBe(true);
   });

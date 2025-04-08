@@ -39,7 +39,7 @@ describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)'
   });
 
   it('should insert a chat and return ChatDTO', async () => {
-    // arrange
+    //arrange
     const questionText = 'Question test?';
     const answerText = 'Answer test!';
     const questionTimestamp = new Date().toISOString();
@@ -59,10 +59,10 @@ describe('InsertChat Integration (Controller -> Service -> Adapter -> Repomock)'
 
     chatRepoMock.insertChat.mockResolvedValue(mockChatEntity);
 
-    // act
+    //act
     const result = await controller.handleMessage(inputDTO);
 
-    // assert
+    //assert
     expect(chatRepoMock.insertChat).toHaveBeenCalledWith(
       questionText,
       answerText,

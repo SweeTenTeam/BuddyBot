@@ -13,7 +13,7 @@ describe('InsertChatAdapter', () => {
   });
 
   it('should call ChatRepository.insertChat with correct arguments and return mapped Chat domain object', async () => {
-    // arrange
+    //arrange
     const questionTimestamp = new Date('2025-01-01T10:00:00Z');
     const answerTimestamp = new Date('2025-01-01T10:01:00Z');
     const lastFetchTimestamp = '2025-01-01T09:55:00Z';
@@ -37,10 +37,10 @@ describe('InsertChatAdapter', () => {
 
     mockRepo.insertChat.mockResolvedValue(mockChatEntity);
 
-    // act
+    //act
     const result = await adapter.insertChat(cmd);
 
-    // assert
+    //assert
     expect(mockRepo.insertChat).toHaveBeenCalledWith(
       questionMessage.content,
       answerMessage.content,

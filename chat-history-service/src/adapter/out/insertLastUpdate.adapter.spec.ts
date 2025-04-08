@@ -14,17 +14,17 @@ describe('InsertLastUpdateAdapter', () => {
   });
 
   it('should call ChatRepository.insertLastRetrieval with correct date and return true', async () => {
-    // arrange
+    //arrange
     const mockCmd: LastUpdateCmd = {
       LastFetch: '2025-04-03T12:00:00Z',
     };
 
     mockRepo.insertLastRetrieval.mockResolvedValue(true);
 
-    // act
+    //act
     const result = await adapter.insertLastRetrieval(mockCmd);
 
-    // assert
+    //assert
     expect(mockRepo.insertLastRetrieval).toHaveBeenCalledWith(mockCmd.LastFetch);
     expect(result).toBe(true);
   });

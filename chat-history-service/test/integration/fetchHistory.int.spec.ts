@@ -40,7 +40,7 @@ describe('FetchHistory Integration (Controller → Service → Adapter → RepoM
   });
 
   it('should fetch chat history and return mapped ChatDTO[]', async () => {
-    // arrange
+    //arrange
     const inputDTO: FetchRequestDTO = {
       id: 'chat-abb',
       numChat: 2,
@@ -67,10 +67,10 @@ describe('FetchHistory Integration (Controller → Service → Adapter → RepoM
 
     mockRepo.fetchStoricoChat.mockResolvedValue(mockChatEntities);
 
-    // act
+    //act
     const result = await controller.fetchChatHistory(inputDTO);
 
-    // assert
+    //assert
     expect(mockRepo.fetchStoricoChat).toHaveBeenCalledWith(inputDTO.id, inputDTO.numChat);
     expect(result).toHaveLength(2);
 
