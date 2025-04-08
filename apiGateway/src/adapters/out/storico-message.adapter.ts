@@ -48,4 +48,15 @@ export class StoricoMessageAdapter implements StoricoPort {
     console.log(` Data fetch salvata nello storico:`, result);
     return result;
   }
+
+  async getLastUpdate(): Promise<LastUpdateCMD>{
+
+    console.log(`Richiesta della data di ultimo fetch`);
+
+    const result = await this.historyService.sendMessage('getLastUpdate_queue', null);
+
+    console.log(` Data del fetch precedente ritronata:`, result);
+    return result;
+
+  }
 }
