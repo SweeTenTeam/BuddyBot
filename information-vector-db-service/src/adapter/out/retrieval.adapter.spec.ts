@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { jest } from '@jest/globals';
 import { RetrieveAdapter } from './retrieval.adapter.js';
-import { RETRIEVAL_PORT } from '../../application/port/out/retrieval-info.port.js';
+import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
 import { InformationEntity } from './persistance/entities/information.entity.js';
 import { OriginEntity, TypeEntity } from './persistance/entities/metadata.entity.js';
-import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
+import { Information } from '../../domain/business/information.js';
+import { Metadata, Origin, Type } from '../../domain/business/metadata.js';
 
 describe('RetrieveAdapter', () => {
   let adapter: RetrieveAdapter;
-  let informationRepository: jest.Mocked<QdrantInformationRepository>;
+  let repository: jest.Mocked<QdrantInformationRepository>;
 
   beforeEach(async () => {
-    const mockInformationRepository = {
+    const mockRepository = {
       retrieveRelevantInfo: jest.fn(),
     };
 
@@ -21,39 +21,56 @@ describe('RetrieveAdapter', () => {
         RetrieveAdapter,
         {
           provide: QdrantInformationRepository,
-          useValue: mockInformationRepository,
+          useValue: mockRepository,
         },
       ],
     }).compile();
 
     adapter = module.get<RetrieveAdapter>(RetrieveAdapter);
-    informationRepository = module.get(QdrantInformationRepository);
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
+    repository = module.get(QdrantInformationRepository);
   });
 
   it('should be defined', () => {
     expect(adapter).toBeDefined();
   });
 
-  it('should retrieve information successfully', async () => {
+  it('should convert repository entities to domain information', async () => {
+    // Arrange
     const mockCmd = new RetrieveCmd();
     mockCmd.query = 'test query';
     
-    const mockResults = [
+    const mockEntities = [
       new InformationEntity('test content', {
-        origin: OriginEntity.CONFLUENCE,
+        origin: OriginEntity.GITHUB,
         type: TypeEntity.COMMIT,
         originID: 'test-id'
-      }),
+      })
     ];
     
-    informationRepository.retrieveRelevantInfo.mockResolvedValue(mockResults);
+    const expectedInfo = [
+      new Information('test content', new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id'))
+    ];
+
+    repository.retrieveRelevantInfo.mockResolvedValue(mockEntities);
+
+    // Act
     const result = await adapter.retrieveRelevantInfo(mockCmd);
 
-    expect(informationRepository.retrieveRelevantInfo).toHaveBeenCalledWith(mockCmd.query);
-    expect(result).toEqual(mockResults);
+    // Assert
+    expect(repository.retrieveRelevantInfo).toHaveBeenCalledWith(mockCmd.query);
+    expect(result).toEqual(expectedInfo);
+  });
+
+  it('should handle empty results', async () => {
+    // Arrange
+    const mockCmd = new RetrieveCmd();
+    mockCmd.query = 'test query';
+    repository.retrieveRelevantInfo.mockResolvedValue([]);
+
+    // Act
+    const result = await adapter.retrieveRelevantInfo(mockCmd);
+
+    // Assert
+    expect(result).toEqual([]);
   });
 }); 

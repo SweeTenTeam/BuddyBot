@@ -7,6 +7,7 @@ import { MetadataEntity } from "./entities/metadata.entity.js";
 import { Information } from "../../../domain/business/information.js";
 import { Metadata } from "../../../domain/business/metadata.js";
 import { Result } from "../../../domain/business/Result.js";
+import { Origin, Type } from "../../../domain/shared/enums.js";
 
 @Injectable()
 export class QdrantInformationRepository {
@@ -36,8 +37,8 @@ export class QdrantInformationRepository {
         documents = splitDocs.map(doc => ({
           pageContent: doc.pageContent,
           metadata: {
-            origin: infoToStore.metadata.origin,
-            type: infoToStore.metadata.type,
+            origin: infoToStore.metadata.origin as Origin,
+            type: infoToStore.metadata.type as Type,
             originID: infoToStore.metadata.originID,
           }
         }));
@@ -46,16 +47,16 @@ export class QdrantInformationRepository {
         documents = [{
           pageContent: infoToStore.content,
           metadata: {
-            origin: infoToStore.metadata.origin,
-            type: infoToStore.metadata.type,
+            origin: infoToStore.metadata.origin as Origin,
+            type: infoToStore.metadata.type as Type,
             originID: infoToStore.metadata.originID,
           }
         }];
       }
 
-        await this.vectorStore.addDocuments(documents);
-        console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
-        return Result.ok();
+      await this.vectorStore.addDocuments(documents);
+      console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
+      return Result.ok();
 
     } catch (error) {
       console.error('Detailed error in storeInformation:', {
@@ -73,40 +74,42 @@ export class QdrantInformationRepository {
       const results = await this.similaritySearch(query, limit);
       
       return results.map(res => {
-        return new InformationEntity(res.pageContent, {
-          origin: res.metadata.origin,
-          type: res.metadata.type,
-          originID: res.metadata.originID
-        });
+        const metadata = new MetadataEntity(
+          res.metadata.origin as Origin,
+          res.metadata.type as Type,
+          res.metadata.originID
+        );
+        return new InformationEntity(res.pageContent, metadata);
       });
     } catch (error) {
+      Logger.error(`Error retrieving relevant info: ${error.message}`, error.stack);
       return [];
     }
   }
 
   async splitDocuments(documents: { pageContent: string }[]): Promise<Document[]> {
-    try {
+    // try {
       const splitDocs = await this.textSplitter.createDocuments(
         documents.map(doc => doc.pageContent)
       );
       return splitDocs;
-    } catch (error) {
-      console.error(`Error splitting documents: ${error}`);
-      throw error;
-    }
+    // } catch (error) {
+    //   console.error(`Error splitting documents: ${error}`);
+    //   throw error;
+    // }
   }
 
   async similaritySearch(query: string, k = 10): Promise<Document[]> {
-    try {
+    // try {
       const retriever = this.vectorStore.asRetriever(k);
       const results = await retriever.invoke(query);
       
       console.debug(`Similarity search found ${results.length} results for query: ${query}`);
       return results;
-    } catch (error) {
-      console.error(`Error performing similarity search: ${error}`);
-      throw error;
-    }
+    // } catch (error) {
+    //   console.error(`Error performing similarity search: ${error}`);
+    //   throw error;
+    // }
   }
 
 
@@ -119,11 +122,11 @@ export class QdrantInformationRepository {
         must: [
           {
             key: 'metadata.origin',
-            match: { value: metadata.origin },
+            match: { value: metadata.origin as Origin },
           },
           {
             key: 'metadata.type',
-            match: { value: metadata.type },
+            match: { value: metadata.type as Type },
           },
           {
             key: 'metadata.originID',
