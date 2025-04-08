@@ -78,6 +78,7 @@ export class ChatRepository {
   }
 
   async insertLastRetrieval(date: string): Promise<boolean> {
+  try {
     const parsedDate = new Date(date);
 
     //id sempre 1
@@ -95,7 +96,11 @@ export class ChatRepository {
     }
 
     return true;
-  }
 
+  } catch (error) {
+    console.error('Errore durante insertLastRetrieval:', error);
+    return false;
+  }
+}
 
 }
