@@ -6,6 +6,13 @@ export enum OriginEntity {
 
 export enum TypeEntity {
   COMMIT = 'COMMIT',
+  DOCUMENT = 'DOCUMENT',
+  FILE = 'FILE',
+  PULLREQUEST = 'PULLREQUEST',
+  REPOSITORY = 'REPOSITORY',
+  TICKET = 'TICKET',
+  WORKFLOW = 'WORKFLOW',
+  WORKFLOW_RUN = 'WORKFLOW_RUN',
 }
 
 export class MetadataEntity {

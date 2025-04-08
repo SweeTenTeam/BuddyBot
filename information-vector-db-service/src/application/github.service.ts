@@ -15,6 +15,7 @@ import { GITHUB_FILES_API_PORT, GithubFilesAPIPort } from './port/out/GithubFile
 import { GITHUB_PULL_REQUESTS_API_PORT, GithubPullRequestsAPIPort } from './port/out/GithubPullRequestsAPIPort.js';
 import { GITHUB_REPOSITORY_API_PORT, GithubRepositoryAPIPort } from './port/out/GithubRepositoryAPIPort.js';
 import { GITHUB_WORKFLOWS_API_PORT, GithubWorkflowsAPIPort } from './port/out/GithubWorkflowsAPIPort.js';
+import { Result } from '../domain/business/Result.js';
 
 @Injectable()
 export class GithubService implements GithubUseCase {
@@ -82,17 +83,22 @@ export class GithubService implements GithubUseCase {
     return workflowRuns;
   }
   
-  async fetchAndStoreGithubInfo(req: GithubCmd): Promise<boolean> {
-    const commits = await this.githubCommitsApi.fetchGithubCommitsInfo(req);
-    const fileCmds = this.extractFileCmdsFromCommits(commits);
+  async fetchAndStoreGithubInfo(req: GithubCmd): Promise<Result> {
+    try {
+      const commits = await this.githubCommitsApi.fetchGithubCommitsInfo(req);
+      console.log(commits);
+      const fileCmds = this.extractFileCmdsFromCommits(commits);
+      const files = await this.githubFilesApi.fetchGithubFilesInfo(fileCmds);
+      console.log(files);
+      const pullRequests = await this.githubPullRequestsApi.fetchGithubPullRequestsInfo(req);
+      const repository = await this.githubRepositoryApi.fetchGithubRepositoryInfo(req);
+      const workflows = await this.githubWorkflowsApi.fetchGithubWorkflowInfo(req);
+      const workflowRuns = await this.getWorkflowRuns(workflows, req);
 
-    const files = await this.githubFilesApi.fetchGithubFilesInfo(fileCmds);
-    const pullRequests = await this.githubPullRequestsApi.fetchGithubPullRequestsInfo(req);
-    const repository = await this.githubRepositoryApi.fetchGithubRepositoryInfo(req);
-    const workflows = await this.githubWorkflowsApi.fetchGithubWorkflowInfo(req);
-    const workflowRuns = await this.getWorkflowRuns(workflows, req);
-
-    await this.githubStoreAdapter.storeGithubInfo(new GithubInfo(commits,files,pullRequests,repository,workflows,workflowRuns));
-    return true;
+      const result = await this.githubStoreAdapter.storeGithubInfo(new GithubInfo(commits, files, pullRequests, repository, workflows, workflowRuns));
+      return result;
+    } catch (error) {
+      return Result.fromError(error);
+    }
   }
 }
