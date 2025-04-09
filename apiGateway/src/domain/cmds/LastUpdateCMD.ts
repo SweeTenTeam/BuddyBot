@@ -1,3 +1,3 @@
 export class LastUpdateCMD{
-    constructor(private LastFetch: string){}
+    constructor(public LastFetch: string){}
 }

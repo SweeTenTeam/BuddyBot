@@ -7,4 +7,5 @@ export interface StoricoPort {
   getStorico(req: RequestChatCMD): Promise<Chat[]>;
   postStorico(chat: ProvChat): Promise<Chat>; 
   postUpdate(LastFetch:LastUpdateCMD): Promise<Boolean>;
+  getLastUpdate(): Promise<LastUpdateCMD>;
 }

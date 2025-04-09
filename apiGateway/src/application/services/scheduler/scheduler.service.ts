@@ -18,9 +18,14 @@ export class TasksService {
     @Inject('StoricoPort') private readonly storicoPort: StoricoPort,
   ) {}
 
-  @Cron('0 */60 * * * *')/**UPDATE EVERY 5 MINUTI */
+  @Cron('0 */5 * * * *')/**UPDATE EVERY 5 MINUTI */
   async handleCron() {
-    const DataFetch = new Date();
+
+    //const LastFetch = await this.storicoPort.getLastUpdate();
+    const isoDateString = await this.storicoPort.getLastUpdate();
+    const DataFetch = new Date(isoDateString.LastFetch);
+
+    //const DataFetch = new Date();
     this.logger.debug(`Every 5 minuti: ${DataFetch}`);
 
 
@@ -56,8 +61,10 @@ export class TasksService {
 
     /** ONLY IF ALL FETCHS ARE OK SAVE LAST FETCH*/
     if (resultFetchJira && resultFetchGithub && resultFetchConf){
+      const NewDataFetch = new Date();
+
       console.log(`Fetch informazioni in information service successo`);
-      const lastUpdateCmd = new LastUpdateCMD(DataFetch.toISOString());
+      const lastUpdateCmd = new LastUpdateCMD(NewDataFetch.toISOString());
       const result = await this.storicoPort.postUpdate(lastUpdateCmd);
 
       console.log(`Data fetch salvata?:`, result);

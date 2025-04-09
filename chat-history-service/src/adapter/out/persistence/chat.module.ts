@@ -13,6 +13,11 @@ import { InsertLastUpdateService } from 'src/application/insertLastUpdate.servic
 import { IU_PORT_OUT } from 'src/application/port/out/insertLastUpdate.port';
 import { InsertLastUpdateAdapter } from '../insertLastUpdate.adapter';
 import { InsertLastUpdateController } from 'src/adapter/in/insertLastUpdate.controller';
+import { FU_PORT_OUT } from 'src/application/port/out/fetchLastUpdate.port';
+import { fetchLastUpdateAdapter } from '../fetchLastUpdate.adapter';
+import { FU_USE_CASE } from 'src/application/port/in/fetchLastUpdate-usecase';
+import { FetchLastUpdateService } from 'src/application/fetchLastUpdate.service';
+import { FetchLastUpdateController } from 'src/adapter/in/fetchLastUpdate.controller';
 
 @Module({
   imports: [
@@ -35,9 +40,17 @@ import { InsertLastUpdateController } from 'src/adapter/in/insertLastUpdate.cont
     {
       provide: IU_PORT_OUT,
       useClass: InsertLastUpdateAdapter
+    },
+    {
+      provide: FU_USE_CASE,
+      useClass: FetchLastUpdateService
+    },
+    {
+      provide: FU_PORT_OUT,
+      useClass: fetchLastUpdateAdapter
     }, ChatRepository
   ],
-  controllers: [ChatConsumer, InsertLastUpdateController]
+  controllers: [ChatConsumer, InsertLastUpdateController, FetchLastUpdateController]
 })
 export class ChatModule { }
 
