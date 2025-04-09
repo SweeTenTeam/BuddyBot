@@ -24,8 +24,6 @@ export class Adapter implements Target {
     async requestAnswer(question: Message): Promise<{ answer: Message; id: string; lastUpdated: string }> {
         try {
             const answer = await this.adaptee.fetchQuestion(this.adaptMessageToJSON(question));
-            console.log("33333333");
-            console.log(answer);
             return {
                 answer: this.adaptMessage(answer.answer),
                 id: answer.id,

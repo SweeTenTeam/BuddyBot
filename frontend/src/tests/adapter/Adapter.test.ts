@@ -18,13 +18,16 @@ describe("Adapter", () => {
 
   it("should fetch and adapt history correctly", async () => {
     const mockResponse = [
+      { id: "1", question: { content: "Q1", timestamp: "12345" }, answer: { content: "A1", timestamp: "12346" }, error: 0, loading: false, lastUpdate: new Date().toISOString() },
+      { id: "2", question: { content: "Q2", timestamp: "12346" }, answer: { content: "A2", timestamp: "12347" }, error: 0, loading: false, lastUpdate: new Date().toISOString() },
+    ];
+    mockFacade.fetchHistory.mockResolvedValue(mockResponse);
+    const adapted = [
       { id: "1", question: { content: "Q1", timestamp: "12345" }, answer: { content: "A1", timestamp: "12346" }, error: 0, loading: false, lastUpdated: new Date().toISOString() },
       { id: "2", question: { content: "Q2", timestamp: "12346" }, answer: { content: "A2", timestamp: "12347" }, error: 0, loading: false, lastUpdated: new Date().toISOString() },
     ];
-    mockFacade.fetchHistory.mockResolvedValue(mockResponse);
-
     const result = await adapter.requestHistory("1", 0);
-    expect(result).toEqual(mockResponse);
+    expect(result).toEqual(adapted);
   });
 
   it("should throw an error if fetching history fails", async () => {
@@ -53,7 +56,7 @@ describe("Adapter", () => {
   it("should generate an id if data.id is missing", async () => {
     const mockGenerateId = jest.spyOn(generateIdModule, "generateId").mockReturnValue("generated-id");
 
-    const mockData = { question: { content: "What is AI?", timestamp: "12345" }, answer: { content: "Artificial Intelligence", timestamp: "12346" }, error: false, loading: false, lastUpdated: "54321" };
+    const mockData = { question: { content: "What is AI?", timestamp: "12345" }, answer: { content: "Artificial Intelligence", timestamp: "12346" }, error: false, loading: false, lastUpdate: "54321" };
     
     const adapted = adapter["adaptQuestionAnswer"](mockData);
 
