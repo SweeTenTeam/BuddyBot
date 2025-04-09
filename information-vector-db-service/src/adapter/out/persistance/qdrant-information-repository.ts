@@ -29,8 +29,8 @@ export class QdrantInformationRepository {
       }
       
       let documents: Document[] = [];
-      
-      if (infoToStore.content.length > 32000) {
+      console.log("docs size: "+ infoToStore.content.length)
+      if (infoToStore.content.length > 10000) {
         const splitDocs = await this.splitDocuments([{ pageContent: infoToStore.content }]);
         
         documents = splitDocs.map(doc => ({
@@ -53,9 +53,16 @@ export class QdrantInformationRepository {
         }];
       }
 
-        await this.vectorStore.addDocuments(documents);
-        console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
-        return Result.ok();
+      // logic for batching, needs to be 1 cause of restriction of free tier
+      const batchSize = 1;
+      for (let i = 0; i < documents.length; i += batchSize) {
+        const batch = documents.slice(i, i + batchSize);
+        await this.vectorStore.addDocuments(batch);
+        console.log(`Added batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(documents.length/batchSize)}`);
+      }
+
+      console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
+      return Result.ok();
 
     } catch (error) {
       console.error('Detailed error in storeInformation:', {
@@ -68,7 +75,7 @@ export class QdrantInformationRepository {
     }
   }
 
-  async retrieveRelevantInfo(query: string, limit = 10): Promise<InformationEntity[]> {
+  async retrieveRelevantInfo(query: string, limit = 30): Promise<InformationEntity[]> {
     try {
       const results = await this.similaritySearch(query, limit);
       
