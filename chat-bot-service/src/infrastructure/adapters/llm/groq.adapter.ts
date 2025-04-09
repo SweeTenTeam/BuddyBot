@@ -30,6 +30,7 @@ export class GroqAdapter implements LLMPort {
     for(const information of info){
       documents.push({pageContent: information.content, metadata: {'origin':information.metadata.origin,'type':information.metadata.type,'originId':information.metadata.originID}});
     }
+    //todo get lenght and delete documents if too large
     const response = await ragChain.invoke({question: req.getText(), context: documents})
     return new Chat(req.getText(), response);
   }

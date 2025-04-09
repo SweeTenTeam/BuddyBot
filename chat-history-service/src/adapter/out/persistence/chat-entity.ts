@@ -9,7 +9,7 @@ export class ChatEntity {
     @Column()
     question: string;
 
-    @CreateDateColumn({ type: 'timestamptz' })
+    @Column({ type: 'timestamptz' })
     questionDate: Date;
 
     @Column()
@@ -17,4 +17,7 @@ export class ChatEntity {
 
     @CreateDateColumn({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
     answerDate: Date = new Date();
+
+    @Column({ nullable: true }) //da togliere nullable, usato solo in fase di sviluppo
+    lastFetch: string;
 }

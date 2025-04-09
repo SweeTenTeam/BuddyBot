@@ -31,7 +31,7 @@ describe('StoricoMessageAdapter', () => {
 
   it('should get storico from historyService', async () => {
     const requestMock = new RequestChatCMD('1', 2);
-    const responseMock = [new Chat('1', new Message('Test Question', '2023-01-01T00:00:00Z'), new Message('Test Answer', '2023-01-01T00:00:00Z'))];
+    const responseMock = [new Chat('1', new Message('Test Question', '2023-01-01T00:00:00Z'), new Message('Test Answer', '2023-01-01T00:00:00Z'), '2023-01-01T00:00:00Z')];
     jest.spyOn(historyService, 'sendMessage').mockResolvedValue(responseMock);
 
     const result = await adapter.getStorico(requestMock);
@@ -41,11 +41,22 @@ describe('StoricoMessageAdapter', () => {
 
   it('should post storico to historyService', async () => {
     const chatMock = new ProvChat('1', 'Test Question', 'Test Answer');
-    const responseMock = new Chat('1', new Message('Test Question', '2023-01-01T00:00:00Z'), new Message('Test Answer', '2023-01-01T00:00:00Z'));
+    const responseMock = new Chat('1', new Message('Test Question', '2023-01-01T00:00:00Z'), new Message('Test Answer', '2023-01-01T00:00:00Z'), '2023-01-01T00:00:00Z');
     jest.spyOn(historyService, 'sendMessage').mockResolvedValue(responseMock);
 
     const result = await adapter.postStorico(chatMock);
     expect(result).toEqual(responseMock);
     expect(historyService.sendMessage).toHaveBeenCalledWith('chat_message', chatMock);
   });
+
+  it('should post last fetch to historyService', async () => {
+    const LastFetch = '2023-01-01T00:00:00Z';
+    const responseMock = true;
+    jest.spyOn(historyService, 'sendMessage').mockResolvedValue(responseMock);
+
+    const result = await adapter.postUpdate(LastFetch);
+    expect(result).toEqual(responseMock);
+    expect(historyService.sendMessage).toHaveBeenCalledWith('lastFetch_queue', LastFetch);
+  });
+  
 });
