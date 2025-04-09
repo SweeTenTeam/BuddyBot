@@ -220,4 +220,22 @@ describe('ChatRepository', () => {
         expect(result).toBe(true);
     });
 
+    it('should fetch the last update record from the repository', async () => {
+        //arrange
+        const mockDate = new Date('2025-04-08T12:00:00Z');
+        const mockEntity: LastUpdateEntity = {
+            id: 1,
+            lastFetch: mockDate,
+        };
+
+        mockLastUpdateRepo.findOne.mockResolvedValue(mockEntity);
+
+        //act
+        const result = await chatRepository.fetchLastUpdate();
+
+        //assert
+        expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+        expect(result).toEqual(mockEntity);
+    });
+
 }); 
