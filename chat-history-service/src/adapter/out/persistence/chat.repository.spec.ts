@@ -25,6 +25,8 @@ describe('ChatRepository', () => {
     chatRepository = new ChatRepository(mockChatRepo, mockLastUpdateRepo);
   });
 
+    //TEST INSERT CHAT
+
     it('should create a new chat using last fetch date from LastUpdateEntity', async () => {
     //arrange
     const questionContent = 'question?';
@@ -70,6 +72,21 @@ describe('ChatRepository', () => {
     expect(result.answerDate.toISOString()).toEqual(mockChatEntity.answerDate.toISOString());
     expect(result.lastFetch).toEqual(lastFetchDate.toISOString());
     });
+
+    it('should throw error if LastUpdateEntity is not found in insertChat', async () => {
+        //arrange
+        mockLastUpdateRepo.findOne.mockResolvedValue(null);
+
+        //act e assert
+        await expect(
+            chatRepository.insertChat('question', 'answer', new Date())
+        ).rejects.toThrow('Error during insert-chat in db');
+
+        expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
+    });
+
+
+    //TEST FETCH CHAT
 
     it('should fetch "N" chats when no lastChatId is provided', async () => {
         //arrange
@@ -172,6 +189,21 @@ describe('ChatRepository', () => {
         expect(result).toEqual(previousChats.slice().reverse());
     });
 
+    it('should throw error if lastChatId is not found in fetchStoricoChat', async () => {
+        //arrange
+        mockChatRepo.findOne.mockResolvedValue(null);
+
+        //act e assert
+        await expect(chatRepository.fetchStoricoChat('invalid-id')).rejects.toThrow(
+            'Error during History-fetch'
+        );
+
+        expect(mockChatRepo.findOne).toHaveBeenCalledWith({ where: { id: 'invalid-id' } });
+    });
+
+
+    //TEST INSERT LAST RETRIEVAL 
+
     it('should update existing LastUpdateEntity if it exists', async () => {
         //arrange
         const inputDate = '2025-04-01T09:50:00Z';
@@ -220,6 +252,20 @@ describe('ChatRepository', () => {
         expect(result).toBe(true);
     });
 
+    it('should return false if an error occurs during insertLastRetrieval', async () => {
+        //arrange
+        mockLastUpdateRepo.findOne.mockRejectedValue(new Error('DB failure'));
+
+        //act
+        const result = await chatRepository.insertLastRetrieval('2025-04-01T09:00:00Z');
+
+        //assert
+        expect(result).toBe(false);
+    });
+
+
+    //TEST FETCH LAST UPDATE
+
     it('should fetch the last update record from the repository', async () => {
         //arrange
         const mockDate = new Date('2025-04-08T12:00:00Z');
@@ -236,6 +282,18 @@ describe('ChatRepository', () => {
         //assert
         expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
         expect(result).toEqual(mockEntity);
+    });
+
+    it('should throw error if no LastUpdateEntity exists in fetchLastUpdate', async () => {
+        //arrange
+        mockLastUpdateRepo.findOne.mockResolvedValue(null);
+
+        //act e assert
+        await expect(chatRepository.fetchLastUpdate()).rejects.toThrow(
+            'LastUpdate-record not found (in db)'
+        );
+
+        expect(mockLastUpdateRepo.findOne).toHaveBeenCalledWith({ where: { id: 1 } });
     });
 
 }); 
