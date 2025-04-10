@@ -4,8 +4,10 @@ import { RetrievalController } from './retrieval.controller.js';
 import { RETRIEVAL_USE_CASE, RetrievalUseCase } from '../../application/port/in/retrieval-usecase.port.js';
 import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
 import { Information } from '../../domain/business/information.js';
-import { Metadata, Origin, Type } from '../../domain/business/metadata.js';
+import { Metadata } from '../../domain/business/metadata.js';
+
 import { RetrievalQueryDTO } from './dto/retrival-query.dto.js';
+import { Origin, Type } from '../../domain/shared/enums.js';
 
 describe('RetrievalController', () => {
   let controller: RetrievalController;

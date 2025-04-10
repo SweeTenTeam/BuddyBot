@@ -70,7 +70,7 @@ import { JIRA_STORE_INFO_PORT } from './application/port/out/JiraStoreInfoPort.j
         });
 
         const textSplitter = new RecursiveCharacterTextSplitter({ 
-          chunkSize: 32000, 
+          chunkSize: 10000, 
           chunkOverlap: 0 
         });
         

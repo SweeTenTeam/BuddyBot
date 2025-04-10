@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { jest } from '@jest/globals';
 import { RetrieveAdapter } from './retrieval.adapter.js';
 import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';

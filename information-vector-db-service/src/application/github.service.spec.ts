@@ -13,6 +13,12 @@ import { Workflow } from '../domain/business/Workflow.js';
 import { WorkflowRun } from '../domain/business/WorkflowRun.js';
 import { GithubCmd } from '../domain/command/GithubCmd.js';
 import { RepoCmd } from '../domain/command/RepoCmd.js';
+import { GITHUB_COMMITS_API_PORT } from '../application/port/out/GithubCommitAPIPort.js';
+import { GITHUB_FILES_API_PORT } from '../application/port/out/GithubFilesAPIPort.js';
+import { GITHUB_PULL_REQUESTS_API_PORT } from '../application/port/out/GithubPullRequestsAPIPort.js';
+import { GITHUB_REPOSITORY_API_PORT } from '../application/port/out/GithubRepositoryAPIPort.js';
+import { GITHUB_WORKFLOWS_API_PORT } from '../application/port/out/GithubWorkflowsAPIPort.js';
+import { GITHUB_STORE_INFO_PORT } from '../application/port/out/GithubStoreInfoPort.js';
 
 describe('GithubService', () => {
   let service: GithubService;
@@ -37,19 +43,35 @@ describe('GithubService', () => {
       providers: [
         GithubService,
         {
-          provide: GithubAPIAdapter,
+          provide: GITHUB_COMMITS_API_PORT,
           useValue: mockApiAdapter,
         },
         {
-          provide: GithubStoreAdapter,
+          provide: GITHUB_FILES_API_PORT,
+          useValue: mockApiAdapter,
+        },
+        {
+          provide: GITHUB_PULL_REQUESTS_API_PORT, 
+          useValue: mockApiAdapter,
+        },
+        {
+          provide: GITHUB_REPOSITORY_API_PORT,
+          useValue: mockApiAdapter,
+        },
+        {
+          provide: GITHUB_WORKFLOWS_API_PORT,
+          useValue: mockApiAdapter,
+        },
+        {
+          provide: GITHUB_STORE_INFO_PORT,
           useValue: mockStoreAdapter,
         },
       ],
     }).compile();
 
     service = module.get<GithubService>(GithubService);
-    apiAdapter = module.get(GithubAPIAdapter);
-    storeAdapter = module.get(GithubStoreAdapter);
+    apiAdapter = module.get(GITHUB_COMMITS_API_PORT);
+    storeAdapter = module.get(GITHUB_STORE_INFO_PORT);
   });
 
   afterEach(() => {
@@ -204,7 +226,7 @@ describe('GithubService', () => {
           pullRequests: [],
           repos: [],
           workflows: [],
-          workflowRuns: [],
+          workflow_runs: []
         })
       );
     });

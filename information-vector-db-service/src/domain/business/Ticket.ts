@@ -1,4 +1,5 @@
-import { Metadata, Origin, Type } from "./metadata.js";
+import { Metadata} from "./metadata.js";
+import { Origin, Type } from "../shared/enums.js";
 import { JiraComment } from './JiraComment.js';
 
 

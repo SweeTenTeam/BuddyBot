@@ -31,7 +31,7 @@ export class QdrantInformationRepository {
       
       let documents: Document[] = [];
       
-      if (infoToStore.content.length > 32000) {
+      if (infoToStore.content.length > 10000) {
         const splitDocs = await this.splitDocuments([{ pageContent: infoToStore.content }]);
         
         documents = splitDocs.map(doc => ({

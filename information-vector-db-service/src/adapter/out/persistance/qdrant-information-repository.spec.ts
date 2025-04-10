@@ -139,10 +139,17 @@ describe('QdrantInformationRepository', () => {
       ] as Document[];
       
       // Create a mock retriever with a properly typed invoke function
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.resolve(mockDocs);
+      //   }
+      // };
+      const mockInvoke = jest.fn<(query: string) => Promise<Document[]>>();
+      mockInvoke.mockImplementation((query: string) => Promise.resolve(mockDocs));
+
+      // Use the mock function in your mockRetriever
       const mockRetriever = {
-        invoke: function(query: string): Promise<Document[]> {
-          return Promise.resolve(mockDocs);
-        }
+        invoke: mockInvoke
       };
       vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 
@@ -158,16 +165,25 @@ describe('QdrantInformationRepository', () => {
 
     it('should handle errors during retrieval', async () => {
       // Create a mock retriever with a properly typed invoke function that rejects
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.reject(new Error('Retrieval error'));
+      //   }
+      // };
+
+      const mockInvoke = jest.fn() as jest.MockedFunction<(query: string) => Promise<Document[]>>;
+
+      // Configure it to reject with an error
+      mockInvoke.mockImplementation((query: string) => Promise.reject(new Error('Retrieval error')));
+
+      // Use the mock function in your mockRetriever
       const mockRetriever = {
-        invoke: function(query: string): Promise<Document[]> {
-          return Promise.reject(new Error('Retrieval error'));
-        }
+        invoke: mockInvoke
       };
       vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 
-      const results = await repository.retrieveRelevantInfo('test query');
+      await expect(repository.retrieveRelevantInfo('test query')).rejects.toThrow('Retrieval error');
 
-      expect(results).toEqual([]);
     });
   });
 
@@ -205,11 +221,21 @@ describe('QdrantInformationRepository', () => {
       ] as Document[];
       
       // Create a mock retriever with a properly typed invoke function
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.resolve(mockDocs);
+      //   }
+      // };
+
+       const mockInvoke = jest.fn<(query: string) => Promise<Document[]>>();
+      mockInvoke.mockImplementation((query: string) => Promise.resolve(mockDocs));
+
+      // Use the mock function in your mockRetriever
       const mockRetriever = {
-        invoke: function(query: string): Promise<Document[]> {
-          return Promise.resolve(mockDocs);
-        }
+        invoke: mockInvoke
       };
+
+      
       vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 
       const results = await repository.similaritySearch('test query', 5);
@@ -221,10 +247,20 @@ describe('QdrantInformationRepository', () => {
 
     it('should handle errors during similarity search', async () => {
       // Create a mock retriever with a properly typed invoke function that rejects
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.reject(new Error('Search error'));
+      //   }
+      // };
+
+      const mockInvoke = jest.fn() as jest.MockedFunction<(query: string) => Promise<Document[]>>;
+
+      // Configure it to reject with an error
+      mockInvoke.mockImplementation((query: string) => Promise.reject(new Error('Search error')));
+
+      // Use the mock function in your mockRetriever
       const mockRetriever = {
-        invoke: function(query: string): Promise<Document[]> {
-          return Promise.reject(new Error('Search error'));
-        }
+        invoke: mockInvoke
       };
       vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 

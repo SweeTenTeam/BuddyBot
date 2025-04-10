@@ -19,12 +19,14 @@ describe('GithubAPIFacade', () => {
         pulls: {
           list: jest.fn(),
           listFiles: jest.fn(),
-          listReviewComments: jest.fn(),
         },
         actions: {
           listRepoWorkflows: jest.fn(),
           listWorkflowRuns: jest.fn(),
         },
+      },
+      pulls: {
+        listReviewComments: jest.fn(),
       },
       request: jest.fn(),
       paginate: jest.fn(),
@@ -437,7 +439,7 @@ describe('GithubAPIFacade', () => {
       const result = await githubAPIFacade.fetchPullRequestReviewComments(owner, repoName, pull_number);
       
       expect(mockOctokit.paginate).toHaveBeenCalledWith(
-        mockOctokit.rest.pulls.listReviewComments,
+        mockOctokit.pulls.listReviewComments,
         {
           owner,
           repo: repoName,
@@ -623,9 +625,10 @@ describe('GithubAPIFacade', () => {
         {
           id: 6789,
           status: 'completed',
-          duration: 120,
-          log: 'Build successful',
-          trigger: 'push'
+          run_started_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:02:00Z',
+          html_url: 'https://github.com/test/repo/actions/runs/6789',
+          event: 'push'
         }
       ];
       
@@ -643,7 +646,15 @@ describe('GithubAPIFacade', () => {
         }
       );
       
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual([
+        {
+          id: 6789,
+          status: 'completed',
+          duration: 120,
+          log: 'https://github.com/test/repo/actions/runs/6789',
+          trigger: 'push'
+        }
+      ]);
     });
     
     it('should fetch workflow runs with since_created parameter', async () => {
@@ -656,9 +667,10 @@ describe('GithubAPIFacade', () => {
         {
           id: 6789,
           status: 'completed',
-          duration: 120,
-          log: 'Build successful',
-          trigger: 'push'
+          run_started_at: '2023-01-01T00:00:00Z',
+          updated_at: '2023-01-01T00:02:00Z',
+          html_url: 'https://github.com/test/repo/actions/runs/6789',
+          event: 'push'
         }
       ];
       
@@ -677,7 +689,15 @@ describe('GithubAPIFacade', () => {
         }
       );
       
-      expect(result).toEqual(mockResponse);
+      expect(result).toEqual([
+        {
+          id: 6789,
+          status: 'completed',
+          duration: 120,
+          log: 'https://github.com/test/repo/actions/runs/6789',
+          trigger: 'push'
+        }
+      ]);
     });
     
     it('should handle errors when fetching workflow runs', async () => {

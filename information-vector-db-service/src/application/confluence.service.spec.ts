@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { jest } from '@jest/globals';
+
 import { ConfluenceService } from './confluence.service.js';
 import { ConfluenceAPIPort, CONFLUENCE_API_PORT } from './port/out/ConfluenceAPIPort.js';
 import { ConfluenceStoreInfoPort, CONFLUENCE_STORE_INFO_PORT } from './port/out/ConfluenceStoreInfoPort.js';

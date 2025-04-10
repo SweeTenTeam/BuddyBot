@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { jest } from '@jest/globals';
 import { ConfluenceStoreAdapter } from './ConfluenceStoreAdapter.js';
 import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 import { ConfluenceDocument } from '../../domain/business/ConfluenceDocument.js';

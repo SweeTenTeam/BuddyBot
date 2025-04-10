@@ -1,4 +1,6 @@
-import { Metadata, Origin, Type } from "./metadata.js";
+import { Origin, Type } from "../shared/enums.js";
+import { Metadata } from "./metadata.js";
+
 
 export class Commit{
     constructor(
