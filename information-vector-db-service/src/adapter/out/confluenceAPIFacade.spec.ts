@@ -1,51 +1,118 @@
-import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
-import { ConfluenceAPIAdapter } from './ConfluenceAPIAdapter.js';
 import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
+import fetch from 'node-fetch';
+
+jest.mock('node-fetch');
+const { Response } = jest.requireActual('node-fetch');
 
 describe('ConfluenceAPIFacade', () => {
-  let confluenceAPIFacade: ConfluenceAPIFacade;
-  let confluenceAPIADapter: ConfluenceAPIAdapter;
+  let facade: ConfluenceAPIFacade;
+  const mockBaseURL = 'https://example.atlassian.net';
+  const mockUsername = 'test@example.com';
+  const mockApiKey = 'test-api-key';
 
   beforeEach(() => {
-    confluenceAPIFacade = new ConfluenceAPIFacade(
-      process.env.CONFLUENCE_BASE_URL || 'your_confluence_url',
-      process.env.CONFLUENCE_USERNAME || 'your_confluence_email',
-      process.env.ATLASSIAN_API_KEY || 'your_api_key'
-    );
-    confluenceAPIADapter = new ConfluenceAPIAdapter(confluenceAPIFacade);
+    facade = new ConfluenceAPIFacade(mockBaseURL, mockUsername, mockApiKey);
+    (fetch as jest.Mock).mockClear();
   });
 
-  // it('should fetch Confluence pages', async () => {
-  //   const data = await confluenceAPIFacade.getConfluencePagesDirectAPI();
-  //   console.log('API Response:', data);
-  //   expect(data).toBeDefined(); 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-  //   const pages = JSON.parse(data).results;
-  //   const ownerIds = pages.map(item => item.ownerId);
+  describe('fetchConfluencePages', () => {
+    const mockResponse = {
+      results: [
+        {
+          id: '123',
+          title: 'Test Page',
+          status: 'current',
+          _links: { next: '/next-page' }
+        }
+      ],
+      _links: { next: '/next-page' }
+    };
 
-  //   const owners = await confluenceAPIFacade.getUserData(ownerIds);
-  //   console.log('Owners:', owners);
-  //   expect(owners).toBeDefined(); 
-  // });
+    it('should fetch pages with default time range', async () => {
+      // Arrange
+      (fetch as jest.Mock).mockResolvedValueOnce(
+        new Response(JSON.stringify(mockResponse))
+      );
 
-  it('should fetch Confluence pages with different time ranges', async () => {
-    // Test with no time range (all pages)
-    // const res = await confluenceAPIFacade.fetchConfluencePages();
-    // console.log(res);
-    
-    // Test with last 7 days
-    // await confluenceAPIFacade.fetchConfluencePages(7);
-    
-    // // Test with last 30 days
-    // await confluenceAPIFacade.fetchConfluencePages(30);
-    
-    // // Test with last 100 days
-    // await confluenceAPIFacade.fetchConfluencePages(100);
+      // Act
+      const result = await facade.fetchConfluencePages();
 
-    const date = new Date();
-    date.setDate(date.getDate() - 100);
-    const cmd = new ConfluenceCmd(date);
-    // cmd.lastUpdate = date;
-    confluenceAPIADapter.fetchDocuments(cmd);
-  }, 300000); // Increased timeout for multiple API calls
+      // Assert
+      expect(result.results).toHaveLength(1);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining('type = page'),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            'Authorization': expect.any(String)
+          })
+        })
+      );
+    });
+
+    it('should fetch pages with specified time range', async () => {
+      // Arrange
+      const daysBack = 7;
+      (fetch as jest.Mock).mockResolvedValueOnce(
+        new Response(JSON.stringify(mockResponse))
+      );
+
+      // Act
+      const result = await facade.fetchConfluencePages(daysBack);
+
+      // Assert
+      expect(result.results).toHaveLength(1);
+      expect(fetch).toHaveBeenCalledWith(
+        expect.stringContaining(`lastModified >= now("-${daysBack}d")`),
+        expect.any(Object)
+      );
+    });
+
+    it('should handle pagination correctly', async () => {
+      // Arrange
+      const firstResponse = {
+        results: [{ id: '1' }],
+        _links: { next: '/next-page' }
+      };
+      const secondResponse = {
+        results: [{ id: '2' }],
+        _links: {}
+      };
+
+      (fetch as jest.Mock)
+        .mockResolvedValueOnce(new Response(JSON.stringify(firstResponse)))
+        .mockResolvedValueOnce(new Response(JSON.stringify(secondResponse)));
+
+      // Act
+      const result = await facade.fetchConfluencePages();
+
+      // Assert
+      expect(result.results).toHaveLength(2);
+      expect(fetch).toHaveBeenCalledTimes(2);
+    });
+
+    it('should handle API errors', async () => {
+      // Arrange
+      (fetch as jest.Mock).mockRejectedValue(new Error('API Error'));
+
+      // Act & Assert
+      await expect(facade.fetchConfluencePages()).rejects.toThrow('API Error');
+    });
+
+    it('should handle non-OK responses', async () => {
+      // Arrange
+      (fetch as jest.Mock).mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: 'Not Found' }), {
+          status: 404,
+          statusText: 'Not Found'
+        })
+      );
+
+      // Act & Assert
+      await expect(facade.fetchConfluencePages()).rejects.toThrow('Failed to fetch pages: Not Found');
+    });
+  });
 }); 

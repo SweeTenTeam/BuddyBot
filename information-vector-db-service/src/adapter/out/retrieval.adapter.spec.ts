@@ -74,4 +74,15 @@ describe('RetrieveAdapter', () => {
     // Assert
     expect(result).toEqual([]);
   });
+
+  it('should handle errors thrown by the repository', async () => {
+    // Arrange
+    const mockCmd = new RetrieveCmd();
+    mockCmd.query = 'test query';
+    const errorMessage = 'Test error';
+    repository.retrieveRelevantInfo.mockRejectedValue(new Error(errorMessage));
+
+    // Act & Assert
+    await expect(adapter.retrieveRelevantInfo(mockCmd)).rejects.toThrow(errorMessage);
+  });
 }); 
