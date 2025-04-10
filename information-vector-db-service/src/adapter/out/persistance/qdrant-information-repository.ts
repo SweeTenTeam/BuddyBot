@@ -83,7 +83,7 @@ export class QdrantInformationRepository {
       });
     } catch (error) {
       Logger.error(`Error retrieving relevant info: ${error.message}`, error.stack);
-      return [];
+      throw error;
     }
   }
 

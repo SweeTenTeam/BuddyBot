@@ -3,9 +3,10 @@ import { RetrieveAdapter } from './retrieval.adapter.js';
 import { QdrantInformationRepository } from './persistance/qdrant-information-repository.js';
 import { RetrieveCmd } from '../../domain/command/retreive-cmd.js';
 import { InformationEntity } from './persistance/entities/information.entity.js';
-import { OriginEntity, TypeEntity } from './persistance/entities/metadata.entity.js';
 import { Information } from '../../domain/business/information.js';
-import { Metadata, Origin, Type } from '../../domain/business/metadata.js';
+import { Metadata } from '../../domain/business/metadata.js';
+import { Origin, Type } from '../../domain/shared/enums.js';
+
 
 describe('RetrieveAdapter', () => {
   let adapter: RetrieveAdapter;
@@ -41,8 +42,8 @@ describe('RetrieveAdapter', () => {
     
     const mockEntities = [
       new InformationEntity('test content', {
-        origin: OriginEntity.GITHUB,
-        type: TypeEntity.COMMIT,
+        origin: Origin.GITHUB,
+        type: Type.COMMIT,
         originID: 'test-id'
       })
     ];

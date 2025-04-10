@@ -4,11 +4,11 @@ import { QdrantInformationRepository } from './qdrant-information-repository.js'
 import { QdrantVectorStore } from '@langchain/qdrant';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { InformationEntity } from './entities/information.entity.js';
-import { OriginEntity, TypeEntity } from './entities/metadata.entity.js';
 import { Document } from 'langchain/document';
 import { Result } from '../../../domain/business/Result.js';
 import { Information } from '../../../domain/business/information.js';
-import { Metadata, Origin, Type } from '../../../domain/business/metadata.js';
+import { Metadata } from '../../../domain/business/metadata.js';
+import { Origin, Type } from '../../../domain/shared/enums.js';
 
 // Define a proper type for the retriever
 interface Retriever {
@@ -78,7 +78,7 @@ describe('QdrantInformationRepository', () => {
     });
 
     it('should handle long content by splitting it', async () => {
-      const longContent = 'a'.repeat(33000);
+      const longContent = 'a'.repeat(15000);
       const info = new Information(longContent, new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id'));
 
       const splitDocs = [
@@ -153,7 +153,7 @@ describe('QdrantInformationRepository', () => {
       expect(results).toHaveLength(1);
       expect(results[0]).toBeInstanceOf(InformationEntity);
       expect(results[0].content).toBe('test content');
-      expect(results[0].metadata.origin).toBe(OriginEntity.GITHUB);
+      expect(results[0].metadata.origin).toBe(Origin.GITHUB);
     });
 
     it('should handle errors during retrieval', async () => {
