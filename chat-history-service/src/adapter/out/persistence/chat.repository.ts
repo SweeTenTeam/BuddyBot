@@ -15,6 +15,7 @@ export class ChatRepository {
   ) {}
 
   async insertChat(question: string, answer: string, date: Date): Promise<ChatEntity> {
+  try {
     const lastUpdate = await this.lastUpdateRepo.findOne({ where: { id: 1 } });
 
     if (!lastUpdate) {
@@ -31,10 +32,16 @@ export class ChatRepository {
     await this.chatRepo.save(newChat);
 
     console.log(newChat);
-    console.log("Vamos");
+    console.log("Inserimento in DB = DONE");
 
     return newChat;
-}
+
+  } catch (error) {
+    console.error('Errore durante l\'inserimento della chat:', error);
+    throw new Error('Error during insert-chat in db'); 
+  }
+  }
+
 
 
   async fetchStoricoChat(lastChatId: string, numChat?: number): Promise<ChatEntity[]> {
