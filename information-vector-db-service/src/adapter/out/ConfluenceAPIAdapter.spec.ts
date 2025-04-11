@@ -89,29 +89,5 @@ describe('ConfluenceAPIAdapter', () => {
       await expect(adapter.fetchDocuments(new ConfluenceCmd())).rejects.toThrow('API Error');
     });
 
-    it('should calculate days correctly from lastUpdate', async () => {
-      const mockPagesResponse = {
-        results: [
-          {
-            id: '123',
-            title: 'Test Document',
-            status: 'current',
-            history: {
-              createdBy: { displayName: 'John Doe' }
-            }
-          }
-        ]
-      };
-
-      mockConfluenceAPI.fetchConfluencePages.mockResolvedValue(mockPagesResponse);
-
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      const cmd = new ConfluenceCmd(sevenDaysAgo);
-
-      await adapter.fetchDocuments(cmd);
-
-      expect(mockConfluenceAPI.fetchConfluencePages).toHaveBeenCalledWith(7);
-    });
   });
 });

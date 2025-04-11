@@ -90,24 +90,23 @@ describe('QdrantInformationRepository', () => {
       const result = await repository.storeInformation(info);
 
       expect(textSplitter.createDocuments).toHaveBeenCalledWith([longContent]);
-      expect(vectorStore.addDocuments).toHaveBeenCalledWith([
-        {
-          pageContent: 'part1',
-          metadata: {
-            origin: Origin.GITHUB,
-            type: Type.COMMIT,
-            originID: 'test-id'
-          }
-        },
-        {
-          pageContent: 'part2',
-          metadata: {
-            origin: Origin.GITHUB,
-            type: Type.COMMIT,
-            originID: 'test-id'
-          }
+      expect(vectorStore.addDocuments).toHaveBeenCalledTimes(2);
+      expect(vectorStore.addDocuments).toHaveBeenNthCalledWith(1, [{
+        pageContent: 'part1',
+        metadata: {
+          origin: Origin.GITHUB,
+          type: Type.COMMIT,
+          originID: 'test-id'
         }
-      ]);
+      }]);
+      expect(vectorStore.addDocuments).toHaveBeenNthCalledWith(2, [{
+        pageContent: 'part2',
+        metadata: {
+          origin: Origin.GITHUB,
+          type: Type.COMMIT,
+          originID: 'test-id'
+        }
+      }]);
       expect(result).toBeInstanceOf(Result);
       expect(result.success).toBe(true);
     });
