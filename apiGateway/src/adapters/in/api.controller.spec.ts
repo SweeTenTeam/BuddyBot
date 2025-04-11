@@ -38,7 +38,7 @@ describe('ApiController', () => {
   });
 
   it('should get storico', async () => {
-    const storicoMock = [new ChatDTO('1', new MessageDto('Q1', '2023-01-01T00:00:00Z'), new MessageDto('A1', '2023-01-01T00:00:00Z'))];
+    const storicoMock = [new ChatDTO('1', new MessageDto('Q1', '2023-01-01T00:00:00Z'), new MessageDto('A1', '2023-01-01T00:00:00Z'), '2023-01-01T00:00:00.000Z')];
     jest.spyOn(getStoricoUseCase, 'execute').mockResolvedValue(storicoMock);
 
     const result = await controller.getStorico('1', 1);
@@ -60,7 +60,7 @@ describe('ApiController', () => {
   });
 
   it('should get risposta', async () => {
-    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'));
+    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'), '2023-01-01T00:00:00Z');
     jest.spyOn(getChatUseCase, 'execute').mockResolvedValue(rispostaMock);
 
     const result = await controller.getRisposta('Test Question', '2023-01-01T00:00:00Z');
@@ -74,7 +74,7 @@ describe('ApiController', () => {
   });
 
   it('should get risposta senza timestamp', async () => {
-    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'));
+    const rispostaMock = new ChatDTO('1', new MessageDto('Test Question', '2023-01-01T00:00:00Z'), new MessageDto('Test Answer', '2023-01-01T00:00:00Z'), '2023-01-01T00:00:00Z');
     jest.spyOn(getChatUseCase, 'execute').mockResolvedValue(rispostaMock);
 
     const result = await controller.getRisposta('Test Question', '');

@@ -28,9 +28,42 @@ export class GroqAdapter implements LLMPort {
     });
     const documents: Document[] = [];
     for(const information of info){
-      documents.push({pageContent: information.content, metadata: {'origin':information.metadata.origin,'type':information.metadata.type,'originId':information.metadata.originID}});
+      documents.push({
+        pageContent: information.content, 
+        metadata: {
+          'origin': information.metadata.origin,
+          'type': information.metadata.type,
+          'originId': information.metadata.originID
+        }
+      });
     }
-    const response = await ragChain.invoke({question: req.getText(), context: documents})
+
+    const TOKEN_LIMIT = 6000;
+    const CHARS_PER_TOKEN = 4;
+    const queryTokens = Math.ceil(req.getText().length / CHARS_PER_TOKEN);
+    const promptTemplateTokens = Math.ceil(prompt.template.length / CHARS_PER_TOKEN);
+    
+    let totalDocTokens = 0;
+    const filteredDocuments: Document[] = [];
+    
+    for (const doc of documents) {
+      const docTokens = Math.ceil(doc.pageContent.length / CHARS_PER_TOKEN);
+      if (totalDocTokens + docTokens + queryTokens + promptTemplateTokens <= TOKEN_LIMIT) {
+        totalDocTokens += docTokens;
+        filteredDocuments.push(doc);
+      } else {
+        console.log(`Skipping document that would exceed token limit. Current tokens: ${totalDocTokens}, Document tokens: ${docTokens}`);
+        break;
+      }
+    }
+
+    console.log(`Using ${filteredDocuments.length} out of ${documents.length} documents. Estimated tokens: ${totalDocTokens + queryTokens + promptTemplateTokens}`);
+    
+    const response = await ragChain.invoke({
+      question: req.getText(), 
+      context: filteredDocuments
+    });
+    
     return new Chat(req.getText(), response);
   }
 }

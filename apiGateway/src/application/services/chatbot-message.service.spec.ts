@@ -19,6 +19,7 @@ describe('GetRispostaService', () => {
     mockStoricoPort = {
       postStorico: jest.fn(),
       getStorico: jest.fn(),
+      postUpdate: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -53,7 +54,8 @@ describe('GetRispostaService', () => {
       const expectedChat = new Chat(
         'generated-id', // This would come from the port implementation
         new Message('test question', '2023-01-01T00:00:00.000Z'),
-        new Message('test answer', '2023-01-01T00:00:00.000Z')
+        new Message('test answer', '2023-01-01T00:00:00.000Z'),
+        '2023-01-01T00:00:00.000Z'
       );
 
       mockChatBotPort.getRisposta.mockResolvedValue(provChatResponse);
@@ -84,7 +86,8 @@ describe('GetRispostaService', () => {
           new Chat(
             'generated-id',
             new Message(chat.question, mockDate),
-            new Message(chat.answer, mockDate)
+            new Message(chat.answer, mockDate),
+            '2023-01-01T00:00:00.000Z'
           )
         );
       });

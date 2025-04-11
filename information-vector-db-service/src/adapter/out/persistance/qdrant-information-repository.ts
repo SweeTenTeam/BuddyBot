@@ -30,7 +30,7 @@ export class QdrantInformationRepository {
       }
       
       let documents: Document[] = [];
-      
+      console.log("docs size: "+ infoToStore.content.length)
       if (infoToStore.content.length > 10000) {
         const splitDocs = await this.splitDocuments([{ pageContent: infoToStore.content }]);
         
@@ -54,7 +54,13 @@ export class QdrantInformationRepository {
         }];
       }
 
-      await this.vectorStore.addDocuments(documents);
+      // logic for batching, needs to be 1 cause of restriction of free tier
+      const batchSize = 1;
+      for (let i = 0; i < documents.length; i += batchSize) {
+        const batch = documents.slice(i, i + batchSize);
+        await this.vectorStore.addDocuments(batch);
+        console.log(`Added batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(documents.length/batchSize)}`);
+      }
       console.log(`Successfully stored information with ID ${infoToStore.metadata.originID}, created ${documents.length} document(s)`);
       return Result.ok();
 
