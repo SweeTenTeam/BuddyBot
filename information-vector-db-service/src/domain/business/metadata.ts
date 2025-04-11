@@ -1,19 +1,4 @@
-export enum Origin {
-  GITHUB = 'GITHUB',
-  JIRA = 'JIRA',
-  CONFLUENCE = "CONFLUENCE"
-}
-
-export enum Type {
-  COMMIT = 'COMMIT',
-  DOCUMENT = 'DOCUMENT',
-  FILE = 'FILE',
-  PULLREQUEST = 'PULLREQUEST',
-  REPOSITORY = 'REPOSITORY',
-  TICKET = 'TICKET',
-  WORKFLOW = 'WORKFLOW',
-  WORKFLOW_RUN = 'WORKFLOW_RUN',
-}
+import { Origin, Type } from '../shared/enums.js';
 
 export class Metadata {
   constructor(

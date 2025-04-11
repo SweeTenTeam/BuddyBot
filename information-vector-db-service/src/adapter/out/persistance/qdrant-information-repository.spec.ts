@@ -1,315 +1,311 @@
-// import { Test, TestingModule } from '@nestjs/testing';
-// import { jest } from '@jest/globals';
-// import { QdrantInformationRepository } from './qdrant-information-repository.js';
-// import { QdrantVectorStore } from '@langchain/qdrant';
-// import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
-// import { InformationEntity } from './entities/information.entity.js';
-// import { OriginEntity, TypeEntity } from './entities/metadata.entity.js';
+import { Test, TestingModule } from '@nestjs/testing';
+import { jest } from '@jest/globals';
+import { QdrantInformationRepository } from './qdrant-information-repository.js';
+import { QdrantVectorStore } from '@langchain/qdrant';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
+import { InformationEntity } from './entities/information.entity.js';
+import { Document } from 'langchain/document';
+import { Result } from '../../../domain/business/Result.js';
+import { Information } from '../../../domain/business/information.js';
+import { Metadata } from '../../../domain/business/metadata.js';
+import { Origin, Type } from '../../../domain/shared/enums.js';
 
-// describe('QdrantInformationRepository', () => {
-//   let repository: QdrantInformationRepository;
-//   let vectorStore: jest.Mocked<QdrantVectorStore>;
-//   let textSplitter: jest.Mocked<RecursiveCharacterTextSplitter>;
+// Define a proper type for the retriever
+interface Retriever {
+  invoke: (query: string) => Promise<Document[]>;
+}
 
-//   beforeEach(async () => {
-//     const mockVectorStore = {
-//       addDocuments: jest.fn(),
-//       asRetriever: jest.fn().mockReturnValue({
-//         invoke: jest.fn(),
-//       }),
-//       client: {
-//         delete: jest.fn().mockResolvedValue(undefined as never)
-//       },
-//       collectionName: 'test_collection'
-//     };
+describe('QdrantInformationRepository', () => {
+  let repository: QdrantInformationRepository;
+  let vectorStore: jest.Mocked<QdrantVectorStore>;
+  let textSplitter: jest.Mocked<RecursiveCharacterTextSplitter>;
 
-//     const mockTextSplitter = {
-//       createDocuments: jest.fn(),
-//     };
+  beforeEach(async () => {
+    const mockVectorStore = {
+      addDocuments: jest.fn(),
+      asRetriever: jest.fn().mockReturnValue({
+        invoke: jest.fn(),
+      }),
+      client: {
+        delete: jest.fn().mockResolvedValue(undefined as never)
+      },
+      collectionName: 'test_collection'
+    };
 
-//     const module: TestingModule = await Test.createTestingModule({
-//       providers: [
-//         QdrantInformationRepository,
-//         {
-//           provide: QdrantVectorStore,
-//           useValue: mockVectorStore,
-//         },
-//         {
-//           provide: RecursiveCharacterTextSplitter,
-//           useValue: mockTextSplitter,
-//         },
-//       ],
-//     }).compile();
+    const mockTextSplitter = {
+      createDocuments: jest.fn(),
+    };
 
-//     repository = module.get<QdrantInformationRepository>(QdrantInformationRepository);
-//     vectorStore = module.get(QdrantVectorStore);
-//     textSplitter = module.get(RecursiveCharacterTextSplitter);
-//   });
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        QdrantInformationRepository,
+        {
+          provide: QdrantVectorStore,
+          useValue: mockVectorStore,
+        },
+        {
+          provide: RecursiveCharacterTextSplitter,
+          useValue: mockTextSplitter,
+        },
+      ],
+    }).compile();
 
-//   afterEach(() => {
-//     jest.clearAllMocks();
-//   });
+    repository = module.get<QdrantInformationRepository>(QdrantInformationRepository);
+    vectorStore = module.get(QdrantVectorStore);
+    textSplitter = module.get(RecursiveCharacterTextSplitter);
+  });
 
-//   it('should be defined', () => {
-//     expect(repository).toBeDefined();
-//   });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-//   it('should store information successfully', async () => {
-//     const mockInfo = new InformationEntity('test content', {
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     });
+  describe('storeInformation', () => {
+    it('should store information successfully', async () => {
+      const info = new Information('test content', new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id'));
 
-//     vectorStore.addDocuments.mockResolvedValue(undefined);
-//     const result = await repository.storeInformation(mockInfo);
+      const result = await repository.storeInformation(info);
 
-//     expect(vectorStore.addDocuments).toHaveBeenCalled();
-//     expect(result).toBe(true);
-//   });
+      expect(vectorStore.addDocuments).toHaveBeenCalledWith([{
+        pageContent: 'test content',
+        metadata: {
+          origin: Origin.GITHUB,
+          type: Type.COMMIT,
+          originID: 'test-id'
+        }
+      }]);
+      expect(result).toBeInstanceOf(Result);
+      expect(result.success).toBe(true);
+    });
 
-//   it('should retrieve relevant information successfully', async () => {
-//     const mockQuery = 'test query';
-//     const mockResults = [{
-//       pageContent: 'test content',
-//       metadata: {
-//         origin: OriginEntity.CONFLUENCE,
-//         type: TypeEntity.COMMMIT,
-//         originID: 'test-id',
-//       },
-//     }];
+    it('should handle long content by splitting it', async () => {
+      const longContent = 'a'.repeat(15000);
+      const info = new Information(longContent, new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id'));
 
-//     const mockRetriever = {
-//       invoke: jest.fn().mockImplementation((query: string) => Promise.resolve(mockResults)),
-//     };
+      const splitDocs = [
+        { pageContent: 'part1', metadata: {} },
+        { pageContent: 'part2', metadata: {} }
+      ] as Document[];
+      textSplitter.createDocuments.mockResolvedValue(splitDocs);
 
-//     vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
-//     const result = await repository.retrieveRelevantInfo(mockQuery);
+      const result = await repository.storeInformation(info);
 
-//     expect(result).toHaveLength(1);
-//     expect(result[0].content).toBe('test content');
-//     expect(result[0].metadata.origin).toBe(OriginEntity.CONFLUENCE);
-//   });
+      expect(textSplitter.createDocuments).toHaveBeenCalledWith([longContent]);
+      expect(vectorStore.addDocuments).toHaveBeenCalledWith([
+        {
+          pageContent: 'part1',
+          metadata: {
+            origin: Origin.GITHUB,
+            type: Type.COMMIT,
+            originID: 'test-id'
+          }
+        },
+        {
+          pageContent: 'part2',
+          metadata: {
+            origin: Origin.GITHUB,
+            type: Type.COMMIT,
+            originID: 'test-id'
+          }
+        }
+      ]);
+      expect(result).toBeInstanceOf(Result);
+      expect(result.success).toBe(true);
+    });
 
-//   it('should handle errors during storage', async () => {
-//     const mockInfo = new InformationEntity('test content', {
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     });
+    it('should handle errors during storage', async () => {
+      const info = new Information('test content', new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id'));
 
-//     vectorStore.addDocuments.mockRejectedValue(new Error('Storage error'));
-//     const result = await repository.storeInformation(mockInfo);
+      vectorStore.addDocuments.mockRejectedValue(new Error('Storage error'));
 
-//     expect(result).toBe(false);
-//   });
+      const result = await repository.storeInformation(info);
 
-//   it('should handle errors during retrieval', async () => {
-//     const mockQuery = 'test query';
-//     const mockRetriever = {
-//       invoke: jest.fn().mockImplementation((query: string) => Promise.reject(new Error('Retrieval error'))),
-//     };
+      expect(result).toBeInstanceOf(Result);
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+  });
 
-//     vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
-//     const result = await repository.retrieveRelevantInfo(mockQuery);
+  describe('retrieveRelevantInfo', () => {
+    it('should retrieve relevant information successfully', async () => {
+      const mockDocs = [
+        {
+          pageContent: 'test content',
+          metadata: {
+            origin: Origin.GITHUB,
+            type: Type.COMMIT,
+            originID: 'test-id'
+          }
+        }
+      ] as Document[];
+      
+      // Create a mock retriever with a properly typed invoke function
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.resolve(mockDocs);
+      //   }
+      // };
+      const mockInvoke = jest.fn<(query: string) => Promise<Document[]>>();
+      mockInvoke.mockImplementation((query: string) => Promise.resolve(mockDocs));
 
-//     expect(result).toEqual([]);
-//   });
+      // Use the mock function in your mockRetriever
+      const mockRetriever = {
+        invoke: mockInvoke
+      };
+      vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 
-//   it('should delete existing documents before storing new ones', async () => {
-//     const mockInfo = new InformationEntity('test content', {
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     });
+      const results = await repository.retrieveRelevantInfo('test query');
 
-//     // Spy on the deleteByMetadata method
-//     const deleteByMetadataSpy = jest.spyOn(repository, 'deleteByMetadata');
-//     deleteByMetadataSpy.mockResolvedValue(true);
-    
-//     vectorStore.addDocuments.mockResolvedValue(undefined);
-    
-//     const result = await repository.storeInformation(mockInfo);
+      expect(vectorStore.asRetriever).toHaveBeenCalledWith(30);
+      expect(mockRetriever.invoke).toHaveBeenCalledWith('test query');
+      expect(results).toHaveLength(1);
+      expect(results[0]).toBeInstanceOf(InformationEntity);
+      expect(results[0].content).toBe('test content');
+      expect(results[0].metadata.origin).toBe(Origin.GITHUB);
+    });
 
-//     // Verify that deleteByMetadata was called with the correct metadata
-//     expect(deleteByMetadataSpy).toHaveBeenCalledWith({
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     });
-    
-//     expect(vectorStore.addDocuments).toHaveBeenCalled();
-//     expect(result).toBe(true);
-//   });
+    it('should handle errors during retrieval', async () => {
+      // Create a mock retriever with a properly typed invoke function that rejects
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.reject(new Error('Retrieval error'));
+      //   }
+      // };
 
-//   it('should successfully delete documents by metadata', async () => {
-//     const metadata = {
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     };
+      const mockInvoke = jest.fn() as jest.MockedFunction<(query: string) => Promise<Document[]>>;
 
-//     const result = await repository.deleteByMetadata(metadata);
+      // Configure it to reject with an error
+      mockInvoke.mockImplementation((query: string) => Promise.reject(new Error('Retrieval error')));
 
-//     // Verify client.delete was called with the right parameters
-//     expect(vectorStore.client.delete).toHaveBeenCalledWith('test_collection', {
-//       filter: {
-//         must: [
-//           {
-//             key: 'metadata.origin',
-//             match: { value: OriginEntity.CONFLUENCE },
-//           },
-//           {
-//             key: 'metadata.type',
-//             match: { value: TypeEntity.COMMMIT },
-//           },
-//           {
-//             key: 'metadata.originID',
-//             match: { value: 'test-id' },
-//           },
-//         ],
-//       },
-//     });
-    
-//     expect(result).toBe(true);
-//   });
+      // Use the mock function in your mockRetriever
+      const mockRetriever = {
+        invoke: mockInvoke
+      };
+      vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
 
-//   it('should handle errors during document deletion', async () => {
-//     const metadata = {
-//       origin: OriginEntity.CONFLUENCE,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'test-id',
-//     };
+      await expect(repository.retrieveRelevantInfo('test query')).rejects.toThrow('Retrieval error');
 
-//     // Mock client.delete to throw an error
-//     vectorStore.client.delete.mockRejectedValueOnce(new Error('Deletion error'));
+    });
+  });
 
-//     const result = await repository.deleteByMetadata(metadata);
-//     expect(result).toBe(false);
-//   });
+  describe('splitDocuments', () => {
+    it('should split documents successfully', async () => {
+      const docs = [{ pageContent: 'test content' }];
+      const splitDocs = [{ pageContent: 'split content', metadata: {} }] as Document[];
+      textSplitter.createDocuments.mockResolvedValue(splitDocs);
 
-//   it('should split long documents into multiple segments', async () => {
-//     // Create a mock document with content longer than 1000 characters
-//     const longContent = 'A'.repeat(2000);
-//     const mockInfo = new InformationEntity(longContent, {
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'long-doc-id',
-//     });
+      const result = await repository.splitDocuments(docs);
 
-//     // Mock the text splitter to return multiple segments
-//     const mockSplitDocs = [
-//       { pageContent: 'A'.repeat(800), metadata: {} },
-//       { pageContent: 'A'.repeat(800), metadata: {} },
-//       { pageContent: 'A'.repeat(400), metadata: {} },
-//     ];
-//     textSplitter.createDocuments.mockResolvedValue(mockSplitDocs);
-    
-//     // Mock deleteByMetadata
-//     jest.spyOn(repository, 'deleteByMetadata').mockResolvedValue(true);
-    
-//     // Mock addDocuments
-//     vectorStore.addDocuments.mockResolvedValue(undefined);
-    
-//     // Store the document
-//     const result = await repository.storeInformation(mockInfo);
-    
-//     // Verify text splitter was called
-//     expect(textSplitter.createDocuments).toHaveBeenCalledWith([longContent]);
-    
-//     // Verify addDocuments was called with the correct number of segments
-//     // and each segment has the correct metadata
-//     expect(vectorStore.addDocuments).toHaveBeenCalledWith(expect.arrayContaining([
-//       expect.objectContaining({
-//         pageContent: expect.any(String),
-//         metadata: {
-//           origin: OriginEntity.GITHUB,
-//           type: TypeEntity.COMMMIT,
-//           originID: 'long-doc-id',
-//         }
-//       })
-//     ]));
-    
-//     // The length of the array passed to addDocuments should match the number of split documents
-//     const addDocumentsArgs = vectorStore.addDocuments.mock.calls[0][0];
-//     expect(addDocumentsArgs.length).toBe(3);
-    
-//     expect(result).toBe(true);
-//   });
+      expect(textSplitter.createDocuments).toHaveBeenCalledWith(['test content']);
+      expect(result).toEqual(splitDocs);
+    });
 
-//   it('should delete all segments of a previously split document', async () => {
-//     // Create a long document that will be split
-//     const longContent = 'B'.repeat(2000);
-//     const mockInfo = new InformationEntity(longContent, {
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'split-doc-id',
-//     });
+    it('should handle errors during splitting', async () => {
+      const docs = [{ pageContent: 'test content' }];
+      textSplitter.createDocuments.mockRejectedValue(new Error('Split error'));
 
-//     // Mock the text splitter to return multiple segments
-//     const mockSplitDocs = [
-//       { pageContent: 'B'.repeat(800), metadata: {} },
-//       { pageContent: 'B'.repeat(800), metadata: {} },
-//       { pageContent: 'B'.repeat(400), metadata: {} },
-//     ];
-//     textSplitter.createDocuments.mockResolvedValue(mockSplitDocs);
-    
-//     // Create spy for deleteByMetadata to verify it's called correctly
-//     const deleteByMetadataSpy = jest.spyOn(repository, 'deleteByMetadata');
-//     deleteByMetadataSpy.mockResolvedValue(true);
-    
-//     // Store the document
-//     await repository.storeInformation(mockInfo);
-    
-//     // Verify deleteByMetadata was called with the correct metadata
-//     expect(deleteByMetadataSpy).toHaveBeenCalledWith({
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'split-doc-id',
-//     });
-    
-//     // Reset the mocks for second test phase
-//     deleteByMetadataSpy.mockReset();
-//     deleteByMetadataSpy.mockResolvedValue(true);
-//     vectorStore.addDocuments.mockReset();
-    
-//     // Now update the document with new content
-//     const updatedContent = 'C'.repeat(1500);
-//     const updatedInfo = new InformationEntity(updatedContent, {
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMMIT,
-//       originID: 'split-doc-id',
-//     });
-    
-//     // Mock the text splitter for updated content
-//     const updatedSplitDocs = [
-//       { pageContent: 'C'.repeat(750), metadata: {} },
-//       { pageContent: 'C'.repeat(750), metadata: {} },
-//     ];
-//     textSplitter.createDocuments.mockResolvedValue(updatedSplitDocs);
-    
-//     // Store the updated document
-//     await repository.storeInformation(updatedInfo);
-    
-//     // Verify deleteByMetadata was called with the same metadata
-//     // This ensures all previous segments are deleted
-//     expect(deleteByMetadataSpy).toHaveBeenCalledWith({
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMIT,
-//       originID: 'split-doc-id',
-//     });
-    
-//     // Verify that vectorStore.addDocuments was called with the new segments
-//     expect(vectorStore.addDocuments).toHaveBeenCalled();
-//     const addDocumentsArgs = vectorStore.addDocuments.mock.calls[0][0];
-//     expect(addDocumentsArgs.length).toBe(2); // Should now have 2 segments instead of 3
-    
-//     // Verify each segment has the correct content and metadata
-//     expect(addDocumentsArgs[0].pageContent).toContain('C');
-//     expect(addDocumentsArgs[0].metadata).toEqual({
-//       origin: OriginEntity.GITHUB,
-//       type: TypeEntity.COMMIT,
-//       originID: 'split-doc-id',
-//     });
-//   });
-// }); 
+      await expect(repository.splitDocuments(docs)).rejects.toThrow('Split error');
+    });
+  });
+
+  describe('similaritySearch', () => {
+    it('should perform similarity search successfully', async () => {
+      const mockDocs = [
+        {
+          pageContent: 'test content',
+          metadata: {
+            origin: Origin.GITHUB,
+            type: Type.COMMIT,
+            originID: 'test-id'
+          }
+        }
+      ] as Document[];
+      
+      // Create a mock retriever with a properly typed invoke function
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.resolve(mockDocs);
+      //   }
+      // };
+
+       const mockInvoke = jest.fn<(query: string) => Promise<Document[]>>();
+      mockInvoke.mockImplementation((query: string) => Promise.resolve(mockDocs));
+
+      // Use the mock function in your mockRetriever
+      const mockRetriever = {
+        invoke: mockInvoke
+      };
+
+      
+      vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
+
+      const results = await repository.similaritySearch('test query', 5);
+
+      expect(vectorStore.asRetriever).toHaveBeenCalledWith(5);
+      expect(mockRetriever.invoke).toHaveBeenCalledWith('test query');
+      expect(results).toEqual(mockDocs);
+    });
+
+    it('should handle errors during similarity search', async () => {
+      // Create a mock retriever with a properly typed invoke function that rejects
+      // const mockRetriever = {
+      //   invoke: function(query: string): Promise<Document[]> {
+      //     return Promise.reject(new Error('Search error'));
+      //   }
+      // };
+
+      const mockInvoke = jest.fn() as jest.MockedFunction<(query: string) => Promise<Document[]>>;
+
+      // Configure it to reject with an error
+      mockInvoke.mockImplementation((query: string) => Promise.reject(new Error('Search error')));
+
+      // Use the mock function in your mockRetriever
+      const mockRetriever = {
+        invoke: mockInvoke
+      };
+      vectorStore.asRetriever.mockReturnValue(mockRetriever as any);
+
+      await expect(repository.similaritySearch('test query')).rejects.toThrow('Search error');
+    });
+  });
+
+  describe('deleteByMetadata', () => {
+    it('should delete documents by metadata successfully', async () => {
+      const metadata = new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id');
+
+      const result = await repository.deleteByMetadata(metadata);
+
+      expect(vectorStore.client.delete).toHaveBeenCalledWith('test_collection', {
+        filter: {
+          must: [
+            {
+              key: 'metadata.origin',
+              match: { value: Origin.GITHUB }
+            },
+            {
+              key: 'metadata.type',
+              match: { value: Type.COMMIT }
+            },
+            {
+              key: 'metadata.originID',
+              match: { value: 'test-id' }
+            }
+          ]
+        }
+      });
+      expect(result).toBeInstanceOf(Result);
+      expect(result.success).toBe(true);
+    });
+
+    it('should handle errors during deletion', async () => {
+      const metadata = new Metadata(Origin.GITHUB, Type.COMMIT, 'test-id');
+
+      vectorStore.client.delete.mockRejectedValue(new Error('Deletion error'));
+
+      const result = await repository.deleteByMetadata(metadata);
+
+      expect(result).toBeInstanceOf(Result);
+      expect(result.success).toBe(false);
+      expect(result.error).toBeDefined();
+    });
+  });
+}); 
