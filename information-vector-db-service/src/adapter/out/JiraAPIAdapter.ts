@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Ticket } from '../../domain/business/Ticket.js';
 import { JiraComment } from '../../domain/business/JiraComment.js';
 import { JiraCmd } from '../../domain/command/JiraCmd.js';
-import { JiraAPIFacade } from './JiraAPIFacade.js';
+import { JiraAPIFacade } from './JiraAPIRepository.js';
 import { JiraAPIPort } from '../../application/port/out/JiraAPIPort.js';
 import { ADFNode } from './utils/ADFNode.js';
 

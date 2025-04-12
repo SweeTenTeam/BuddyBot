@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { ConfluenceAPIAdapter } from './ConfluenceAPIAdapter.js';
-import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
+import { ConfluenceAPIFacade } from './ConfluenceAPIRepository.js';
 import { ConfluenceCmd } from '../../domain/command/ConfluenceCmd.js';
 import { ConfluenceDocument } from '../../domain/business/ConfluenceDocument.js';
 

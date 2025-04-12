@@ -1,5 +1,5 @@
 import { Octokit } from '@octokit/rest';
-import { GithubAPIFacade } from './GithubAPIFacade.js';
+import { GithubAPIFacade } from './GithubAPIRepository.js';
 import { jest } from '@jest/globals';
 
 describe('GithubAPIFacade', () => {

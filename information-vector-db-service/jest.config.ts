@@ -11,7 +11,6 @@ const config: JestConfigWithTsJest = {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
-  collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   // Configuration to include integration tests
@@ -21,6 +20,17 @@ const config: JestConfigWithTsJest = {
   ],
   // Long timeout for integration tests
   testTimeout: 30000,
+  collectCoverage: true,
+  collectCoverageFrom: [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.spec.ts"
+  ],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/dist/",
+    "main.ts"
+  ],
 };
 
 export default config;

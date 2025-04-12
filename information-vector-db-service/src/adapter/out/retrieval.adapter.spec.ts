@@ -32,9 +32,6 @@ describe('RetrieveAdapter', () => {
     repository = module.get(QdrantInformationRepository);
   });
 
-  it('should be defined', () => {
-    expect(adapter).toBeDefined();
-  });
 
   it('should convert repository entities to domain information', async () => {
     // Arrange

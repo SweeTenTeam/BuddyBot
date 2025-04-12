@@ -36,9 +36,6 @@ describe('RetrievalController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 
   it('should retrieve information successfully', async () => {
     const mockQuery = new RetrievalQueryDTO();

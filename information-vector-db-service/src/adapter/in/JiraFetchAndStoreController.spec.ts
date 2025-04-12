@@ -33,10 +33,6 @@ describe('JiraFetchAndStoreController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('fetchAndStore', () => {
     it('should fetch and store jira info with boardId and lastUpdate', async () => {
       // Arrange

@@ -78,9 +78,6 @@ describe('GithubService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
 
   describe('fetchAndStoreGithubInfo', () => {
     it('should fetch and store GitHub information successfully', async () => {

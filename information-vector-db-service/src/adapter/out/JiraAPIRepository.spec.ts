@@ -1,4 +1,4 @@
-import { JiraAPIFacade } from './JiraAPIFacade.js';
+import { JiraAPIFacade } from './JiraAPIRepository.js';
 import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { Version3Client, Version3Models } from 'jira.js';

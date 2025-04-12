@@ -3,7 +3,7 @@ import { GithubFilesAPIPort } from "../../application/port/out/GithubFilesAPIPor
 import { GithubPullRequestsAPIPort } from "../../application/port/out/GithubPullRequestsAPIPort.js";
 import { GithubRepositoryAPIPort } from "../../application/port/out/GithubRepositoryAPIPort.js";
 import { GithubWorkflowsAPIPort } from "../../application/port/out/GithubWorkflowsAPIPort.js";
-import { GithubAPIFacade } from "./GithubAPIFacade.js";
+import { GithubAPIFacade } from "./GithubAPIRepository.js";
 import { Injectable } from '@nestjs/common';
 import { Commit } from "../../domain/business/Commit.js";
 import { File } from "../../domain/business/File.js";

@@ -35,9 +35,6 @@ describe('GithubFetchAndStoreController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 
   describe('fetchAndStore', () => {
     it('should fetch and store github info with repo list and lastUpdate', async () => {

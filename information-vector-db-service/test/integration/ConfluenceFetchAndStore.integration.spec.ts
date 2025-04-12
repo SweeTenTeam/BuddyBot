@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { ConfluenceService } from '../../src/application/confluence.service.js';
 import { CONFLUENCE_USECASE } from '../../src/application/port/in/ConfluenceUseCase.js';
-import { ConfluenceAPIFacade } from '../../src/adapter/out/ConfluenceAPIFacade.js';
+import { ConfluenceAPIFacade } from '../../src/adapter/out/ConfluenceAPIRepository.js';
 import { ConfluenceAPIAdapter } from '../../src/adapter/out/ConfluenceAPIAdapter.js';
 import { ConfluenceStoreAdapter } from '../../src/adapter/out/ConfluenceStoreAdapter.js';
 import { CONFLUENCE_API_PORT } from '../../src/application/port/out/ConfluenceAPIPort.js';
