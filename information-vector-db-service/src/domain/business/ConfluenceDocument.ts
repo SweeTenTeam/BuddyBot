@@ -1,4 +1,6 @@
-import { Metadata, Origin, Type } from "./metadata.js";
+import { Metadata} from "./metadata.js";
+import { Origin, Type } from "../shared/enums.js";
+
 
 export class ConfluenceDocument {
   constructor(

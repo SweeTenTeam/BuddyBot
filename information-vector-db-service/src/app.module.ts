@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { InformationController } from './adapter/in/information.controller.js';
 import { JiraService } from './application/jira.service.js';
 import { ConfluenceService } from './application/confluence.service.js';
 import { GithubService } from './application/github.service.js';
@@ -38,10 +37,19 @@ import { GITHUB_REPOSITORY_API_PORT } from './application/port/out/GithubReposit
 import { GITHUB_WORKFLOWS_API_PORT } from './application/port/out/GithubWorkflowsAPIPort.js';
 import { CONFLUENCE_STORE_INFO_PORT } from './application/port/out/ConfluenceStoreInfoPort.js';
 import { JIRA_STORE_INFO_PORT } from './application/port/out/JiraStoreInfoPort.js';
+import { GithubFetchAndStoreController } from './adapter/in/GithubFetchAndStoreController.js';
+import { JiraFetchAndStoreController } from './adapter/in/JiraFetchAndStoreController.js';
+import { ConfluenceFetchAndStoreController } from './adapter/in/ConfluenceFetchAndStoreController.js';
 
 @Module({
   imports: [],
-  controllers: [TestController, RetrievalController, InformationController],
+  controllers: [
+    TestController, 
+    RetrievalController, 
+    GithubFetchAndStoreController,
+    JiraFetchAndStoreController,
+    ConfluenceFetchAndStoreController
+  ],
   providers: [
     {
       provide: RETRIEVAL_USE_CASE, 
@@ -70,7 +78,7 @@ import { JIRA_STORE_INFO_PORT } from './application/port/out/JiraStoreInfoPort.j
         });
 
         const textSplitter = new RecursiveCharacterTextSplitter({ 
-          chunkSize: 32000, 
+          chunkSize: 10000, 
           chunkOverlap: 0 
         });
         
