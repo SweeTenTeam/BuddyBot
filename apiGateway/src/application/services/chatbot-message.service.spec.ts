@@ -20,6 +20,7 @@ describe('GetRispostaService', () => {
       postStorico: jest.fn(),
       getStorico: jest.fn(),
       postUpdate: jest.fn(),
+      getLastUpdate: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({

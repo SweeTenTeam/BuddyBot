@@ -6,7 +6,7 @@ import { HistoryService } from '../../infrastructure/rabbitmq/history.service';
 //import { HistoryService } from '@infrastructure/rabbitmq/history.service';
 import { ProvChat } from '../../domain/business/prov-chat';
 import { LastUpdateCMD } from '../../domain/cmds/LastUpdateCMD';
-import { Message } from 'src/domain/business/message';
+import { Message } from '../../domain/business/message';
 
 @Injectable()
 export class StoricoMessageAdapter implements StoricoPort {
@@ -53,7 +53,7 @@ export class StoricoMessageAdapter implements StoricoPort {
 
     console.log(`Richiesta della data di ultimo fetch`);
 
-    const result = await this.historyService.sendMessage('getLastUpdate_queue', null);
+    const result = await this.historyService.sendMessage('getLastUpdate_queue', '');
 
     console.log(` Data del fetch precedente ritronata:`, result);
     return result;
