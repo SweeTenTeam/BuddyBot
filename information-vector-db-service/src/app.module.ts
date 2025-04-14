@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { JiraService } from './application/jira.service.js';
 import { ConfluenceService } from './application/confluence.service.js';
 import { GithubService } from './application/github.service.js';
-import { TestController } from './adapter/in/test.controller.js';
 import { GITHUB_USECASE } from './application/port/in/GithubUseCase.js';
 import { JIRA_API_PORT } from './application/port/out/JiraAPIPort.js';
 import { JiraAPIAdapter } from './adapter/out/JiraAPIAdapter.js';
@@ -43,8 +42,7 @@ import { ConfluenceFetchAndStoreController } from './adapter/in/ConfluenceFetchA
 
 @Module({
   imports: [],
-  controllers: [
-    TestController, 
+  controllers: [ 
     RetrievalController, 
     GithubFetchAndStoreController,
     JiraFetchAndStoreController,
