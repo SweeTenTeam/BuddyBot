@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { JiraService } from '../../src/application/jira.service.js';
 import { JIRA_USECASE } from '../../src/application/port/in/JiraUseCase.js';
-import { JiraAPIFacade } from '../../src/adapter/out/JiraAPIFacade.js';
+import { JiraAPIFacade } from '../../src/adapter/out/JiraAPIRepository.js';
 import { JiraAPIAdapter } from '../../src/adapter/out/JiraAPIAdapter.js';
 import { JiraStoreAdapter } from '../../src/adapter/out/JiraStoreAdapter.js';
 import { JIRA_API_PORT } from '../../src/application/port/out/JiraAPIPort.js';

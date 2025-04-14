@@ -33,9 +33,6 @@ describe('ConfluenceFetchAndStoreController', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 
   describe('fetchAndStore', () => {
     it('should fetch and store confluence info with lastUpdate', async () => {

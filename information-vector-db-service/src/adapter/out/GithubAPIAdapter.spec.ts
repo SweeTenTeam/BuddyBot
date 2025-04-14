@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { GithubAPIAdapter } from './GithubAPIAdapter.js';
-import { GithubAPIFacade } from './GithubAPIFacade.js';
+import { GithubAPIFacade } from './GithubAPIRepository.js';
 import { GithubCmd } from '../../domain/command/GithubCmd.js';
 import { RepoCmd } from '../../domain/command/RepoCmd.js';
 import { FileCmd } from '../../domain/command/FileCmd.js';

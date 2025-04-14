@@ -1,4 +1,4 @@
-import { ConfluenceAPIFacade } from './ConfluenceAPIFacade.js';
+import { ConfluenceAPIFacade } from './ConfluenceAPIRepository.js';
 import { jest } from '@jest/globals';
 
 

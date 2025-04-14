@@ -41,10 +41,6 @@ describe('GithubStoreAdapter', () => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(adapter).toBeDefined();
-  });
-
   describe('storeGithubInfo', () => {
     it('should store all GitHub information successfully', async () => {
       // Arrange

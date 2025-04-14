@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { GithubService } from '../../src/application/github.service.js';
 import { GITHUB_USECASE } from '../../src/application/port/in/GithubUseCase.js';
-import { GithubAPIFacade } from '../../src/adapter/out/GithubAPIFacade.js';
+import { GithubAPIFacade } from '../../src/adapter/out/GithubAPIRepository.js';
 import { GithubAPIAdapter } from '../../src/adapter/out/GithubAPIAdapter.js';
 import { GithubStoreAdapter } from '../../src/adapter/out/GithubStoreAdapter.js';
 import { GITHUB_COMMITS_API_PORT } from '../../src/application/port/out/GithubCommitAPIPort.js';

@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { JiraService } from './application/jira.service.js';
 import { ConfluenceService } from './application/confluence.service.js';
 import { GithubService } from './application/github.service.js';
-import { TestController } from './adapter/in/test.controller.js';
 import { GITHUB_USECASE } from './application/port/in/GithubUseCase.js';
 import { JIRA_API_PORT } from './application/port/out/JiraAPIPort.js';
 import { JiraAPIAdapter } from './adapter/out/JiraAPIAdapter.js';
-import { JiraAPIFacade } from './adapter/out/JiraAPIFacade.js';
+import { JiraAPIFacade } from './adapter/out/JiraAPIRepository.js';
 import { RetrievalController } from './adapter/in/retrieval.controller.js';
 import { RETRIEVAL_USE_CASE } from './application/port/in/retrieval-usecase.port.js';
 import { RetrievalService } from './application/retrieval.service.js';
@@ -18,12 +17,12 @@ import { QdrantVectorStore } from '@langchain/qdrant';
 import { NomicEmbeddings } from '@langchain/nomic';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { GithubAPIAdapter } from './adapter/out/GithubAPIAdapter.js';
-import { GithubAPIFacade } from './adapter/out/GithubAPIFacade.js';
+import { GithubAPIFacade } from './adapter/out/GithubAPIRepository.js';
 import { JIRA_USECASE } from './application/port/in/JiraUseCase.js';
 import { CONFLUENCE_USECASE } from './application/port/in/ConfluenceUseCase.js';
 import { CONFLUENCE_API_PORT } from './application/port/out/ConfluenceAPIPort.js';
 import { ConfluenceAPIAdapter } from './adapter/out/ConfluenceAPIAdapter.js';
-import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIFacade.js';
+import { ConfluenceAPIFacade } from './adapter/out/ConfluenceAPIRepository.js';
 import { Octokit } from '@octokit/rest';
 import { Version3Client } from 'jira.js';
 import { GithubStoreAdapter } from './adapter/out/GithubStoreAdapter.js';
@@ -43,8 +42,7 @@ import { ConfluenceFetchAndStoreController } from './adapter/in/ConfluenceFetchA
 
 @Module({
   imports: [],
-  controllers: [
-    TestController, 
+  controllers: [ 
     RetrievalController, 
     GithubFetchAndStoreController,
     JiraFetchAndStoreController,

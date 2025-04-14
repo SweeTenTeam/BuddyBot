@@ -31,9 +31,7 @@ describe('RetrievalService', () => {
     retrievalPort = module.get(RETRIEVAL_PORT);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+
 
   it('should retrieve information using the port', async () => {
     // Arrange

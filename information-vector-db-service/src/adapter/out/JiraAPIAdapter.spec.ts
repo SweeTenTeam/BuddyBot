@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { jest } from '@jest/globals';
 import { JiraAPIAdapter } from './JiraAPIAdapter.js';
-import { JiraAPIFacade } from './JiraAPIFacade.js';
+import { JiraAPIFacade } from './JiraAPIRepository.js';
 import { JiraCmd } from '../../domain/command/JiraCmd.js';
 import { Ticket } from '../../domain/business/Ticket.js';
 import { JiraComment } from '../../domain/business/JiraComment.js';
