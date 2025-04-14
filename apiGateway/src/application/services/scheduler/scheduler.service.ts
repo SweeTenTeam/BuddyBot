@@ -15,9 +15,9 @@ export class TasksService implements OnModuleInit {
   constructor(
     @Inject('InfoPort') private readonly infoPort: InfoPort,
     @Inject('StoricoPort') private readonly storicoPort: StoricoPort,
-  ) {}
+  ) { }
 
-  
+
   async onModuleInit() {
     /** COMMENT AFTER FIRST BUILD / UN-CONMMENT FOR FIRST BUILD 
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -35,13 +35,13 @@ export class TasksService implements OnModuleInit {
     await this.runFetch();
   }
 
-  
+
 
   private async runFetch() {
     try {
       this.logger.debug('Richiesta della data di ultimo FETCH (SERVICE)');
       const isoDateString = await this.storicoPort.getLastUpdate();
-      
+
       let DataFetch: Date;
       //let GitDataFetch: Date;
 
@@ -52,7 +52,7 @@ export class TasksService implements OnModuleInit {
 
         //const GitDataFetch = new Date();
         //GitDataFetch.setDate(GitDataFetch.getDate() - 7); /** GITHUB - 7 giorni*/
-        
+
         this.logger.warn(`Nessuna data FETCH (SERVICE) precedente. Uso data di fallback: ${DataFetch}`);
       } else {
         /** PROVA POI VA MESSA DATA DA FETCH PER LA PRIMA VOLTA */
@@ -68,8 +68,8 @@ export class TasksService implements OnModuleInit {
       const confCmd = new FetchConfluenceCMD(DataFetch);
 
       const owner = process.env.GITHUB_OWNER || 'SweeTenTeam';
-      const repoName = process.env.GITHUB_REPO || 'BuddyBot';
-      const branch = process.env.GITHUB_BRANCH || 'develop';
+      const repoName = process.env.GITHUB_REPO || 'Demo';
+      const branch = process.env.GITHUB_BRANCH || 'main';
       const repoCMD = new RepoGithubCMD(owner, repoName, branch);
       const githubCmd = new FetchGithubCMD([repoCMD], DataFetch);
 
