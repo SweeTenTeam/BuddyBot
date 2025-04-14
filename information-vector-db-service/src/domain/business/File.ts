@@ -1,15 +1,15 @@
-import { Metadata} from "./metadata.js";
+import { Metadata } from "./metadata.js";
 import { Origin, Type } from "../shared/enums.js";
 
 
-export class File{
+export class File {
     constructor(
         private path: string,
         private sha: string,
         private repositoryName: string,
         private branchName: string,
         private content: string
-    ) {}
+    ) { }
 
     getPath(): string {
         return this.path;
@@ -30,11 +30,11 @@ export class File{
     getContent(): string {
         return this.content;
     }
-        toStringifiedJson(): string {
+    toStringifiedJson(): string {
         return JSON.stringify(this);
     }
 
     getMetadata(): Metadata {
-      return new Metadata(Origin.GITHUB, Type.FILE, this.sha);
+        return new Metadata(Origin.GITHUB, Type.FILE, this.path);
     }
 }
