@@ -50,9 +50,10 @@ import { VectorDbClient } from './vectordb.client.js';
       useFactory: () => {
         return  new ChatGroq({
             apiKey: process.env.GROQ_API_KEY,
-            model: "qwen-2.5-32b",
+            model: "meta-llama/llama-4-scout-17b-16e-instruct",
             maxTokens: 6000,
             maxRetries: 2,
+
         });
       },
   }

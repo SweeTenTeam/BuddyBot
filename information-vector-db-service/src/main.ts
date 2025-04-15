@@ -1,6 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { AppModule } from './app.module.js';
+import { QdrantInformationRepository } from './adapter/out/persistance/qdrant-information-repository.js';
+import { Metadata } from './domain/business/metadata.js';
+import { Origin, Type } from './domain/shared/enums.js';
 
 async function bootstrap() {
   console.log('Starting information-vector-db-service...');
@@ -20,6 +23,15 @@ async function bootstrap() {
     },
   );
   
+  const qdrantRepository = app.get<QdrantInformationRepository>(QdrantInformationRepository);
+
+  await qdrantRepository.deleteByMetadata(new Metadata(Origin.CONFLUENCE, Type.DOCUMENT, '48005395'));
+    await qdrantRepository.deleteByMetadata(new Metadata(Origin.CONFLUENCE, Type.DOCUMENT, '48005395'));
+
+
+  // await qdrantRepository.deleteByMetadata(new Metadata(Origin.GITHUB, Type.FILE, '.DS_Store'));
+
+
   console.log('Microservice created, starting to listen...');
   await app.listen();
   console.log('Microservice is now listening for messages');

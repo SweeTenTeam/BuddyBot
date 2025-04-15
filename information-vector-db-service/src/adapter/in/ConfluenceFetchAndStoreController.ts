@@ -14,6 +14,8 @@ export class ConfluenceFetchAndStoreController {
   @MessagePattern('fetchAndStoreConfluence')
   async fetchAndStore(@Payload() req: FetchConfluenceDto): Promise<Result> {
     try {
+      let d = new Date(req.lastUpdate);
+        console.log(d);
       const result = await this.confluenceService.fetchAndStoreConfluenceInfo(
         new ConfluenceCmd(req.lastUpdate ? new Date(req.lastUpdate) : undefined),
       );

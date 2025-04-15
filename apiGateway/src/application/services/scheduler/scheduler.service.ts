@@ -20,16 +20,16 @@ export class TasksService implements OnModuleInit {
 
   async onModuleInit() {
     /** COMMENT AFTER FIRST BUILD / UN-CONMMENT FOR FIRST BUILD */
-    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-    await sleep(10000); //ASPETTA CHE tutti i servizi siano attivi RABBIT PARTA
+    // const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    // await sleep(10000); //ASPETTA CHE tutti i servizi siano attivi RABBIT PARTA
 
-    this.logger.debug('Esecuzione FETCH iniziale...');
-    await this.runFetch();
+    // this.logger.debug('Esecuzione FETCH iniziale...');
+    // await this.runFetch();
   }
 
 
   /** SCHEDULER OGNI TOT >< */
-  @Cron('0 */60 * * * *')
+  @Cron('0 */55 * * * *')
   async handleCron() {
     this.logger.debug('Esecuzione FETCH ogni TOT (ogni 5 min)...');
     await this.runFetch();

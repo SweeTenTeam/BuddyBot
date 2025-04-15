@@ -43,7 +43,7 @@ export default function Bubble({ message, user, error, loading, lastUpdated }: {
                 </div>
             ) : (
                 <>
-                    <div className={`p-4 rounded-2xl mt-4 mb-4 max-w-[90%] sm:max-w-[70%] md:max-w-[40%] w-full break-words flex flex-col ${isUser}`}>
+                    <div className={`p-4 rounded-2xl mt-4 mb-4 max-w-[90%] sm:max-w-[70%] md:max-w-[60%] w-full break-words flex flex-col ${isUser}`}>
                         {!user ?
                             <>
                                 <MarkDown content={message.content} />

@@ -68,7 +68,7 @@ export class GithubAPIAdapter implements GithubCommitsAPIPort, GithubFilesAPIPor
       // Other binary files
       '.xlsx', '.xls', '.doc', '.docx', '.ppt', '.pptx',
       //other format not wanted
-      '.env'
+      '.env', '.DS_Store'
     ];
     
     return !binaryExtensions.some(ext => filename.toLowerCase().endsWith(ext));

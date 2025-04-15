@@ -19,15 +19,12 @@ export class QdrantInformationRepository {
     try {
       // First, delete any existing documents with the same metadata combination
       console.log('Attempting to delete existing documents with same metadata...');
-      const deleteResult = await this.deleteByMetadata({
+      await this.deleteByMetadata({
         origin: infoToStore.metadata.origin,
         type: infoToStore.metadata.type,
         originID: infoToStore.metadata.originID
       });
       
-      if (!deleteResult.success) {
-        return Result.fail(`Failed to delete existing documents: ${deleteResult.error}`);
-      }
       
       let documents: Document[] = [];
       console.log("docs size: "+ infoToStore.content.length)
@@ -103,6 +100,8 @@ export class QdrantInformationRepository {
     //   console.error(`Error splitting documents: ${error}`);
     //   throw error;
     // }
+
+
   }
 
   async similaritySearch(query: string, k = 10): Promise<Document[]> {

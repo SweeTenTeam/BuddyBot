@@ -20,7 +20,7 @@ export class GroqAdapter implements LLMPort {
   async generateAnswer(req: ReqAnswerCmd, info: Information[]): Promise<Chat> {
     //console.log("Information to pass to LLM: ") //uncomment this
     //console.log(info);
-    const prompt = PromptTemplate.fromTemplate(`Answer the question based only on the following context: {context} Question: {question}`);
+    const prompt = PromptTemplate.fromTemplate('Rispondi alla domanda in italiano e formattandola in markdown con informazioni leggibili da esseri umani basandoti solo sul seguente contesto avvisando se la domanda non è pertinente al contesto: {context} Domanda: {question}');
     const ragChain = await createStuffDocumentsChain({
         llm:this.groq,
         prompt,

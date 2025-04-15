@@ -61,7 +61,7 @@ export class JiraAPIAdapter implements JiraAPIPort {
       const lastUpdate = req.lastUpdate;
       const daysBack = lastUpdate ? 
         Math.ceil((new Date().getTime() - lastUpdate.getTime()) / (1000 * 60 * 60 * 24)) : undefined;//if not last update pass undefined and it will fetch all the issues
-      
+
       const issues = await this.jiraAPI.fetchRecentIssues(daysBack);
 
       for (const issue of issues) {
