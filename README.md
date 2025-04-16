@@ -94,19 +94,19 @@ Per installare il prodotto, è necessario clonare il repository Git del progetto
 
 Per installare il prodotto, è necessario eseguire i seguenti comandi:
 
-1. Aprire il terminale e navigare nella cartella in cui si desidera installare il prodotto (o navigare nella cartella in cui è stato scompattato il file `.zip`) con il comando:
+- Aprire il terminale e navigare nella cartella in cui si desidera installare il prodotto (o navigare nella cartella in cui è stato scompattato il file `.zip`) con il comando:
   ```bash
     cd /percorso/della/cartella
   ```
-2. Clonare il repository Git del progetto con il comando (passaggio opzionale se si è scaricato il progetto da GitHub):
+- Clonare il repository Git del progetto con il comando (passaggio opzionale se si è scaricato il progetto da GitHub):
   ```bash
     git clone git@github.com:SweeTenTeam/BuddyBot.git
   ```
-3. Navigare nella cartella del progetto con il comando:
+- Navigare nella cartella del progetto con il comando:
   ```bash
     cd BuddyBot
   ```
-4. A partire dai file `.env.example` presenti nella cartella del progetto, è necessario creare i file `.env`. I file `.env` contengono le variabili di ambiente necessarie per il corretto funzionamento del prodotto. Per farlo è possibile eseguire il comando:
+- A partire dai file `.env.example` presenti nella cartella del progetto, è necessario creare i file `.env`. I file `.env` contengono le variabili di ambiente necessarie per il corretto funzionamento del prodotto. Per farlo è possibile eseguire il comando:
   ```bash
     cp .env.example .env
   ```
@@ -114,9 +114,9 @@ Per installare il prodotto, è necessario eseguire i seguenti comandi:
   
   Questo passaggio va ripetuto per ogni microservizio del prodotto.
 
-5. Impostare la repositorye la branch da tracciare nel file `.env` del microservizio `apiGateway`;
+- Impostare la repositorye la branch da tracciare nel file `.env` del microservizio `apiGateway`;
 
-6. Far partire il container di Docker con il seguente comando se è la prima volta:
+- Far partire il container di Docker con il seguente comando se è la prima volta:
   ```bash
     docker-compose up --build
   ```
