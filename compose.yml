@@ -1,11 +1,86 @@
 services:
+  frontend:
+    build: frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env
+
+  api-gateway:
+    build: apiGateway
+    ports:
+      - "80:80"
+
+  chat-bot:
+    build: chat-bot-service
+    env_file:
+      - ./chat-bot-service/.env
+  
+  history-service:
+    build: chat-history-service
+    depends_on:
+      - db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: db
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./qdrant-storage/:/qdrant/storage:z
+
+
   information:
-    build: informationService
-    volumes:
-      - ./informationService:/app/
-  vectorial:
-    build: vectorialDbService
-    volumes:
-      - ./vectorialDbService:/app/
+    build: information-vector-db-service
+    env_file:
+      - information-vector-db-service/.env
+    depends_on:
+      - rabbitmq
+      - qdrant
+    #volumes:
+    #  - ./information-vector-db-service:/app/
+  test:
+    build: test
+    ports:
+      - "8000:3000"
+    depends_on:
+      - rabbitmq
   rabbitmq:
-    image: rabbitmq
+    image: rabbitmq:management 
+    container_name: rabbitmq
+    restart: always
+    ports:
+    - "5672:5672"
+    - "15672:15672" 
+    environment:
+      RABBITMQ_DEFAULT_USER: guest 
+      RABBITMQ_DEFAULT_PASS: guest
+
+  db:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_HOST: db
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+volumes:
+  postgresql_data:
