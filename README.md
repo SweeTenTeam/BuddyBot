@@ -1,6 +1,6 @@
 
-[![Continuous Integration](https://github.com/SweeTenTeam/Docs/tree/master/.github/workflows/CI.svg)](https://github.com/SweeTenTeam/Docs/actions)
-[![Code Coverage](https://github.com/SweeTenTeam/Docs/tree/master/.github/workflows/Coverage.svg)](https://github.com/SweeTenTeam/Docs/actions)
+[![Continuous Integration](https://github.com/SweeTenTeam/BuddyBot/blob/main/.github/workflows/CI.svg)](https://github.com/SweeTenTeam/Docs/actions)
+[![Code Coverage](https://github.com/SweeTenTeam/BuddyBot/blob/main/.github/workflows/Coverage.svg)](https://github.com/SweeTenTeam/Docs/actions)
 # BuddyBot
 
 ## Scopo del prodotto
